@@ -9,7 +9,3 @@
 
 #Object files
 *.o
-#Other
-*.c~
-*.h~
-*.asm~
