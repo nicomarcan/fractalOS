@@ -24,6 +24,6 @@ uint64_t _r12();
 uint64_t _r13();
 uint64_t _r14();
 uint64_t _r15();
-void _lidt(void * idtr);
+void _lidt(uint64_t idtr);
 
 #endif

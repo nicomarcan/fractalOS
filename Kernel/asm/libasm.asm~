@@ -1,5 +1,5 @@
 GLOBAL cpuVendor,_rax,_rbx,_rcx,_rdx,_rbp,_rsi,_rdi,_rsp
-GLOBAL _r8,_r9,_r10,_r11,_r12,_r13,_r14,_r15,_lidt
+GLOBAL _r8,_r9,_r10,_r11,_r12,_r13,_r14,_r15
 section .text
 	
 cpuVendor:
