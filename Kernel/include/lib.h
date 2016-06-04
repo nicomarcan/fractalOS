@@ -28,7 +28,11 @@ void _lidt(void * idtr);
 void picMasterMask(uint8_t mask);
 void picSlaveMask(uint8_t mask);
 void _irq00handler();
+void _irq01handler();
 void _cli();
 void _sti();
-
+char kb_read();
+int intToString(char * buffer,int num);
+void charToString(char*buffer,char c);
+uint64_t rtc(uint64_t mode);
 #endif

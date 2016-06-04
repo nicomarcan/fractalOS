@@ -48,3 +48,32 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 
 	return destination;
 }
+
+
+void charToString(char*buffer,char c){	
+	buffer[0]=c;
+	buffer[1]=0;
+}
+
+int intToString(char * buffer,int num){
+	int i=0;
+	int tmp=0;
+	int k,q;
+	while(num){
+		tmp = num/10;
+		buffer[i]=(num - tmp*10)+'0';
+		num=tmp;
+		i++;
+	}
+	buffer[i]=0;
+	for(k=0,q=i-1;k<q;k++,q--){
+		tmp=buffer[k];
+		buffer[k]=buffer[q];
+		buffer[q]=tmp;
+	}
+	return i;		
+}
+
+
+
+

@@ -4,22 +4,22 @@ static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 
 static char buffer[64] = { '0' };
 static uint8_t * const video = (uint8_t*)0xB8000;
-static uint8_t * currentVideo = (uint8_t*)0xB8000;
 static const uint32_t width = 80;
 static const uint32_t height = 25 ;
+static int i=0;
 
 void ncPrint(const char * string)
 {
-	int i;
-
-	for (i = 0; string[i] != 0; i++)
-		ncPrintChar(string[i]);
+	int q;
+	for (q = 0; string[q] != 0; q++)
+		ncPrintChar(string[q]);
 }
 
-void ncPrintChar(char character)
+void ncPrintChar(char c)
 {
-	*currentVideo = character;
-	currentVideo += 2;
+	video[i] = c;
+	i+=2;
+	if(i>=width*height*2) i=0;
 }
 
 void ncNewline()
@@ -28,7 +28,7 @@ void ncNewline()
 	{
 		ncPrintChar(' ');
 	}
-	while((uint64_t)(currentVideo - video) % (width * 2) != 0);
+	while(i%(width*2)!=0);
 }
 
 void ncPrintDec(uint64_t value)
@@ -54,11 +54,12 @@ void ncPrintBase(uint64_t value, uint32_t base)
 
 void ncClear()
 {
-	int i;
+	int q;
 
-	for (i = 0; i < height * width; i++)
-		video[i * 2] = ' ';
-	currentVideo = video;
+	for (q = 0; q < height * width; q++){
+		video[q * 2] = ' ';
+	}
+	i=0;
 }
 
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base)

@@ -104,33 +104,16 @@ int main()
 	
 	
 	setup_IDT_entry(32,0x0008,(uint64_t)&_irq00handler,0x8E);
+	setup_IDT_entry(33,0x0008,(uint64_t)&_irq01handler,0x8E);
 	load_IDTR();
 	
 	_cli();
 	
-	picMasterMask(0xFD);
+	picMasterMask(0xFC);
 	picSlaveMask(0xFF);
 	
 	_sti();
 	
 	for(;;);
 	return 0;
-}
-
-
-void irqDispatcher(uint64_t irq){	
-	switch(irq) {
-		case 0:
-			int_08();
-			break;	
-	}
-	return;
-}
-
-
-
-void int_08(){
-	static int i ;
-	char *video = (char *) 0xb8000;
-	video[i++] = (char) i;
 }

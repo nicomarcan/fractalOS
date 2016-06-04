@@ -1,6 +1,7 @@
 GLOBAL cpuVendor,_rax,_rbx,_rcx,_rdx,_rbp,_rsi,_rdi,_rsp
 GLOBAL _r8,_r9,_r10,_r11,_r12,_r13,_r14,_r15,_cli,_sti
-GLOBAL _lidt,picMasterMask,picSlaveMask,_irq00handler
+GLOBAL _lidt,picMasterMask,picSlaveMask,_irq00handler,_irq01handler
+GLOBAL kb_read,rtc
 
 EXTERN irqDispatcher
 
@@ -124,6 +125,9 @@ picSlaveMask:
 
 _irq00handler:
 	irqHandlerMaster 0
+	
+_irq01handler:
+	irqHandlerMaster 1
 
 _cli:
 	cli
@@ -133,4 +137,28 @@ _sti:
 	sti
 	ret
 	
+kb_read:
+	mov rax,0
+	in al,60h
+	ret
+	
+	
+rtc:
+	call bin_fmt
+	mov rax,rdi
+	out 70h,al
+	in al,71h
+	ret
+
+bin_fmt:
+	mov al,0bh
+	out 70h,al
+	in al,71h
+	push rax
+	mov al,0bh
+	out 70h,al
+	pop rax
+	or al,04h
+	out 71h,al
+	ret
 
