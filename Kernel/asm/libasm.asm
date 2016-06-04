@@ -138,8 +138,15 @@ _sti:
 	ret
 	
 kb_read:
+	in al,64h
+	test al,1
+	jz .none
 	mov rax,0
 	in al,60h
+	jmp .ret
+.none:
+	mov rax,0
+.ret:
 	ret
 	
 	

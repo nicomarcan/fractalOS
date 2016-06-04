@@ -1,8 +1,12 @@
 #include <stdint.h>
 #include <naiveConsole.h>
 #include <rtc.h>
+#include <kb_driver.h>
 
 char buffer[100]={0};
+
+void int_32();
+void int_33();
 
 void irqDispatcher(uint64_t irq){	
 	switch(irq) {
@@ -32,7 +36,9 @@ void int_32(){
  * (irq 1)
  */
 void int_33(){
-	char c=kb_getc();
+	char c;
+	fetch();
+	c=getChar();
 	if(c!=0){
 		if(c=='\n'){
 			ncNewline();
