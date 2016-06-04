@@ -1,5 +1,9 @@
 GLOBAL cpuVendor,_rax,_rbx,_rcx,_rdx,_rbp,_rsi,_rdi,_rsp
-GLOBAL _r8,_r9,_r10,_r11,_r12,_r13,_r14,_r15,_lidt
+GLOBAL _r8,_r9,_r10,_r11,_r12,_r13,_r14,_r15,_cli,_sti
+GLOBAL _lidt,picMasterMask,picSlaveMask,_irq00handler
+
+EXTERN irqDispatcher
+
 section .text
 	
 cpuVendor:
@@ -95,7 +99,38 @@ _lidt:
 	lidt [rdi]
 	sti
 	ret
+	
+picMasterMask:
+	mov ax,[rdi]
+	out 21h,al
+	retn
+	
+picSlaveMask:
+	mov ax,[rdi]
+	out 0A1h,al
+	retn
 
+%macro irqHandlerMaster 1 
 
+	mov rdi, %1
+	call irqDispatcher
+	
+	;signal pic
+	mov al, 20h
+	out 20h, al
 
+	iretq
+%endMacro
+
+_irq00handler:
+	irqHandlerMaster 0
+
+_cli:
+	cli
+	ret
+	
+_sti:
+	sti
+	ret
+	
 

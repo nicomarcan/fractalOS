@@ -3,6 +3,7 @@
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
+#include <idtr_config.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -17,7 +18,7 @@ static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 
 typedef int (*EntryPoint)();
-
+void int_08();
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
@@ -100,5 +101,36 @@ int main()
 	ncNewline();
 
 	ncPrint("[Finished]");
+	
+	
+	setup_IDT_entry(32,0x0008,(uint64_t)&_irq00handler,0x8E);
+	load_IDTR();
+	
+	_cli();
+	
+	picMasterMask(0xFD);
+	picSlaveMask(0xFF);
+	
+	_sti();
+	
+	for(;;);
 	return 0;
+}
+
+
+void irqDispatcher(uint64_t irq){	
+	switch(irq) {
+		case 0:
+			int_08();
+			break;	
+	}
+	return;
+}
+
+
+
+void int_08(){
+	static int i ;
+	char *video = (char *) 0xb8000;
+	video[i++] = (char) i;
 }

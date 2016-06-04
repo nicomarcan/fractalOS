@@ -25,5 +25,10 @@ uint64_t _r13();
 uint64_t _r14();
 uint64_t _r15();
 void _lidt(void * idtr);
+void picMasterMask(uint8_t mask);
+void picSlaveMask(uint8_t mask);
+void _irq00handler();
+void _cli();
+void _sti();
 
 #endif
