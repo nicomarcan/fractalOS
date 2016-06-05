@@ -1,5 +1,8 @@
 #include <stdint.h>
 
+static const void * base = 0x600000;
+static uint32_t i=0;
+
 void * memset(void * destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
@@ -49,31 +52,17 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 	return destination;
 }
 
-
-void charToString(char*buffer,char c){	
-	buffer[0]=c;
-	buffer[1]=0;
+/*
+ * Outstanding O(1) implementation of
+ * malloc and free functions.
+ */
+void * malloc(uint32_t size){
+	void * ans = base + i;
+	i+=size;
+	return ans;
 }
 
-int intToString(char * buffer,int num){
-	int i=0;
-	int tmp=0;
-	int k,q;
-	while(num){
-		tmp = num/10;
-		buffer[i]=(num - tmp*10)+'0';
-		num=tmp;
-		i++;
-	}
-	buffer[i]=0;
-	for(k=0,q=i-1;k<q;k++,q--){
-		tmp=buffer[k];
-		buffer[k]=buffer[q];
-		buffer[q]=tmp;
-	}
-	return i;		
+void free(void * ptr){
+	return;
 }
-
-
-
 

@@ -1,8 +1,7 @@
+#include <utils.h>
+#include <asmlib.h>
+#include <rtc.h>
 #include <lib.h>
-
-#define RTC_SECONDS 0
-#define RTC_MINUTES 2
-#define RTC_HOURS   4
 
 char * timeStr(char * buffer){
 	char * backup=buffer;	
@@ -16,4 +15,15 @@ char * timeStr(char * buffer){
 	i=intToString(buffer,s);
 	buffer=backup;
 	return buffer;
+}
+
+TIME * time(){
+	TIME * ans = malloc(sizeof(TIME));
+	ans->sec=(uint8_t)rtc(RTC_SECONDS);
+	ans->min=(uint8_t)rtc(RTC_MINUTES);
+	ans->hour=(uint8_t)rtc(RTC_HOURS);
+	ans->day=(uint8_t)rtc(RTC_MDAY);
+	ans->month=(uint8_t)rtc(RTC_MONTH);
+	ans->year=(uint32_t)rtc(RTC_YEAR);
+	return ans;
 }

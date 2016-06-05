@@ -1,9 +1,10 @@
 GLOBAL cpuVendor,_rax,_rbx,_rcx,_rdx,_rbp,_rsi,_rdi,_rsp
-GLOBAL _r8,_r9,_r10,_r11,_r12,_r13,_r14,_r15,_cli,_sti
+GLOBAL _r8,_r9,_r10,_r11,_r12,_r13,_r14,_r15,
+GLOBAL _cli,_sti,_eax,_ebx,_ecx,_edx
 GLOBAL _lidt,picMasterMask,picSlaveMask,_irq00handler,_irq01handler
-GLOBAL kb_read,rtc
+GLOBAL _int80handler,kb_read,rtc
 
-EXTERN irqDispatcher
+EXTERN irqDispatcher,int_80
 
 section .text
 	
@@ -29,6 +30,24 @@ cpuVendor:
 
 	mov rsp, rbp
 	pop rbp
+	ret
+
+_eax:
+	ret
+
+_ebx:
+	mov rax,0
+	mov eax,ebx
+	ret
+
+_ecx:
+	mov rax,0
+	mov eax,ecx
+	ret
+	
+_edx:
+	mov rax,0
+	mov eax,edx
 	ret
 
 _rax:
@@ -128,6 +147,11 @@ _irq00handler:
 	
 _irq01handler:
 	irqHandlerMaster 1
+	
+	
+_int80handler:
+	call int_80
+	iretq
 
 _cli:
 	cli

@@ -2,8 +2,9 @@
 #include <naiveConsole.h>
 #include <rtc.h>
 #include <kb_driver.h>
-
-char buffer[100]={0};
+#include <lib.h>
+#include <asmlib.h>
+#include <syscalls.h>
 
 void int_32();
 void int_33();
@@ -26,9 +27,7 @@ void irqDispatcher(uint64_t irq){
  * (irq 0)
  */
 void int_32(){
-//	static int i ;
-//	char *video = (char *) 0xb8000;
-//	video[i++] = (char) i;
+	
 }
 
 /*
@@ -37,15 +36,33 @@ void int_32(){
  */
 void int_33(){
 	char c;
+	char * buff;
 	fetch();
-	c=getChar();
+	c=peekChar();
 	if(c!=0){
 		if(c=='\n'){
 			ncNewline();
 		} else if (c=='\b'){
-			ncPrint(timeStr(buffer));
+			buff = (char*)malloc(10);
+			ncPrint(timeStr(buff));
 		} else {	
 			ncPrintChar(c);
 		}
 	}
 }
+
+/*
+ * Interrupt for syscalls
+ */
+void int_80(){
+	int eax = _eax();
+	int ebx=_ebx(),ecx=_ecx(),edx=_edx();
+	switch(eax){
+		case 4:
+			sys_write(ebx,(char*)ecx,edx);
+			break;
+		default:
+			break;
+	}
+	return ;
+}	

@@ -1,5 +1,5 @@
 #include <types.h>
-#include <lib.h>
+#include <asmlib.h>
 
 /*
 * Basic functions for setting up

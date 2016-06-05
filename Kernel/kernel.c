@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <string.h>
-#include <lib.h>
+#include <asmlib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <idtr_config.h>
@@ -103,8 +103,9 @@ int main()
 	ncPrint("[Finished]");
 	
 	
-	setup_IDT_entry(32,0x0008,(uint64_t)&_irq00handler,0x8E);
-	setup_IDT_entry(33,0x0008,(uint64_t)&_irq01handler,0x8E);
+	setup_IDT_entry(32,0x8,(uint64_t)&_irq00handler,0x8E);
+	setup_IDT_entry(33,0x8,(uint64_t)&_irq01handler,0x8E);
+	setup_IDT_entry(0x80,0x8,(uint64_t)&_int80handler,0x8E);
 	load_IDTR();
 	
 	_cli();
@@ -113,6 +114,7 @@ int main()
 	picSlaveMask(0xFF);
 	
 	_sti();
+	
 	
 	for(;;);
 	return 0;
