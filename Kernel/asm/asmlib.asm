@@ -121,12 +121,12 @@ _lidt:
 	ret
 	
 picMasterMask:
-	mov ax,[rdi]
+	mov al,[rdi]
 	out 21h,al
 	retn
 	
 picSlaveMask:
-	mov ax,[rdi]
+	mov al,[rdi]
 	out 0A1h,al
 	retn
 
