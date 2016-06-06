@@ -1,4 +1,4 @@
-void charToString(char*buffer,char c){	
+void charToString(char*buffer,char c){
 	buffer[0]=c;
 	buffer[1]=0;
 }
@@ -19,7 +19,7 @@ int intToString(char * buffer,int num){
 		buffer[k]=buffer[q];
 		buffer[q]=tmp;
 	}
-	return i;		
+	return i;
 }
 
 int strlen(const char * s){

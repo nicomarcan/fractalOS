@@ -14,7 +14,7 @@
 #define RETURN    '\r'
 #define NEWLINE ENTER
 
-// Non-ASCII special scancodes 
+// Non-ASCII special scancodes
 // Esc in scancode is 1
 #define    KESC         1
 #define    KF1          0x80
@@ -59,10 +59,10 @@
 #define    KMENU    ( KRWIN + 1 )
 
 #define    KRLEFT_CTRL        0x1D
-#define    KRRIGHT_CTRL       0x1D   
+#define    KRRIGHT_CTRL       0x1D
 
 #define    KRLEFT_ALT         0x38
-#define    KRRIGHT_ALT        0x38   
+#define    KRRIGHT_ALT        0x38
 
 #define    KRLEFT_SHIFT       0x2A
 #define    KRLEFT_SHIFT_BK	  0xAA
@@ -78,7 +78,7 @@
 // Non-Shifted scan codes to ASCII:
 unsigned char asciiNonShift[] = {
 NULL, ESC, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', BACKSPACE,
-TAB, 'q', 'w',   'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',   '[', ']', ENTER, 0,
+TAB, 'q', 'w','e', 'r', 't', 'y', 'u', 'i', 'o', 'p',   '[', ']', ENTER, 0,
 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0, '\\',
 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 0, 0, 0, ' ', 0,
 KF1, KF2, KF3, KF4, KF5, KF6, KF7, KF8, KF9, KF10, 0, 0,

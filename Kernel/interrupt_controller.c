@@ -5,11 +5,14 @@
 #include <lib.h>
 #include <asmlib.h>
 #include <syscalls.h>
+#include <utils.h>
 
 void int_32();
 void int_33();
 
-void irqDispatcher(uint64_t irq){	
+char buffer[10];
+
+void irqDispatcher(uint64_t irq){
 	switch(irq) {
 		case 0:
 			int_32();
@@ -27,7 +30,7 @@ void irqDispatcher(uint64_t irq){
  * (irq 0)
  */
 void int_32(){
-	
+
 }
 
 /*
@@ -35,18 +38,19 @@ void int_32(){
  * (irq 1)
  */
 void int_33(){
-	char c;
+	unsigned char c;
 	char * buff;
-	fetch();
-	c=peekChar();
-	if(c!=0){
-		if(c=='\n'){
-			ncNewline();
-		} else if (c=='\b'){
-			buff = (char*)malloc(10);
-			ncPrint(timeStr(buff));
-		} else {	
-			ncPrintChar(c);
+	if(fetch()){
+		c=peekChar();
+		if(c!=0){
+			if(c=='\n'){
+				ncNewline();
+			} else if (c=='\b'){
+				buff = (char*)malloc(10);
+				ncPrint(timeStr(buff));
+			} else {
+				ncPrintChar(c);
+			}
 		}
 	}
 }
@@ -65,4 +69,4 @@ void int_80(){
 			break;
 	}
 	return ;
-}	
+}
