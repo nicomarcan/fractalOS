@@ -41,4 +41,7 @@ void _int80handler();
 char kb_read();
 uint64_t rtc(uint64_t mode);
 
+uint64_t _in(uint16_t port);
+uint64_t _out(uint16_t port,uint16_t value);
+
 #endif

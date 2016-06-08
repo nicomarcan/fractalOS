@@ -4,6 +4,16 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <idtr_config.h>
+#include <video_access.h>
+
+
+//unreal mode: pasar a modo 16 bits, int 10 y volver
+//modo grafico desde cero: consola grafica
+//driver simple para escribir a puerto serial
+//  qemu: todo lo que sale a puerto serial lo imprime por
+//  la consola de linux
+//flag de qemu que tiene una bios especial para acceder a modo
+//grafico desde 64 bits bochs
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -82,7 +92,9 @@ void * initializeKernelBinary()
 }
 
 int main()
-{	
+{
+	int i;
+	char * video = (char *)0xA0000;
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -101,20 +113,22 @@ int main()
 	ncNewline();
 
 	ncPrint("[Finished]");
-	
-	
+
+
 	setup_IDT_entry(32,0x8,(uint64_t)&_irq00handler,0x8E);
 	setup_IDT_entry(33,0x8,(uint64_t)&_irq01handler,0x8E);
 	setup_IDT_entry(0x80,0x8,(uint64_t)&_int80handler,0x8E);
-	
+
 	_cli();
-	
+
 	picMasterMask(0xFC);
 	picSlaveMask(0xFF);
-	
+
 	_sti();
-	
-	
-	for(;;);
+
+	set_video_mode();
+
+	for(;;){
+	}
 	return 0;
 }
