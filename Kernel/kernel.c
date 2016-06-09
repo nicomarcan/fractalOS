@@ -126,9 +126,12 @@ int main()
 
 	_sti();
 
-	set_video_mode();
+//	set_video_mode(1024,768,8);
+	ncPrintHex(version());
+//	set_version(0xB0C5);
+//	ncPrintHex(version());
 
-	for(;;){
-	}
+	for(i=0;i<100;i++) video[i]=i;
+	for(;;);
 	return 0;
 }

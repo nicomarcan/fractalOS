@@ -183,7 +183,7 @@ rtc:
 
 bin_fmt:
 	push rbp
-	mov rsp,rbp
+	mov rbp,rsp
 	mov al,0bh
 	out 70h,al
 	in al,71h
@@ -193,7 +193,8 @@ bin_fmt:
 	pop rax
 	or al,04h
 	out 71h,al
-	leave
+	mov rsp,rbp
+	pop rbp
 	ret
 
 

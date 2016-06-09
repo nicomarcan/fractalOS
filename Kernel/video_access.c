@@ -1,4 +1,5 @@
 #include <asmlib.h>
+#include <stdint.h>
 
 #define VBE_DISPI_INDEX_ID 0
 #define VBE_DISPI_INDEX_XRES 1
@@ -15,24 +16,35 @@
 #define VBE_DISPI_IOPORT_DATA 0x01CF
 
 
-void set_video_mode(){
+void set_video_mode(uint32_t width,uint32_t height,uint8_t bpp){
   //Disable VBE
   _out(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_ENABLE);
   _out(VBE_DISPI_IOPORT_DATA,0);
 
   //Set height
   _out(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_VIRT_WIDTH);
-  _out(VBE_DISPI_IOPORT_DATA,1024);
+  _out(VBE_DISPI_IOPORT_DATA,width);
 
   //Set height
   _out(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_VIRT_HEIGHT);
-  _out(VBE_DISPI_IOPORT_DATA,768);
+  _out(VBE_DISPI_IOPORT_DATA,height);
 
   //Set BPP
-  _out(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_ENABLE);
-  _out(VBE_DISPI_IOPORT_DATA,24);
+  _out(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_BPP);
+  _out(VBE_DISPI_IOPORT_DATA,bpp);
 
   //Enable VBE
-  _out(VBE_DISPI_IOPORT_INDEX,4);
+  _out(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_ENABLE);
   _out(VBE_DISPI_IOPORT_DATA,1);
 }
+
+uint16_t version(){
+	_out(VBE_DISPI_IOPORT_INDEX,0);
+	return _in(VBE_DISPI_IOPORT_DATA);
+}
+
+void set_version(uint16_t version){
+	_out(VBE_DISPI_IOPORT_INDEX,0);
+	_out(VBE_DISPI_IOPORT_DATA,version);
+}
+
