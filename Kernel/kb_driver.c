@@ -1,6 +1,7 @@
 #include <asmlib.h>
 #include <kb_layout.h>
 #include <naiveConsole.h>
+#include <kb_driver.h>
 
 #define BUFF_SIZE 0xFF
 
@@ -49,6 +50,9 @@ static void insert(unsigned char c){
 	buff.i++;
 	if(buff.i==BUFF_SIZE) buff.i=0;
 	buff.not_read++;
+	if(buff.not_read==BUFF_SIZE+1){
+		buff.not_read=0;
+	}
 }
 
 /*

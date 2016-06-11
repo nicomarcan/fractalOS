@@ -62,8 +62,11 @@ void int_80(){
 	int eax = _eax();
 	int ebx=_ebx(),ecx=_ecx(),edx=_edx();
 	switch(eax){
+		case 3:
+			sys_read(ebx,(char *)ecx,edx);
+			break;
 		case 4:
-			sys_write(ebx,(char*)ecx,edx);
+			sys_write(ebx,(const char*)ecx,edx);
 			break;
 		default:
 			break;
