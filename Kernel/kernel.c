@@ -4,8 +4,7 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <idtr_config.h>
-#include <video_access.h>
-
+#include <video_driver.h>
 
 //unreal mode: pasar a modo 16 bits, int 10 y volver
 //modo grafico desde cero: consola grafica
@@ -93,8 +92,6 @@ void * initializeKernelBinary()
 
 int main()
 {
-	int i;
-	char * video = (char *)0xA0000;
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -125,13 +122,9 @@ int main()
 	picSlaveMask(0xFF);
 
 	_sti();
-
-//	set_video_mode(1024,768,8);
-	ncPrintHex(version());
-//	set_version(0xB0C5);
-//	ncPrintHex(version());
-
-	for(i=0;i<100;i++) video[i]=i;
+	
+	initialize_driver();
+	
 	for(;;);
 	return 0;
 }

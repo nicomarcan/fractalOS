@@ -36,6 +36,7 @@ void set_video_mode(uint32_t width,uint32_t height,uint8_t bpp){
   //Enable VBE
   _out(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_ENABLE);
   _out(VBE_DISPI_IOPORT_DATA,1);
+  
 }
 
 uint16_t version(){

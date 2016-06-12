@@ -6,6 +6,7 @@
 #include <asmlib.h>
 #include <syscalls.h>
 #include <utils.h>
+#include <video_driver.h>
 
 void int_32();
 void int_33();
@@ -50,6 +51,10 @@ void int_33(){
 				ncPrint(timeStr(buff));
 			} else {
 				ncPrintChar(c);
+				/*
+				 * to use with graphical mode
+				 */
+				 //print_char((uint8_t)c);
 			}
 		}
 	}
