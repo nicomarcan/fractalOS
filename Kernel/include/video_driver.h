@@ -6,4 +6,5 @@ void naive_print();
 void clear_screen();
 void print_char(uint8_t character);
 void print_string(char * str);
+void print_newline();
 #endif
