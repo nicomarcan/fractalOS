@@ -63,18 +63,18 @@ void int_33(){
 /*
  * Interrupt for syscalls
  */
-void int_80(){
-	int eax = _eax();
-	int ebx=_ebx(),ecx=_ecx(),edx=_edx();
-	switch(eax){
-		case 3:
-			sys_read(ebx,(char *)ecx,edx);
-			break;
-		case 4:
-			sys_write(ebx,(const char*)ecx,edx);
-			break;
-		default:
-			break;
-	}
-	return ;
-}
+ void syscall_dispatcher(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
+
+ 	switch(rax){
+ 		case 0:
+ 			sys_read(rdi,(char *)rsi,rdx);
+ 			break;
+ 		case 1:
+ 			sys_write((unsigned int) rdi,(const char*)rsi, (unsigned int)rdx);
+ 			break;
+ 		default:
+ 			break;
+ 	}
+
+ 	return ;
+ }

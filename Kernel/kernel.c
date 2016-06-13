@@ -114,7 +114,7 @@ int main()
 
 	setup_IDT_entry(32,0x8,(uint64_t)&_irq00handler,0x8E);
 	setup_IDT_entry(33,0x8,(uint64_t)&_irq01handler,0x8E);
-	setup_IDT_entry(0x80,0x8,(uint64_t)&_int80handler,0x8E);
+	setup_IDT_entry(0x80,0x8,(uint64_t)&_syscall_handler,0x8E);
 
 	_cli();
 
@@ -122,9 +122,9 @@ int main()
 	picSlaveMask(0xFF);
 
 	_sti();
-	
+
 	initialize_driver();
-	
+
 	for(;;);
 	return 0;
 }

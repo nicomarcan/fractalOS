@@ -36,7 +36,7 @@ void _sti();
 
 void _irq00handler();
 void _irq01handler();
-void _int80handler();
+void _syscall_handler();
 
 char kb_read();
 uint64_t rtc(uint64_t mode);
