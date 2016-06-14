@@ -92,6 +92,7 @@ void * initializeKernelBinary()
 
 int main()
 {
+	int i,j;
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -124,6 +125,12 @@ int main()
 	_sti();
 	
 	initialize_driver();
+	
+	for(i=100;i<200;i++){
+		for(j=100;j<200;j++){
+			print_pixel(i,j,0,0,0xFF);
+		}
+	}
 	
 	for(;;);
 	return 0;

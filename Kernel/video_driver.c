@@ -50,7 +50,7 @@ void clear_screen(){
 }
 
 void print_char(uint8_t character){
-	draw_char((uint8_t*)fb+i*WIDTH*C_HEIGHT*bPP+j*C_WIDTH*bPP,
+	draw_char((uint8_t*)fb+(i*WIDTH*C_HEIGHT+j*C_WIDTH)*bPP,
 			  character);
 	j++;
 	if(j>=(WIDTH/C_WIDTH)){
@@ -76,6 +76,18 @@ void print_newline(){
 		bk++;
 	}
 }
+/*
+ * p row
+ * q column
+ * colour: 0x00BBGGRR
+ */
+void print_pixel(int p,int q,uint8_t b,uint8_t g,uint8_t r){
+	uint8_t * pixel = fb + (p*WIDTH+q)*bPP;
+	pixel[0]=b;
+	pixel[1]=g;
+	pixel[2]=r;
+}
+
 /*
  * Adaptation of example found at osdev.org
  * by saques
