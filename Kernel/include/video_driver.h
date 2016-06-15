@@ -1,6 +1,6 @@
 #ifndef VIDEO_DRIVER_H
 #define VIDEO_DRIVER_H
-
+#include <stdint.h>
 void initialize_driver();
 void naive_print();
 void clear_screen();

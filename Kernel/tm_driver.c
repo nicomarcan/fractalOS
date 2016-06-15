@@ -23,7 +23,7 @@ void delete(char ** vptr) {
 /*
  * prints line with specified length
  */
-void print(const char * sptr, char ** vptr, char color, char length){
+void print_text(const char * sptr, char ** vptr, char color, char length){
     while(length--){
       if (*vptr >= vbuffend){
           *vptr = vbuff;

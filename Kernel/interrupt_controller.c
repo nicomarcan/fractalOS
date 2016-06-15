@@ -39,27 +39,7 @@ void int_32(){
  * (irq 1)
  */
 void int_33(){
-	unsigned char c;
-	char * buff;
-	if(fetch()){
-		c=peekChar();
-		if(c!=0){
-			if(c=='\n'){
-				//ncNewline();
-				print_newline();
-			} else if (c=='\b'){
-				buff = (char*)malloc(10);
-				//ncPrint(timeStr(buff));
-				print_string(timeStr(buff));
-			} else {
-				//ncPrintChar(c);
-				/*
-				 * to use with graphical mode
-				 */
-				print_char((uint8_t)c);
-			}
-		}
-	}
+	fetch();
 }
 
 /*

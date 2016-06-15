@@ -5,6 +5,7 @@
 #include <naiveConsole.h>
 #include <idtr_config.h>
 #include <video_driver.h>
+#include <clib.h>
 
 //unreal mode: pasar a modo 16 bits, int 10 y volver
 //modo grafico desde cero: consola grafica

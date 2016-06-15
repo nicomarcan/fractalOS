@@ -61,6 +61,22 @@ void print_char(uint8_t character){
 		}
 	}
 }
+void print(const uint8_t * sptr, uint8_t length) {
+		while (length--) {
+			switch (*sptr) {
+				case '\b':
+					print_backspace();
+					break;
+				case '\n':
+					print_newline();
+					break;
+				default:
+					print_char(*sptr);
+					break;
+				}
+			sptr++;
+		}
+}
 
 void print_string(char * str){
 	while(*str!=0){
@@ -76,6 +92,24 @@ void print_newline(){
 		bk++;
 	}
 }
+
+void print_backspace() {
+	if (j != 0) {
+		j--;
+		print_char(' ');
+		j--;
+	}
+	else {
+		if (i != 0) {
+			i--;
+			j = WIDTH / C_WIDTH - 1;
+			print_char(' ');
+			i--;
+			j = WIDTH / C_WIDTH - 1;
+		}
+	}
+}
+
 /*
  * p row
  * q column
@@ -102,7 +136,7 @@ static void draw_char(uint8_t *where, uint8_t character) {
         row_data = font_data_for_char[row];
 		for(q=0;q<C_WIDTH;q++){
 			if((row_data>>(8-q-1))&0x01){
-				tmp[0]=0xFF;tmp[1]=0xFF;tmp[2]=0xFF;
+				tmp[0]=0xFF;tmp[1]=0XFF;tmp[2]=0XFF;
 			} else {
 				tmp[0]=0x00;tmp[1]=0x00;tmp[2]=0x00;
 			}
