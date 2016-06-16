@@ -57,48 +57,14 @@ void * initializeKernelBinary()
 
 int main()
 {
-<<<<<<< HEAD
-	int i,j;
-	uint8_t c;
-	ncPrint("[Kernel Main]");
-	ncNewline();
-	ncPrint("  Sample code module at 0x");
-	ncPrintHex((uint64_t)sampleCodeModuleAddress);
-	ncNewline();
-	ncPrint("  Calling the sample code module returned: ");
-	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
-	ncNewline();
-	ncNewline();
-
-	ncPrint("  Sample data module at 0x");
-	ncPrintHex((uint64_t)sampleDataModuleAddress);
-	ncNewline();
-	ncPrint("  Sample data module contents: ");
-	ncPrint((char*)sampleDataModuleAddress);
-	ncNewline();
-
-	ncPrint("[Finished]");
-
-
 	setup_IDT_entry(32,0x8,(uint64_t)&_irq00handler,0x8E);
 	setup_IDT_entry(33,0x8,(uint64_t)&_irq01handler,0x8E);
 	setup_IDT_entry(0x80,0x8,(uint64_t)&_syscall_handler,0x8E);
-
-
-	_cli();
-
-	picMasterMask(0xFC);
-	picSlaveMask(0xFF);
-
-	_sti();
-
 
 	initialize_driver();
 	ncPrintDec(20);
 	c = getchar();
 	putchar(c);
-
-
 
 	((EntryPoint)fractalModuleAddress)();
 
