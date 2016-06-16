@@ -72,6 +72,9 @@ void int_33() {
 			 */
 			sys_pixel((uint32_t) rdi,(uint32_t)rsi,(uint32_t)rdx);
 			break;
+		case 11:
+			sys_clearscreen();
+			break;
  		default:
  			break;
  	}

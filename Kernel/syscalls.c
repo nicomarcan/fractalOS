@@ -70,3 +70,7 @@ void * sys_mem(uint32_t size) {
 void sys_pixel(uint32_t x,uint32_t y,uint32_t ccoord){
 	print_pixel(x,y,ccoord);
 }
+
+void sys_clearscreen(){
+	clear_screen();
+}
