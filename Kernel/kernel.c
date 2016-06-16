@@ -57,7 +57,6 @@ void * initializeKernelBinary()
 
 int main()
 {
-<<<<<<< HEAD
 	int i,j;
 	uint8_t c;
 	ncPrint("[Kernel Main]");

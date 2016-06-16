@@ -43,7 +43,7 @@ int64_t sys_read(uint64_t fd,uint8_t *buf,uint64_t count){
 	int8_t c;
 	switch(fd){
 		case STDIN:
-			while((c=getChar())!=-1 && i<count){
+			while(i<count && (c=getChar())!=-1){
 				if (c > 0) {
 					buf[i]=c;
 					i++;

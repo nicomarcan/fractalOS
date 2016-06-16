@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <font_bitmaps.h>
-
+#include <video_driver.h>
 #define WIDTH 1024
 #define HEIGHT 768
 #define bPP 3
