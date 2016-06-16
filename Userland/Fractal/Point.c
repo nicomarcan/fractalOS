@@ -6,11 +6,3 @@ Point * newPoint(uint32_t x,uint32_t y){
   ans->y=y;
   return ans;
 }
-
-uint32_t x(Point * p){
-  return p->x;
-}
-
-uint32_t y(Point * p){
-  return p->y;
-}

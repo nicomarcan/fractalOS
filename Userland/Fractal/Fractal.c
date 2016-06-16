@@ -3,8 +3,7 @@
 #include <Point.h>
 #include <Stack.h>
 
-Stack * squares ;
-
+static Stack * squares ;
 
 void initializeFractal(Point centre,uint32_t height,uint32_t width){
  squares = newStack();
@@ -13,4 +12,5 @@ void initializeFractal(Point centre,uint32_t height,uint32_t width){
 
 void step(){
   
+
 }

@@ -3,10 +3,14 @@ GLOBAL _r8,_r9,_r10,_r11,_r12,_r13,_r14,_r15,
 GLOBAL _cli,_sti,_eax,_ebx,_ecx,_edx
 GLOBAL _lidt,picMasterMask,picSlaveMask,_irq00handler,_irq01handler
 GLOBAL _int80handler,kb_read,rtc,_out,_in
-GLOBAL _syscall_handler
+GLOBAL _syscall_handler,_hlt
 EXTERN irqDispatcher, int_80, syscall_dispatcher
 
 section .text
+
+_hlt:
+	hlt
+	ret
 
 cpuVendor:
 	push rbp

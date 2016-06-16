@@ -14,6 +14,8 @@ void int_33();
 
 char buffer[10];
 
+extern uint64_t counter;
+
 void irqDispatcher(uint64_t irq){
 	switch(irq) {
 		case 0:
@@ -32,7 +34,7 @@ void irqDispatcher(uint64_t irq){
  * (irq 0)
  */
 void int_32(){
-	pulse();
+	counter--;
 }
 
 /*
@@ -46,6 +48,7 @@ void int_33() {
 /*
  * Interrupt for syscalls
  */
+
  int64_t syscall_dispatcher(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
 	int64_t ret = 0;
  	switch(rax){
@@ -55,6 +58,20 @@ void int_33() {
  		case 1:
  			ret = sys_write(rdi,(const uint8_t*)rsi,rdx);
  			break;
+ 		case 8:
+			return sys_mem(rdi);
+			break;
+ 		case 9:
+			sys_sleep(rdi);
+			break;
+ 		case 10:
+			/*
+			 * rdi: x coord
+			 * rsi: y coord
+			 * rdx: colour coord
+			 */
+			sys_pixel((uint32_t) rdi,(uint32_t)rsi,(uint32_t)rdx);
+			break;
  		default:
  			break;
  	}
