@@ -10,8 +10,8 @@ Square * newSquare(Point p,uint32_t height,uint32_t width){
 }
 
 Point * topLeftCorner(Square * s){
-  uint32_t x,y;
-  x=x(s->p)-(s->width)/2;
-  y=y(s->p)-(s->height)/2;
-  return newPoint(x,y);
+  uint32_t p,q;
+  p=s->p.x-(s->width)/2;
+  q=s->p.y-(s->height)/2;
+  return newPoint(p,q);
 }

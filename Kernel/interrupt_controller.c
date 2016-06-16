@@ -47,7 +47,7 @@ void int_33(){
 /*
  * Interrupt for syscalls
  */
- void syscall_dispatcher(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
+ uint64_t syscall_dispatcher(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
 
  	switch(rax){
  		case 0:
@@ -56,6 +56,9 @@ void int_33(){
  		case 1:
  			sys_write((unsigned int) rdi,(const char*)rsi, (unsigned int)rdx);
  			break;
+ 		case 8:
+			return sys_mem(rdi);
+			break;
  		case 9:
 			sys_sleep(rdi);
 			break;

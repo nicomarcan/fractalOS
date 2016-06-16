@@ -1,8 +1,8 @@
 #ifndef SQUARE_H
 #define SQUARE_H
 #include <stdint.h>
-
-typedef struct {
+#include <Point.h>
+typedef struct Square {
   Point p;
   uint32_t height,width;
 } Square ;

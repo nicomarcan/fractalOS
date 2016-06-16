@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <asmlib.h>
 
 extern char bss;
 extern char endOfBinary;
@@ -7,11 +8,19 @@ extern char endOfBinary;
 void * memset(void * destiny, int32_t c, uint64_t length);
 
 
-int main() {
+char * main() {
+	int i,j;
+	
 	//Clean BSS
 	memset(&bss, 0, &endOfBinary - &bss);
 	
-	return 0;
+	for(i=100;i<200;i++){
+		for(j=100;j<200;j++){
+			pixel(i,j,0x0000FF00);
+		}
+	}
+	
+	return "hola";
 }
 
 

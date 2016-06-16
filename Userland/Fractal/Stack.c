@@ -1,9 +1,9 @@
-#include <stack.h>
+#include <Stack.h>
 #include <stdlib.h>
 
 Stack * newStack(){
   Stack * ans = malloc(sizeof(Stack));
-  ans->data=ans->size=0;
+  ans->first=ans->size=0;
   return ans ;
 }
 
