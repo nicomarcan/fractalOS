@@ -7,7 +7,7 @@ typedef struct Square {
   uint32_t height,width;
 } Square ;
 
-Square * newSquare(Point p,uint32_t height,uint32_t width);
+Square * newSquare(uint32_t x,uint32_t y,uint32_t height,uint32_t width);
 Point * topLeftCorner(Square * s);
 
 #endif

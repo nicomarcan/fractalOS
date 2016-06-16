@@ -1,9 +1,9 @@
 #include <Square.h>
 #include <Point.h>
 
-Square * newSquare(Point p,uint32_t height,uint32_t width){
+Square * newSquare(uint32_t x,uint32_t y,uint32_t height,uint32_t width){
   Square * ans = malloc(sizeof(Square));
-  ans->p=p;
+  ans->p=*newPoint(x,y);
   ans->height=height;
   ans->width=width;
   return ans;

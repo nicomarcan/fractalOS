@@ -1,4 +1,4 @@
-GLOBAL pixel,sleep,malloc
+GLOBAL pixel,sleep,malloc,clearscreen
 
 pixel:
 	push rbp
@@ -25,6 +25,16 @@ malloc:
 	mov rbp,rsp
 	
 	mov rax,8
+	int 0x80
+	
+	leave
+	ret
+
+clearscreen:
+	push rbp
+	mov rbp,rsp
+	
+	mov rax,11
 	int 0x80
 	
 	leave
