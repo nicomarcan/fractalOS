@@ -50,3 +50,7 @@ int sys_read(int fd,char *buf,int count){
 	}
 	return i;
 }
+
+void sys_pixel((uint32_t) x,(uint32_t)y,(uint32_t)ccoord)){
+	print_pixel(x,y,ccoord);
+}

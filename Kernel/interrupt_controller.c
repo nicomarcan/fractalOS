@@ -54,6 +54,13 @@ void int_33(){
  		case 1:
  			sys_write((unsigned int) rdi,(const char*)rsi, (unsigned int)rdx);
  			break;
+ 		case 10:
+			/*
+			 * rdi: x coord
+			 * rsi: y coord
+			 * rdx: colour coord
+			 */
+			sys_pixel((uint32_t) rdi,(uint32_t)rsi,(uint32_t)rdx);
  		default:
  			break;
  	}

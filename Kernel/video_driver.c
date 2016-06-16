@@ -113,13 +113,13 @@ void print_backspace() {
 /*
  * p row
  * q column
- * colour: 0x00BBGGRR
+ * ccoord: 0x00BBGGRR
  */
-void print_pixel(int p,int q,uint8_t b,uint8_t g,uint8_t r){
-	uint8_t * pixel = fb + (p*WIDTH+q)*bPP;
-	pixel[0]=b;
-	pixel[1]=g;
-	pixel[2]=r;
+void print_pixel(uint32_t x,uint32_t y,uint32_t ccoord){
+	uint8_t * pixel = fb + (x*WIDTH+y)*bPP;
+	pixel[0]=(uint8_t)(ccoord>>16);
+	pixel[1]=(uint8_t)(ccoord>>8);
+	pixel[2]=(uint8_t)(ccoord);
 }
 
 /*
