@@ -13,6 +13,8 @@ void int_33();
 
 char buffer[10];
 
+extern uint64_t counter;
+
 void irqDispatcher(uint64_t irq){
 	switch(irq) {
 		case 0:
@@ -31,7 +33,7 @@ void irqDispatcher(uint64_t irq){
  * (irq 0)
  */
 void int_32(){
-
+	counter--;
 }
 
 /*
@@ -54,6 +56,9 @@ void int_33(){
  		case 1:
  			sys_write((unsigned int) rdi,(const char*)rsi, (unsigned int)rdx);
  			break;
+ 		case 9:
+			sys_sleep(rdi);
+			break;
  		case 10:
 			/*
 			 * rdi: x coord
@@ -61,6 +66,7 @@ void int_33(){
 			 * rdx: colour coord
 			 */
 			sys_pixel((uint32_t) rdi,(uint32_t)rsi,(uint32_t)rdx);
+			break;
  		default:
  			break;
  	}

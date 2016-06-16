@@ -7,5 +7,5 @@
 int sys_read(int fd,char *buf,int count);
 void sys_write(uint64_t fd,const uint8_t *buf, uint64_t count);
 int sys_read(int fd,char *buf,int count);
-void sys_pixel((uint32_t) x,(uint32_t)y,(uint32_t)ccoord));
+void sys_pixel(uint32_t x,uint32_t y,uint32_t ccoord);
 #endif

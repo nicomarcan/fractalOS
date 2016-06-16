@@ -27,6 +27,8 @@ uint32_t _ebx();
 uint32_t _ecx();
 uint32_t _edx();
 
+
+void _hlt();
 void _lidt(void * idtr);
 void picMasterMask(uint8_t mask);
 void picSlaveMask(uint8_t mask);
