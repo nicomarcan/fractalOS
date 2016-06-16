@@ -146,3 +146,25 @@ static void draw_char(uint8_t *where, uint8_t character) {
         tmp=where;
     }
 }
+
+void pulse() {
+	static uint8_t b = 0;
+	static uint8_t count = 0;
+	if (count > PULSE_TIME) {
+		count = 0;
+		if (b) {
+			draw_char((uint8_t*)fb+(i*WIDTH*C_HEIGHT+j*C_WIDTH)*bPP,
+					  '|');
+			b = 0;
+		}
+		else {
+			draw_char((uint8_t*)fb+(i*WIDTH*C_HEIGHT+j*C_WIDTH)*bPP,
+					  ' ');
+			b = 1;
+		}
+	}
+	else {
+		count++;
+	}
+
+}

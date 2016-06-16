@@ -5,7 +5,7 @@
 #define STDOUT 1
 #define STDERR 2
 
-int sys_read(int fd,char *buf,int count);
-void sys_write(uint64_t fd,const uint8_t *buf, uint64_t count);
+int64_t sys_read(uint64_t fd,uint8_t *buf,uint64_t count);
+int64_t sys_write(uint64_t fd,const uint8_t *buf, uint64_t count);
 
 #endif

@@ -131,14 +131,33 @@ picSlaveMask:
 	retn
 
 %macro irqHandlerMaster 1
+	push rbp
+	mov rbp, rsp
+
+	push rbx
+  push rbp
+  push r12
+  push r13
+  push r14
+  push r15
 
 	mov rdi, %1
 	call irqDispatcher
+
+
+	pop r15
+  pop r14
+  pop r13
+  pop r12
+  pop rbp
+  pop rbx
 
 	;signal pic
 	mov al, 20h
 	out 20h, al
 
+	mov rax, 0
+	leave
 	iretq
 %endMacro
 
@@ -160,6 +179,7 @@ _syscall_handler:
 	mov rdx, rsi
 	mov rsi, rdi
 	mov rdi, rax
+	xor rax, rax
 
 	call syscall_dispatcher
 

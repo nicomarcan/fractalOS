@@ -59,7 +59,7 @@ static void insert(unsigned char c){
  * Returns a char from the buffer.
  * -1 if no chars to read
  */
-unsigned char getChar(){
+int8_t getChar(){
 	if(buff.not_read==0) return -1;
 	unsigned ans = buff.array[buff.j];
 	buff.j++;

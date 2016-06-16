@@ -94,6 +94,7 @@ void * initializeKernelBinary()
 int main()
 {
 	int i,j;
+	uint8_t c;
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -122,11 +123,15 @@ int main()
 
 	picMasterMask(0xFC);
 	picSlaveMask(0xFF);
-
+	
+	initialize_driver();
 	_sti();
 
-	initialize_driver();
 
+
+	ncPrintDec(20);
+	c = getchar();
+	putchar(c);
 	for(i=100;i<200;i++){
 		for(j=100;j<200;j++){
 			print_pixel(i,j,0,0,0xFF);

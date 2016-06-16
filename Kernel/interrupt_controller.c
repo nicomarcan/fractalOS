@@ -1,3 +1,4 @@
+#include <interrupt_controller.h>
 #include <stdint.h>
 #include <naiveConsole.h>
 #include <rtc.h>
@@ -31,32 +32,31 @@ void irqDispatcher(uint64_t irq){
  * (irq 0)
  */
 void int_32(){
-
+	pulse();
 }
 
 /*
  * Keyboard
  * (irq 1)
  */
-void int_33(){
+void int_33() {
 	fetch();
 }
 
 /*
  * Interrupt for syscalls
  */
- void syscall_dispatcher(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
-
+ int64_t syscall_dispatcher(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
+	int64_t ret = 0;
  	switch(rax){
  		case 0:
- 			sys_read(rdi,(char *)rsi,rdx);
+ 			ret = sys_read(rdi,(uint8_t *)rsi,rdx);
  			break;
  		case 1:
- 			sys_write((unsigned int) rdi,(const char*)rsi, (unsigned int)rdx);
+ 			ret = sys_write(rdi,(const uint8_t*)rsi,rdx);
  			break;
  		default:
  			break;
  	}
-
- 	return ;
+ 	return ret;
  }
