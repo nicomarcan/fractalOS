@@ -95,7 +95,7 @@ uint8_t shell() {
   get_input(shell_buf_ptr, BUFSIZ);
 
   read_comm(comm_str, &shell_buf_ptr);
-
+  
   comm = parse_comm(comm_str, comm_table);
 
   if (comm == NULL) {
@@ -141,7 +141,7 @@ CommDescr * parse_comm(const uint8_t * comm_str, CommDescr ** comm_table) {
 void read_comm(const uint8_t * comm_str, uint8_t ** shell_buf) {
   uint8_t * comm_str_ptr = comm_str;
   while(**shell_buf != '\0' && **shell_buf == ' ') {
-    *shell_buf++;
+    (*shell_buf)++;
   }
   while (**shell_buf != '\0' && **shell_buf != ' ') {
     *comm_str_ptr++ = *(*shell_buf)++;
