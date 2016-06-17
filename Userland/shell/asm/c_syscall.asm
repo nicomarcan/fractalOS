@@ -1,4 +1,4 @@
-GLOBAL read, write
+GLOBAL read, write, time
 
 section .text
 
@@ -38,6 +38,30 @@ read:
   push r15
 
   mov rax, 0
+  int 80h
+
+  pop r15
+  pop r14
+  pop r13
+  pop r12
+  pop rbp
+  pop rbx
+
+  leave
+  ret
+
+time:
+  push rbp
+  mov rbp, rsp
+
+  push rbx
+  push rbp
+  push r12
+  push r13
+  push r14
+  push r15
+
+  mov rax, 12
   int 80h
 
   pop r15

@@ -1,6 +1,11 @@
 #include <c_syscall.h>
 #include <clib.h>
 
+typedef struct{
+	uint8_t sec,min,hour,day,month;
+	uint32_t year;
+} TIME;
+
 int64_t fread(uint64_t fd, uint8_t * buf, int64_t len);
 
 void putchar(uint8_t c){

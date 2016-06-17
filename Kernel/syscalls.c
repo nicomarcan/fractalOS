@@ -4,6 +4,7 @@
 #include <naiveConsole.h>
 #include <asmlib.h>
 #include <lib.h>
+#include <rtc.h>
 #define SYS_OUT_COLOR			0x29
 #define SYS_ERR_COLOR			0x49
 
@@ -56,6 +57,9 @@ int64_t sys_read(uint64_t fd,uint8_t *buf,uint64_t count){
 	return i;
 }
 
+TIME * sys_time() {
+	return time();
+}
 void sys_sleep(uint64_t ticks){
 	counter=ticks;
 	_sti();

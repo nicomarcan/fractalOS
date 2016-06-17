@@ -23,7 +23,6 @@ static CommDescr * comm_table[COMM_TABLE_MAX_SIZE];
 static uint64_t comm_table_size;
 static uint8_t exit_val = 0;
 
-
 int64_t shell_main() {
   //Clean BSS
 	memset(&bss, 0, &endOfBinary - &bss);
@@ -38,6 +37,12 @@ int64_t hello_world(uint64_t argc, uint8_t * argv[]) {
 
 int64_t exit(uint64_t argc, uint8_t * argv[]) {
   exit_val = 1;
+}
+
+int64_t curr_time(uint64_t argc, uint8_t * argv[]) {
+  static uint8_t str [50];
+  get_time(str);
+  ncPrint(str);
 }
 
 int64_t echo(uint64_t argc, uint8_t * argv[]) {
@@ -59,6 +64,7 @@ void init_shell(){
   add_entry("echo", echo);
   add_entry("exit", exit);
   add_entry("fractal", (uint64_t *) 0x600000);
+  add_entry("time", curr_time);
 }
 
 CommDescr *  init_entry(uint8_t * command, int64_t (*func_ptr) (uint64_t, uint8_t**)){
@@ -84,8 +90,11 @@ uint8_t shell() {
   int64_t argc;
   CommDescr * comm;
   putchars("$ ", 2);
+
   get_input(shell_buf_ptr, BUFSIZ);
+
   read_comm(comm_str, &shell_buf_ptr);
+
   comm = parse_comm(comm_str, comm_table);
 
   if (comm == NULL) {
@@ -110,11 +119,11 @@ uint8_t shell() {
 CommDescr * parse_comm(const uint8_t * comm_str, CommDescr ** comm_table) {
   uint64_t i = 0;
   CommDescr * curr_comm;
-  static uint8_t shell_str [BUFSIZ];
-  curr_comm = comm_table[i];
 
+  curr_comm = comm_table[i];
   while (i < comm_table_size && c_strcmp(comm_str, curr_comm->command) != 0) {
     curr_comm = comm_table[++i];
+
   }
   if (i >= comm_table_size) {
     curr_comm = NULL;

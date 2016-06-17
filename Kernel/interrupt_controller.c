@@ -75,6 +75,8 @@ void int_33() {
 		case 11:
 			sys_clearscreen();
 			break;
+		case 12:
+			ret = (int64_t) sys_time();
  		default:
  			break;
  	}

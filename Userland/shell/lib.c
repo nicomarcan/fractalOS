@@ -1,6 +1,6 @@
 #include <stdint.h>
-
-static const void * base = 0x700000;
+#include <naiveConsole.h>
+static const void * base = 0x800000;
 static uint32_t i=0;
 
 void * memset(void * destination, int32_t c, uint64_t length)
@@ -65,4 +65,3 @@ void * malloc(uint32_t size){
 void free(void * ptr){
 	return;
 }
-

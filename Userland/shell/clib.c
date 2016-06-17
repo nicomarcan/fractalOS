@@ -92,5 +92,28 @@ int64_t c_strcmp(const uint8_t * a, const uint8_t * b) {
     a++;
     b++;
   }
+  
   return *a - *b;
+}
+
+/* similar a la time del rtc en el Kernel */
+int64_t get_time(uint8_t * buf) {
+  int64_t i;
+
+  TIME * t = time();
+  i = intToString(buf, t->day);
+  buf += i; *buf='/'; buf++;
+  i = intToString(buf, t->month);
+  buf += i; *buf='/'; buf++;
+  i = intToString(buf, t->year);
+  buf += i; *buf=' '; buf++;
+  i = intToString(buf, t->hour);
+  buf += i; *buf=':'; buf++;
+  i = intToString(buf, t->min);
+  buf += i; *buf=':'; buf++;
+  i = intToString(buf, t->sec);
+  buf += i; *buf=' '; buf++;
+
+  *buf = '\0';
+
 }
