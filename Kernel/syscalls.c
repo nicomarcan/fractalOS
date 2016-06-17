@@ -58,6 +58,7 @@ int64_t sys_read(uint64_t fd,uint8_t *buf,uint64_t count){
 
 void sys_sleep(uint64_t ticks){
 	counter=ticks;
+	_sti();
 	while(counter){
 		_hlt();
 	}

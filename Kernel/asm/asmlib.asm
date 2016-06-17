@@ -9,7 +9,10 @@ EXTERN irqDispatcher, int_80, syscall_dispatcher
 section .text
 
 _hlt:
+	push rbp
+	mov rbp,rsp
 	hlt
+	leave
 	ret
 
 cpuVendor:

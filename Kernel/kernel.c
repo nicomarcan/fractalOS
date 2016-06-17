@@ -70,8 +70,8 @@ int main()
 	_sti();
 	
 	initialize_driver();
-	ncPrintDec(20);
-	c = getchar();
+//	ncPrintDec(20);
+//	c = getchar();
 
 	((EntryPoint)fractalModuleAddress)();
 

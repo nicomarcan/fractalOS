@@ -14,7 +14,7 @@ void int_33();
 
 char buffer[10];
 
-extern uint64_t counter;
+	extern uint64_t counter;
 
 void irqDispatcher(uint64_t irq){
 	switch(irq) {

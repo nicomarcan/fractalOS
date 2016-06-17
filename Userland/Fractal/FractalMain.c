@@ -8,32 +8,23 @@ extern char endOfBinary;
 
 
 void * memset(void * destiny, int32_t c, uint64_t length);
-static void printSquareS(Square * s);
 
 int main() {
-	int i;
+	int i=8;
 	
 	//Clean BSS
 	memset(&bss, 0, &endOfBinary - &bss);
 	
-//	initializeFractal(newPoint(1024/2,768/2),256);
+	initializeFractal(newSquare(512-128,384+128,512,512));
 	
-	Square * s = newSquare(100,100,100,100);
-	
-	printSquareS(s);
+	while(i){
+		sleep(18*3);
+		step();
+		i--;
+	}
 	
 	return 0;
 }
-
-static void printSquareS(Square * s){
-		int i,j;
-		Point * p = topLeftCorner(s);
-		for(i=p->x;i<s->width;i++){
-			for(j=p->y;j<s->height;j++){
-				pixel(i,j,0x00FFFF00);
-			}
-		}
-	}
 
 void * memset(void * destiation, int32_t c, uint64_t length) {
 	uint8_t chr = (uint8_t)c;

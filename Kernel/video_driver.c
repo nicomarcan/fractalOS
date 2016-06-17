@@ -42,8 +42,10 @@ void naive_print(){
 }
 
 void clear_screen(){
-	for(i=0;i<WIDTH*HEIGHT*bPP;i++){
-		fb[i]=0;
+	uint64_t * tmp = (uint64_t *)fb;
+	uint64_t limit =(WIDTH*HEIGHT*bPP)/sizeof(uint64_t) +1;
+	for(i=0;i<limit;i++){
+		tmp[i]=0;
 	}
 	i=0;
 	j=0;
