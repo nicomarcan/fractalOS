@@ -11,6 +11,32 @@ void putchars(uint8_t * str, uint64_t c) {
   write(STDOUT, str, c);
 }
 
+void raw_putchar(uint8_t c) {
+  switch(c) {
+    case '\b':
+      putchar('\\');
+      putchar('b');
+      break;
+    case '\n':
+      putchar('\\');
+      putchar('n');
+      break;
+    case ' ':
+      putchar('\\');
+      putchar('s');
+      break;
+    default:
+      putchar(c);
+      break;
+  }
+}
+
+void raw_putchars(uint8_t * str, uint64_t c) {
+  for (int i = 0; i < c; i++) {
+    raw_putchar(str[i]);
+  }
+}
+
 int64_t getchar(void) {
   static uint8_t buf[BUFSIZ];
   static uint8_t *bufp = buf;
@@ -57,6 +83,6 @@ int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
     }
     bufp = buf + j;
   }
-  putchars(buf, j);
+  
   return j;
 }

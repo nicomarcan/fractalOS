@@ -57,15 +57,21 @@ void * initializeKernelBinary()
 
 int main()
 {
-
+	uint8_t c;
 	setup_IDT_entry(32,0x8,(uint64_t)&_irq00handler,0x8E);
 	setup_IDT_entry(33,0x8,(uint64_t)&_irq01handler,0x8E);
 	setup_IDT_entry(0x80,0x8,(uint64_t)&_syscall_handler,0x8E);
 
+	_cli();
+
+	picMasterMask(0xFC);
+	picSlaveMask(0xFF);
+
+	_sti();
+	
 	initialize_driver();
 	ncPrintDec(20);
 	c = getchar();
-	putchar(c);
 
 	((EntryPoint)fractalModuleAddress)();
 
