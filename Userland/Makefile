@@ -2,7 +2,7 @@ include Makefile.inc
 
 SAMPLE_DATA=0001-sampleDataModule.bin
 
-all: sampleCodeModule sampleDataModule fractal
+all: sampleCodeModule sampleDataModule fractal shell
 
 sampleCodeModule:
 	cd SampleCodeModule; make
@@ -13,9 +13,13 @@ sampleDataModule:
 fractal:
 	cd Fractal; make
 
+shell:
+	cd shell; make
+
 clean:
 	cd SampleCodeModule; make clean
 	cd Fractal; make clean
+	cd shell; make clean
 	rm -rf *.bin
 
 
