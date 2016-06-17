@@ -1,6 +1,31 @@
-GLOBAL read, write, time, sleep
+GLOBAL read, write, time, sleep, memory
 
 section .text
+
+memory:
+  push rbp
+  mov rbp, rsp
+
+  push rbx
+  push rbp
+  push r12
+  push r13
+  push r14
+  push r15
+
+  mov rax, 8
+  int 80h
+
+  pop r15
+  pop r14
+  pop r13
+  pop r12
+  pop rbp
+  pop rbx
+
+  leave
+  ret
+
 
 write:
   push rbp

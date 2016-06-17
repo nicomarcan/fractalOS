@@ -75,10 +75,10 @@ CommDescr *  init_entry(uint8_t * command, int64_t (*func_ptr) (uint64_t, uint8_
 }
 void comm_err(uint8_t * comm_str) {
   ncPrint(comm_str);
-  ncPrint(" no es un comando valido.");
+  ncPrint(" is an illegal command");
 }
 void arg_err() {
-  ncPrint("Error de sintaxis.");
+  ncPrint("Wrong syntax");
 }
 
 uint8_t shell() {
@@ -88,6 +88,7 @@ uint8_t shell() {
   uint8_t * argv[MAX_ARGUMENT_SIZE];
   uint64_t len;
   int64_t argc;
+  uint8_t retval;
   CommDescr * comm;
   putchars("$ ", 2);
 
@@ -105,7 +106,12 @@ uint8_t shell() {
       arg_err();
     }
     else {
-      comm->func_ptr(argc, argv);
+      retval=comm->func_ptr(argc, argv);
+      if(retval==0){
+		  putchars("Process ended correctly ",24);
+	  } else {
+		  putchars("Process ended with errors ",26);
+	  }
     }
   }
 

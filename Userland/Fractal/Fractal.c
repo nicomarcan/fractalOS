@@ -15,6 +15,7 @@ static uint32_t colour=RED;
 void initializeFractal(Square * s){
 	squares = newStack();
 	push(squares,s);
+	clearscreen(); 
 	printSquare(s);
 }
 
