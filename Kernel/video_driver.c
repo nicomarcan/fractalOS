@@ -98,14 +98,9 @@ void print_newline(){
 void print_backspace() {
 	if (j != 0) {
 		j--;
-		print_char(' ');
-		j--;
 	}
 	else {
 		if (i != 0) {
-			i--;
-			j = WIDTH / C_WIDTH - 1;
-			print_char(' ');
 			i--;
 			j = WIDTH / C_WIDTH - 1;
 		}
@@ -147,26 +142,4 @@ static void draw_char(uint8_t *where, uint8_t character) {
         where += WIDTH*bPP;
         tmp=where;
     }
-}
-
-void pulse() {
-	static uint8_t b = 0;
-	static uint8_t count = 0;
-	if (count > PULSE_TIME) {
-		count = 0;
-		if (b) {
-			draw_char((uint8_t*)fb+(i*WIDTH*C_HEIGHT+j*C_WIDTH)*bPP,
-					  '|');
-			b = 0;
-		}
-		else {
-			draw_char((uint8_t*)fb+(i*WIDTH*C_HEIGHT+j*C_WIDTH)*bPP,
-					  ' ');
-			b = 1;
-		}
-	}
-	else {
-		count++;
-	}
-
 }

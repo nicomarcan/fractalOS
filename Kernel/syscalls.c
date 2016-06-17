@@ -61,6 +61,11 @@ TIME * sys_time() {
 	return time();
 }
 void sys_sleep(uint64_t ticks){
+	if (ticks == 0) {
+		_sti();
+		_hlt();
+		return;
+	}
 	counter=ticks;
 	_sti();
 	while(counter){

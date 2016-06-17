@@ -1,6 +1,6 @@
 #include <c_syscall.h>
 #include <clib.h>
-
+#define P_TIMER 2
 int64_t fread(uint64_t fd, uint8_t * buf, int64_t len);
 
 void putchar(uint8_t c){
@@ -55,6 +55,8 @@ int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
   int64_t j = 0;
   uint8_t * bufp = buf;
   uint8_t ent_bool = 0;
+  uint64_t pulse = 0;
+  uint8_t pchar = ' ';
   // ncPrintDec(len);
   while (!ent_bool) {
     if (0 < (ret = read(fd, bufp, len - j))) {
@@ -68,8 +70,12 @@ int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
         else if (bufp[i] == '\b') {
           if (j > 0) {
             buf[j] = ' ';
-            j--;
+            putchar(' ');
             putchar('\b');
+            putchar('\b');
+            putchar(' ');
+            putchar('\b');
+            j--;
           }
         }
         else {
@@ -80,8 +86,20 @@ int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
           }
         }
       }
+      bufp = buf + j;
     }
-    bufp = buf + j;
+    else {
+      sleep(0);
+      if (pulse > P_TIMER) {
+        pchar = (pchar == '|') ? ' ': '|';
+        putchar(pchar);
+        putchar('\b');
+        pulse = 0;
+      }
+      else {
+        pulse++;
+      }
+    }
   }
 
   return j;
@@ -92,7 +110,7 @@ int64_t c_strcmp(const uint8_t * a, const uint8_t * b) {
     a++;
     b++;
   }
-  
+
   return *a - *b;
 }
 

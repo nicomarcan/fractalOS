@@ -7,6 +7,10 @@ int intToString(char * buffer,int num){
 	int i=0;
 	int tmp=0;
 	int k,q;
+	if (num == 0) {
+		buffer[0] = '0';
+		return 1;
+	}
 	while(num){
 		tmp = num/10;
 		buffer[i]=(num - tmp*10)+'0';
