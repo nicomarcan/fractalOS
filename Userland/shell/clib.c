@@ -1,6 +1,6 @@
 #include <c_syscall.h>
 #include <clib.h>
-#define P_TIMER 2
+#define P_TIMER 5
 int64_t fread(uint64_t fd, uint8_t * buf, int64_t len);
 
 void putchar(uint8_t c){
