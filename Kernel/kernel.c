@@ -68,10 +68,11 @@ int main()
 	picSlaveMask(0xFF);
 
 	_sti();
-	
+
 	initialize_driver();
-	ncPrintDec(20);
-	c = getchar();
+	init_shell();
+
+	while(!shell());
 
 	((EntryPoint)fractalModuleAddress)();
 

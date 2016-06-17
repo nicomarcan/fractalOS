@@ -55,7 +55,7 @@ int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
   int64_t j = 0;
   uint8_t * bufp = buf;
   uint8_t ent_bool = 0;
-  ncPrintDec(len);
+  // ncPrintDec(len);
   while (!ent_bool) {
     if (0 < (ret = read(fd, bufp, len - j))) {
       for (int i = 0; i < ret; i++) {
@@ -83,6 +83,14 @@ int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
     }
     bufp = buf + j;
   }
-  
+
   return j;
+}
+
+int64_t c_strcmp(const uint8_t * a, const uint8_t * b) {
+  while (*a == *b && *a != '\0') {
+    a++;
+    b++;
+  }
+  return *a - *b;
 }
