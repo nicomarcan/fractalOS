@@ -31,10 +31,11 @@ int main(uint64_t argc, uint8_t** argv) {
 	initializeFractal(newSquare(CENTRE_X,CENTRE_Y,size,size));
 	
 	while(i){
-		sleep(18*3);
+		sleep(18*2);
 		step();
 		i--;
 	}
+	sleep(18*2);
 	clearscreen();
 	
 	return 0;
