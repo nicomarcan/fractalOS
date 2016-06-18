@@ -293,9 +293,6 @@ Command * inputCommand(void){
      Command * command;
      sr=sc=dr=dc=0;
      command = malloc(sizeof(*command));
-     if (command == NULL){
-	  exit(1);
-     }
 
      while( (c=c_tolower(getchar())) != '\n' && c != EOF ){
 	  switch(state){

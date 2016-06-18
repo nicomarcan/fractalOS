@@ -40,9 +40,8 @@ void raw_putchars(uint8_t * str, uint64_t c) {
 }
 static uint8_t buf[BUFSIZ];
 static int64_t n = 0;
+static uint8_t *bufp = buf;
 int64_t getchar(void) {
-  static uint8_t *bufp = buf;
-
 
   if (n == 0) {
     n = fread(STDIN, buf, sizeof (buf) - 1);
@@ -53,9 +52,9 @@ int64_t getchar(void) {
 
 int ungetc(uint8_t c) {
   for (int64_t j = n-1; j > 0; j--){
-    buf[j] = buf[j-1];
+    bufp[j] = bufp[j-1];
   }
-  buf[0] = c;
+  bufp[0] = c;
   n++;
   return 0;
 }

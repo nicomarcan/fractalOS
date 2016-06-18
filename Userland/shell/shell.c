@@ -1,6 +1,7 @@
 #include <shell.h>
 #include <clib.h>
 #include <fanorona.h>
+#include <command.h>
 
 #define NULL 0
 
@@ -11,83 +12,96 @@ extern char endOfBinary;
 /* command table entry */
 typedef struct {
   uint8_t * command;
+  uint8_t * descr;
   int64_t (*func_ptr)(uint64_t argc, uint8_t ** argv);
 } CommDescr;
 
-int64_t get_input(uint8_t * shell_buf, uint64_t size);
-CommDescr *  init_entry(uint8_t * command, int64_t (*func_ptr) (uint64_t, uint8_t**));
-void add_entry(uint8_t * command, int64_t (*func_ptr) (uint64_t, uint8_t**));
-CommDescr * parse_comm(const uint8_t * shell_buff, CommDescr ** comm_table);
-int64_t read_arg(uint8_t * argv, uint8_t ** shell_buff );
-int64_t parse_arg(uint8_t ** shell_buff, uint8_t * argv[MAX_ARGUMENT_SIZE]);
+/* parsing operation */
+static int64_t get_input(uint8_t * shell_buf, uint64_t size);
+static CommDescr * parse_comm(const uint8_t * shell_buff, CommDescr ** comm_table);
+static int64_t read_arg(uint8_t * argv, uint8_t ** shell_buff );
+static int64_t parse_arg(uint8_t ** shell_buff, uint8_t * argv[MAX_ARGUMENT_SIZE]);
 
+/* command management */
+static CommDescr *  init_entry(uint8_t * command, uint8_t * description, int64_t (*func_ptr) (uint64_t, uint8_t**));
+static void add_entry(uint8_t * command, uint8_t * description, int64_t (*func_ptr) (uint64_t, uint8_t**));
+
+/* command table  */
 static CommDescr * comm_table[COMM_TABLE_MAX_SIZE];
 static uint64_t comm_table_size;
+
+/* exit status boolean */
 static uint8_t exit_val = 0;
+static void comm_err(uint8_t * comm_str);
+
+/* input error */
+static void arg_err();
+
+
 
 int64_t shell_main() {
   //Clean BSS
 	memset(&bss, 0, &endOfBinary - &bss);
 
   init_shell();
-
   while(!shell());
 }
-int64_t hello_world(uint64_t argc, uint8_t * argv[]) {
-  printf("hello, world\n");
-  return 0;
-}
 
-int64_t exit(uint64_t argc, uint8_t * argv[]) {
+/* exit command */
+static int64_t exit(uint64_t argc, uint8_t * argv[]) {
   exit_val = 1;
   return 0;
 }
 
-int64_t curr_time(uint64_t argc, uint8_t * argv[]) {
-  static uint8_t str [50];
-  print_time(str);
-  return 0;
-}
-
-int64_t echo(uint64_t argc, uint8_t * argv[]) {
-  for (int i=0; i < argc; i++) {
-    printf(argv[i]);
+static int64_t help(uint64_t argc, uint8_t * argv[]) {
+  printf("Available commands: \n");
+  for (int i=0; i<comm_table_size;i++) {
+    printf("\t%s - %s\n", comm_table[i]->command, comm_table[i]->descr);
   }
-  putchar('\n');
   return 0;
 }
 
-void add_entry(uint8_t * command, int64_t (*func_ptr) (uint64_t, uint8_t**)) {
+/* add new entry to commad table */
+static void add_entry(uint8_t * command, uint8_t * description, int64_t (*func_ptr) (uint64_t, uint8_t**)) {
   if (comm_table_size < COMM_TABLE_MAX_SIZE) {
-    comm_table[comm_table_size] = init_entry(command, func_ptr);
+    comm_table[comm_table_size] = init_entry(command, description, func_ptr);
     comm_table_size++;
   }
 }
 
+/* command table initialization*/
 void init_shell(){
   /* init command table. */
-  add_entry("hello-world", hello_world);
-  add_entry("echo", echo);
-  add_entry("exit", exit);
-  add_entry("fractal", (uint64_t *) 0x600000);
-  add_entry("time", curr_time);
-  add_entry("fanorona", fanorona_main);
-  add_entry("clear", clear_screen);
+  add_entry("hello-world", "simple debug hello, world",hello_world);
+  add_entry("echo", "prints input, escapes with \"\"",echo);
+  add_entry("exit", "terminate shell", exit);
+  add_entry("fractal", "prints beautiful fractal", (uint64_t *) 0x600000);
+  add_entry("time", "prints current time", curr_time);
+  add_entry("fanorona", "play Fanorona(tm).", fanorona_main);
+  add_entry("clear", "clear screen", clear_screen);
+  add_entry("help", "display available commands", help);
 }
 
-CommDescr *  init_entry(uint8_t * command, int64_t (*func_ptr) (uint64_t, uint8_t**)){
+/* command entry initialization */
+static CommDescr *  init_entry(uint8_t * command, uint8_t * description, int64_t (*func_ptr) (uint64_t, uint8_t**)){
   CommDescr * hw = malloc(sizeof(CommDescr));
   hw->command = command;
+  hw->descr = description;
   hw->func_ptr = func_ptr;
   return hw;
 }
-void comm_err(uint8_t * comm_str) {
+
+/* command not found */
+static void comm_err(uint8_t * comm_str) {
   printf("%s is an illegal command\n", comm_str);
 }
-void arg_err() {
+
+/* arguments fail closing quote check. */
+static void arg_err() {
   printf("Wrong syntax\n");
 }
 
+/* reads from input and executes a command.*/
 uint8_t shell() {
   static uint8_t shell_buf[BUFSIZ];
   static uint8_t comm_str[BUFSIZ];
@@ -121,11 +135,10 @@ uint8_t shell() {
   }
 
   return exit_val;
-  // CommDescr * comm_descr = parse_comm(&shell_buff, comm_table);
-  // parse_arg(&shell_buff, comm_descr->argc, argv);
 
 }
 
+/* parses first string from the shell_buff and looks for matching command.*/
 CommDescr * parse_comm(const uint8_t * comm_str, CommDescr ** comm_table) {
   uint64_t i = 0;
   CommDescr * curr_comm;
@@ -141,7 +154,7 @@ CommDescr * parse_comm(const uint8_t * comm_str, CommDescr ** comm_table) {
   return curr_comm;
 }
 
-/* reads from shell_buff into shell_str until blank char*/
+/* reads from shell_buff into comm_str until blank char*/
 void read_comm(const uint8_t * comm_str, uint8_t ** shell_buf) {
   uint8_t * comm_str_ptr = comm_str;
   while(**shell_buf != '\0' && **shell_buf == ' ') {
@@ -153,6 +166,7 @@ void read_comm(const uint8_t * comm_str, uint8_t ** shell_buf) {
   *comm_str_ptr = '\0';
 }
 
+/* reads argument from shell_buff into argv*/
 int64_t read_arg(uint8_t * argv, uint8_t ** shell_buff ) {
   static const uint8_t QUOTE = 0;
   static const uint8_t N_QUOTE = 1;
@@ -205,6 +219,8 @@ int64_t read_arg(uint8_t * argv, uint8_t ** shell_buff ) {
   argv[i] = '\0';
   return st;
 }
+
+/* parses arguments from the shell buffer into argv string array. */
 int64_t parse_arg(uint8_t ** shell_buff, uint8_t *argv[MAX_ARGUMENT_SIZE]) {
   uint64_t i = 0;
 
@@ -223,6 +239,7 @@ int64_t parse_arg(uint8_t ** shell_buff, uint8_t *argv[MAX_ARGUMENT_SIZE]) {
   return i;
 }
 
+/* gets input from the command line. */
 int64_t get_input(uint8_t * shell_buf, uint64_t size) {
   uint64_t i = 0;
   uint8_t c;
