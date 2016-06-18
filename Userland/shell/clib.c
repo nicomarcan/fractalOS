@@ -122,3 +122,10 @@ void print_time(uint8_t * buf) {
   printf("%d/%d/%d %d:%d:%d\t", t->day, t->month, t->year, t->hour, t->min, t->sec);
   free(t);
 }
+
+int64_t rand() {
+  return 42;
+}
+void srand (uint64_t seed) {
+  return;
+}

@@ -1,5 +1,7 @@
 #include <shell.h>
 #include <clib.h>
+#include <fanorona.h>
+
 #define NULL 0
 
 void * memset(void * destiny, int32_t c, uint64_t length);
@@ -64,6 +66,7 @@ void init_shell(){
   add_entry("exit", exit);
   add_entry("fractal", (uint64_t *) 0x600000);
   add_entry("time", curr_time);
+  add_entry("fanorona", fanorona_main);
 }
 
 CommDescr *  init_entry(uint8_t * command, int64_t (*func_ptr) (uint64_t, uint8_t**)){
