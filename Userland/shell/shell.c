@@ -41,8 +41,7 @@ int64_t exit(uint64_t argc, uint8_t * argv[]) {
 
 int64_t curr_time(uint64_t argc, uint8_t * argv[]) {
   static uint8_t str [50];
-  get_time(str);
-  ncPrint(str);
+  print_time(str);
 }
 
 int64_t echo(uint64_t argc, uint8_t * argv[]) {
@@ -94,7 +93,7 @@ uint8_t shell() {
   get_input(shell_buf_ptr, BUFSIZ);
 
   read_comm(comm_str, &shell_buf_ptr);
-  
+
   comm = parse_comm(comm_str, comm_table);
 
   if (comm == NULL) {
@@ -150,6 +149,7 @@ int64_t read_arg(uint8_t * argv, uint8_t ** shell_buff ) {
   uint8_t st = N_QUOTE;
   uint64_t i = 0;
   uint8_t end_b = 0;
+  uint8_t tc;
 
   while(!end_b && i < BUFSIZ) {
 
@@ -171,8 +171,17 @@ int64_t read_arg(uint8_t * argv, uint8_t ** shell_buff ) {
         (*shell_buff)++;
         break;
       case '\\':
-          if (st == QUOTE && *( (*shell_buff) + 1) == 'n'){
-            argv[i++] = '\n';
+          tc = *((*shell_buff) + 1);
+          if (st == QUOTE && (tc == 'n' || tc == 't' || tc == 'b')){
+            if ( tc == 'n'){
+              argv[i++] = '\n';
+            }
+            else if (tc== 't') {
+              argv[i++] = '\t';
+            }
+            else{
+              argv[i++] = '\b';
+            }
             (*shell_buff)++;
             (*shell_buff)++;
             break;

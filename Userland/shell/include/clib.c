@@ -1,8 +1,6 @@
 #include <c_syscall.h>
 #include <clib.h>
-#include <printf.h>
 
-#define P_TIMER 5
 int64_t fread(uint64_t fd, uint8_t * buf, int64_t len);
 
 void putchar(uint8_t c){
@@ -38,35 +36,25 @@ void raw_putchars(uint8_t * str, uint64_t c) {
     raw_putchar(str[i]);
   }
 }
-static uint8_t buf[BUFSIZ];
-static int64_t n = 0;
-int64_t getchar(void) {
-  static uint8_t *bufp = buf;
 
+int64_t getchar(void) {
+  static uint8_t buf[BUFSIZ];
+  static uint8_t *bufp = buf;
+  static int64_t n = 0;
 
   if (n == 0) {
-    n = fread(STDIN, buf, sizeof (buf) - 1);
+    n = fread(STDIN, buf, sizeof (buf));
     bufp = buf;
   }
   return (--n >= 0) ? (uint8_t) *bufp++ : -1;
 }
 
-int ungetc(uint8_t c) {
-  for (int64_t j = n-1; j > 0; j--){
-    buf[j] = buf[j-1];
-  }
-  buf[0] = c;
-  n++;
-  return 0;
-}
 int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
   int64_t ret = 0;
   int64_t count = 0;
   int64_t j = 0;
   uint8_t * bufp = buf;
   uint8_t ent_bool = 0;
-  uint64_t pulse = 0;
-  uint8_t pchar = ' ';
   // ncPrintDec(len);
   while (!ent_bool) {
     if (0 < (ret = read(fd, bufp, len - j))) {
@@ -80,12 +68,8 @@ int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
         else if (bufp[i] == '\b') {
           if (j > 0) {
             buf[j] = ' ';
-            putchar(' ');
-            putchar('\b');
-            putchar('\b');
-            putchar(' ');
-            putchar('\b');
             j--;
+            putchar('\b');
           }
         }
         else {
@@ -96,29 +80,30 @@ int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
           }
         }
       }
-      bufp = buf + j;
     }
-    else {
-      sleep(0);
-      if (pulse > P_TIMER) {
-        pchar = (pchar == '|') ? ' ': '|';
-        putchar(pchar);
-        putchar('\b');
-        pulse = 0;
-      }
-      else {
-        pulse++;
-      }
-    }
+    bufp = buf + j;
   }
 
   return j;
 }
 
+int64_t c_strcmp(const uint8_t * a, const uint8_t * b) {
+  while (*a == *b && *a != '\0') {
+    a++;
+    b++;
+  }
+  return *a - *b;
+}
+
 /* similar a la time del rtc en el Kernel */
-void print_time(uint8_t * buf) {
+int64_t get_time(uint8_t * buf) {
   int64_t i;
   TIME * t = time();
-  printf("%d/%d/%d %d:%d:%d\t", t->day, t->month, t->year, t->hour, t->min, t->sec);
-  free(t);
+  i = intToString(buf, t->day);
+  buf += i; *buf='\\'; buf++;
+  i = intToString(buf, t->month);
+  buf += i; *buf='\\'; buf++;
+  i = intToString(buf, t->year);
+  buf += i; *buf='\\'; buf++;
+
 }

@@ -66,6 +66,10 @@ void print_char(uint8_t character){
 void print(const uint8_t * sptr, uint8_t length) {
 		while (length--) {
 			switch (*sptr) {
+				case '\t':
+					for (int i=0; i<4; i++){
+						print_char(' ');
+					}
 				case '\b':
 					print_backspace();
 					break;
