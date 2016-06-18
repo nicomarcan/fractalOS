@@ -2,7 +2,7 @@
 #include <clib.h>
 #include <fanorona.h>
 #include <command.h>
-
+#include <scanf.h>
 #define NULL 0
 
 void * memset(void * destiny, int32_t c, uint64_t length);
@@ -53,6 +53,15 @@ static int64_t exit(uint64_t argc, uint8_t * argv[]) {
   return 0;
 }
 
+static int64_t scan(uint64_t argc, uint8_t * argv[]) {
+  int64_t i;
+  double d;
+  uint8_t buf[10];
+  scanf("%s %d %f ", buf, &i, &d);
+  printf("%s|%d |%f\n", buf, i, d);
+}
+
+/* display available commands */
 static int64_t help(uint64_t argc, uint8_t * argv[]) {
   printf("Available commands: \n");
   for (int i=0; i<comm_table_size;i++) {
@@ -80,6 +89,7 @@ void init_shell(){
   add_entry("fanorona", "play Fanorona(tm).", fanorona_main);
   add_entry("clear", "clear screen", clear_screen);
   add_entry("help", "display available commands", help);
+  add_entry("scan", "scanf debug", scan);
 }
 
 /* command entry initialization */

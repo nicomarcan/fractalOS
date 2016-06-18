@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <c_syscall.h>
+#include <lib.h>
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
@@ -12,6 +13,9 @@ void * memset(void * destination, int32_t c, uint64_t length)
 	return destination;
 }
 
+void bcopy(const void *src, void *dest, uint64_t n) {
+	memcpy(dest, src, n);
+}
 void * memcpy(void * destination, const void * source, uint64_t length)
 {
 	/*
