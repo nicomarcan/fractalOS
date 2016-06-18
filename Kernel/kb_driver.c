@@ -6,9 +6,10 @@
 #define BUFF_SIZE 0xFF
 
 static char shift=0;
+static char blockm=0;
 
 static void insert(unsigned char c);
-
+int isAlpha(char c);
 typedef struct{
 	unsigned char array[BUFF_SIZE];
 	int i;
@@ -24,12 +25,16 @@ CIRC_BUFFER buff={{0},0,0,0};
  */
 char fetch(){
 	unsigned char c=(unsigned char)kb_read();
+	unsigned char p;
 	switch (c){
 		case KRLEFT_SHIFT:
 			shift=1;
 			break;
 		case KRLEFT_SHIFT_BK:
 			shift=0;
+			break;
+		case KRCAPS_LOCK:
+			blockm=!blockm;
 			break;
 		default:
 			break;
@@ -38,9 +43,15 @@ char fetch(){
 		return 0;
 	}
 	if (shift) {
-		insert(asciiShift[c]);
+		p=asciiShift[c];
+		if(blockm && isAlpha(p))
+			p=asciiNonShift[c];
+		insert(p);
 	} else {
-		insert(asciiNonShift[c]);
+		p=asciiNonShift[c];
+		if(blockm && isAlpha(p))
+			p=asciiShift[c];
+		insert(p);
 	}
 	return 1;
 }
@@ -93,4 +104,8 @@ void ungetc(unsigned char c){
 	}
 	buff.not_read++;
 	buff.array[buff.j]=c;
+}
+
+int isAlpha(char c){
+	return (c>=65 && c<=90) || (c>=97 && c<=122) ;
 }
