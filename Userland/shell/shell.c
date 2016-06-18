@@ -34,7 +34,7 @@ int64_t shell_main() {
   while(!shell());
 }
 int64_t hello_world(uint64_t argc, uint8_t * argv[]) {
-  putchars("hello, world",12);
+  printf("hello, world\n");
   return 0;
 }
 
@@ -51,7 +51,7 @@ int64_t curr_time(uint64_t argc, uint8_t * argv[]) {
 
 int64_t echo(uint64_t argc, uint8_t * argv[]) {
   for (int i=0; i < argc; i++) {
-    ncPrint(argv[i]);
+    printf(argv[i]);
   }
   putchar('\n');
   return 0;
@@ -82,11 +82,10 @@ CommDescr *  init_entry(uint8_t * command, int64_t (*func_ptr) (uint64_t, uint8_
   return hw;
 }
 void comm_err(uint8_t * comm_str) {
-  ncPrint(comm_str);
-  ncPrint(" is an illegal command");
+  printf("%s is an illegal command\n", comm_str);
 }
 void arg_err() {
-  ncPrint("Wrong syntax");
+  printf("Wrong syntax\n");
 }
 
 uint8_t shell() {

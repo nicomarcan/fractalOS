@@ -1,5 +1,5 @@
 #include <naiveConsole.h>
-#include <clib.h>
+#define STDOUT 1
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 
 static char buffer[64] = { '0' };
@@ -8,11 +8,12 @@ static const uint32_t width = 80;
 static const uint32_t height = 25 ;
 static int i=0;
 
+
 void ncPrint(const char * string)
 {
 	int q;
 	for (q = 0; string[q] != 0; q++)
-		putchar(string[q]);
+		print_char(string[q]);
 }
 
 void ncPrintChar(char c)

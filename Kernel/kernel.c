@@ -2,10 +2,8 @@
 #include <string.h>
 #include <asmlib.h>
 #include <moduleLoader.h>
-#include <naiveConsole.h>
 #include <idtr_config.h>
 #include <video_driver.h>
-#include <clib.h>
 
 extern uint8_t text;
 extern uint8_t rodata;

@@ -1,6 +1,5 @@
 #include <asmlib.h>
 #include <kb_layout.h>
-#include <naiveConsole.h>
 #include <kb_driver.h>
 
 #define BUFF_SIZE 0xFF

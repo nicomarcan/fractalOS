@@ -1,6 +1,5 @@
 #include <interrupt_controller.h>
 #include <stdint.h>
-#include <naiveConsole.h>
 #include <rtc.h>
 #include <kb_driver.h>
 #include <lib.h>

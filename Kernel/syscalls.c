@@ -1,7 +1,6 @@
 #include <syscalls.h>
 #include <kb_driver.h>
 #include <video_driver.h>
-#include <naiveConsole.h>
 #include <asmlib.h>
 #include <lib.h>
 #include <rtc.h>
