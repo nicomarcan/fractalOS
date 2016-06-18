@@ -15,4 +15,7 @@ int64_t read(uint64_t fd, const uint8_t * buf, uint8_t count);
 TIME * time();
 void sleep(uint64_t ticks);
 void clear();
+void set_color(uint8_t r, uint8_t g, uint8_t b);
+void set_back_color(uint8_t r, uint8_t g, uint8_t b);
+
 #endif

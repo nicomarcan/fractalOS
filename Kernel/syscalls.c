@@ -83,3 +83,11 @@ void sys_pixel(uint32_t x,uint32_t y,uint32_t ccoord){
 void sys_clearscreen(){
 	clear_screen();
 }
+
+void sys_set_color(uint8_t r, uint8_t g, uint8_t b) {
+	set_font_color(r,b,g);
+}
+
+void sys_set_back_color(uint8_t r, uint8_t g, uint8_t b) {
+	set_back_color(r,g,b);
+}

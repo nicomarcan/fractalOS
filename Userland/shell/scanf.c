@@ -135,6 +135,17 @@ scanf(const char *fmt, ...)
 }
 
 int
+sscanf(const char *inp, const char *fmt, ...)
+{
+	int ret;
+	va_list ap;
+	va_start(ap, fmt);
+	ret = vsscanf(inp, fmt, ap);
+	va_end(ap);
+	return(ret);
+}
+
+int
 vsscanf(const char *inp, char const *fmt0, va_list ap)
 {
 	int inr;

@@ -6,12 +6,24 @@
 #define bPP 3
 #define C_WIDTH 8
 #define C_HEIGHT 16
-
+#define DEFAULT_COLOR_R 0x00
+#define DEFAULT_COLOR_G 0x00
+#define DEFAULT_COLOR_B 0x00
+#define DEFAULT_B_COLOR_R 0xFF
+#define DEFAULT_B_COLOR_G 0xFF
+#define DEFAULT_B_COLOR_B 0xFF
 
 static void draw_char(uint8_t *where, uint8_t character) ;
 
 
 uint8_t * fb;
+static uint8_t char_color_r = DEFAULT_COLOR_R;
+static uint8_t char_color_g = DEFAULT_COLOR_G;
+static uint8_t char_color_b = DEFAULT_COLOR_B;
+
+static uint8_t back_color_r = DEFAULT_B_COLOR_R;
+static uint8_t back_color_g = DEFAULT_B_COLOR_G;
+static uint8_t back_color_b = DEFAULT_B_COLOR_B;
 static int i=0;
 static int j=0;
 
@@ -27,6 +39,7 @@ void initialize_driver(){
 	* Pure64 docs
 	*/
 	fb= (uint8_t *)(*(uint32_t *)0x5080);
+	clear_screen();
 }
 
 /*
@@ -42,10 +55,12 @@ void naive_print(){
 }
 
 void clear_screen(){
-	uint64_t * tmp = (uint64_t *)fb;
-	uint64_t limit =(WIDTH*HEIGHT*bPP)/sizeof(uint64_t) +1;
+	uint8_t * tmp = (uint8_t *)fb;
+	uint64_t limit =(WIDTH*HEIGHT*bPP) +1;
 	for(i=0;i<limit;i++){
-		tmp[i]=0;
+		*(tmp + i )= back_color_r;
+		*(tmp + i + 1)= back_color_g;
+		*(tmp + i + 2)= back_color_b;
 	}
 	i=0;
 	j=0;
@@ -137,13 +152,24 @@ static void draw_char(uint8_t *where, uint8_t character) {
         row_data = font_data_for_char[row];
 		for(q=0;q<C_WIDTH;q++){
 			if((row_data>>(8-q-1))&0x01){
-				tmp[0]=0xFF;tmp[1]=0XFF;tmp[2]=0XFF;
+				tmp[0]=char_color_b;tmp[1]=char_color_g;tmp[2]=char_color_r;
 			} else {
-				tmp[0]=0x00;tmp[1]=0x00;tmp[2]=0x00;
+				tmp[0]=back_color_b;tmp[1]=back_color_g;tmp[2]=back_color_r;
 			}
 			tmp+=3;
 		}
         where += WIDTH*bPP;
         tmp=where;
     }
+}
+void set_font_color(uint8_t r, uint8_t g, uint8_t b) {
+	char_color_r = r;
+	char_color_g = g;
+	char_color_b = b;
+}
+void set_back_color(uint8_t r, uint8_t g, uint8_t b) {
+	back_color_r = r;
+	back_color_g = g;
+	back_color_b = b;
+	clear_screen();
 }

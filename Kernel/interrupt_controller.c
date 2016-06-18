@@ -76,6 +76,13 @@ void int_33() {
 			break;
 		case 12:
 			ret = (int64_t) sys_time();
+			break;
+		case 13:
+			sys_set_color(rdi, rsi, rdx);
+			break;
+		case 14:
+			sys_set_back_color(rdi, rsi, rdx);
+			break;
  		default:
  			break;
  	}

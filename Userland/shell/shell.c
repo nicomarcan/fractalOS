@@ -58,7 +58,8 @@ static int64_t scan(uint64_t argc, uint8_t * argv[]) {
   double d;
   uint8_t buf[10];
   scanf("%s %d %f ", buf, &i, &d);
-  printf("%s|%d |%f\n", buf, i, d);
+  printf("%s|%d|%d\n", buf, i, (int64_t)d);
+  return 0;
 }
 
 /* display available commands */
@@ -69,6 +70,51 @@ static int64_t help(uint64_t argc, uint8_t * argv[]) {
   }
   return 0;
 }
+
+static int64_t get_colors_from_argv(uint64_t argc, uint8_t * argv[],uint8_t * r, uint8_t * g, uint8_t * b) {
+  int64_t ret = sscanf(argv[0], "%x", r);
+  if (ret == 0) {
+    return 1;
+  }
+  if (argc > 1) {
+    ret = sscanf(argv[1], "%x", g);
+    if (ret == 0) {
+      return 1;
+    }
+    if (argc > 2) {
+      ret = sscanf(argv[2], "%x", b);
+      if (ret == 0) {
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
+static int64_t set_shell_color(uint64_t argc, uint8_t * argv[]) {
+  int64_t r = 0, g = 0, b = 0, ret;
+  if (argc == 0 || argc > 3) {
+    return 1;
+  }
+  if (get_colors_from_argv(argc, argv, &r,&g,&b)) {
+    return 1;
+  }
+  set_color((uint8_t) r, (uint8_t) g, (uint8_t) b);
+  return 0;
+}
+
+static int64_t set_shell__background_color(uint64_t argc, uint8_t * argv[]) {
+  int64_t r = 0, g = 0, b = 0, ret;
+  if (argc == 0 || argc > 3) {
+    return 1;
+  }
+  if (get_colors_from_argv(argc, argv, &r,&g,&b)) {
+    return 1;
+  }
+  set_back_color((uint8_t) r, (uint8_t) g, (uint8_t) b);
+  return 0;
+}
+
 
 /* add new entry to commad table */
 static void add_entry(uint8_t * command, uint8_t * description, int64_t (*func_ptr) (uint64_t, uint8_t**)) {
@@ -90,6 +136,8 @@ void init_shell(){
   add_entry("clear", "clear screen", clear_screen);
   add_entry("help", "display available commands", help);
   add_entry("scan", "scanf debug", scan);
+  add_entry("set-color", "set text color", set_shell_color);
+  add_entry("set-back", "set background color", set_shell__background_color);
 }
 
 /* command entry initialization */
@@ -139,7 +187,7 @@ uint8_t shell() {
     else {
       retval=comm->func_ptr(argc, argv);
       if(retval!=0) {
-		      putchars("Process ended with errors ",26);
+        printf("Process ended with errors\n");
 	    }
     }
   }

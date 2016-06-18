@@ -1,4 +1,4 @@
-GLOBAL read, write, time, sleep, memory, clear
+GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color
 
 section .text
 
@@ -135,6 +135,54 @@ clear:
   push r15
 
 	mov rax,11
+	int 0x80
+
+  pop r15
+  pop r14
+  pop r13
+  pop r12
+  pop rbp
+  pop rbx
+
+	leave
+	ret
+
+set_color:
+	push rbp
+	mov rbp,rsp
+
+  push rbx
+  push rbp
+  push r12
+  push r13
+  push r14
+  push r15
+
+	mov rax,13
+	int 0x80
+
+  pop r15
+  pop r14
+  pop r13
+  pop r12
+  pop rbp
+  pop rbx
+
+	leave
+	ret
+
+set_back_color:
+	push rbp
+	mov rbp,rsp
+
+  push rbx
+  push rbp
+  push r12
+  push r13
+  push r14
+  push r15
+
+	mov rax,14
 	int 0x80
 
   pop r15
