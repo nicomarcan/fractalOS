@@ -111,7 +111,9 @@ static int64_t set_shell__background_color(uint64_t argc, uint8_t * argv[]) {
   if (get_colors_from_argv(argc, argv, &r,&g,&b)) {
     return 1;
   }
+
   set_back_color((uint8_t) r, (uint8_t) g, (uint8_t) b);
+  // printf("%x %x %x", r, g, b);
   return 0;
 }
 

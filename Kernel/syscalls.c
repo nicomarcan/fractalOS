@@ -85,7 +85,7 @@ void sys_clearscreen(){
 }
 
 void sys_set_color(uint8_t r, uint8_t g, uint8_t b) {
-	set_font_color(r,b,g);
+	set_font_color(r,g,b);
 }
 
 void sys_set_back_color(uint8_t r, uint8_t g, uint8_t b) {

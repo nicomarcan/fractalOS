@@ -56,11 +56,11 @@ void naive_print(){
 
 void clear_screen(){
 	uint8_t * tmp = (uint8_t *)fb;
-	uint64_t limit =(WIDTH*HEIGHT*bPP) +1;
+	uint64_t limit =(WIDTH*HEIGHT) +1;
 	for(i=0;i<limit;i++){
-		*(tmp + i )= back_color_r;
-		*(tmp + i + 1)= back_color_g;
-		*(tmp + i + 2)= back_color_b;
+		*(tmp + i * bPP )= back_color_b;
+		*(tmp + i * bPP + 1)= back_color_g;
+		*(tmp + i * bPP + 2)= back_color_r;
 	}
 	i=0;
 	j=0;
@@ -149,18 +149,18 @@ static void draw_char(uint8_t *where, uint8_t character) {
     uint8_t row_data;
     const uint8_t *font_data_for_char = &__font_bitmap__[(character - 0x20)*0x10];
     for (row = 0; row < C_HEIGHT; row++) {
-        row_data = font_data_for_char[row];
-		for(q=0;q<C_WIDTH;q++){
-			if((row_data>>(8-q-1))&0x01){
-				tmp[0]=char_color_b;tmp[1]=char_color_g;tmp[2]=char_color_r;
-			} else {
-				tmp[0]=back_color_b;tmp[1]=back_color_g;tmp[2]=back_color_r;
+      row_data = font_data_for_char[row];
+			for(q=0;q<C_WIDTH;q++){
+				if((row_data>>(8-q-1))&0x01){
+					tmp[0]=char_color_b;tmp[1]=char_color_g;tmp[2]=char_color_r;
+				} else {
+					tmp[0]=back_color_b;tmp[1]=back_color_g;tmp[2]=back_color_r;
+				}
+				tmp+=3;
 			}
-			tmp+=3;
-		}
-        where += WIDTH*bPP;
-        tmp=where;
-    }
+	        where += WIDTH*bPP;
+	        tmp=where;
+	    }
 }
 void set_font_color(uint8_t r, uint8_t g, uint8_t b) {
 	char_color_r = r;
