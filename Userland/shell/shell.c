@@ -35,21 +35,26 @@ int64_t shell_main() {
 }
 int64_t hello_world(uint64_t argc, uint8_t * argv[]) {
   putchars("hello, world",12);
+  return 0;
 }
 
 int64_t exit(uint64_t argc, uint8_t * argv[]) {
   exit_val = 1;
+  return 0;
 }
 
 int64_t curr_time(uint64_t argc, uint8_t * argv[]) {
   static uint8_t str [50];
   print_time(str);
+  return 0;
 }
 
 int64_t echo(uint64_t argc, uint8_t * argv[]) {
   for (int i=0; i < argc; i++) {
     ncPrint(argv[i]);
   }
+  putchar('\n');
+  return 0;
 }
 
 void add_entry(uint8_t * command, int64_t (*func_ptr) (uint64_t, uint8_t**)) {
@@ -67,6 +72,7 @@ void init_shell(){
   add_entry("fractal", (uint64_t *) 0x600000);
   add_entry("time", curr_time);
   add_entry("fanorona", fanorona_main);
+  add_entry("clear", clear_screen);
 }
 
 CommDescr *  init_entry(uint8_t * command, int64_t (*func_ptr) (uint64_t, uint8_t**)){
@@ -109,15 +115,12 @@ uint8_t shell() {
     }
     else {
       retval=comm->func_ptr(argc, argv);
-      if(retval==0){
-		  putchars("Process ended correctly ",24);
-	  } else {
-		  putchars("Process ended with errors ",26);
-	  }
+      if(retval!=0) {
+		      putchars("Process ended with errors ",26);
+	    }
     }
   }
 
-  putchar('\n');
   return exit_val;
   // CommDescr * comm_descr = parse_comm(&shell_buff, comm_table);
   // parse_arg(&shell_buff, comm_descr->argc, argv);

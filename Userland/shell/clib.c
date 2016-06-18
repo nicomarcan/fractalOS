@@ -119,7 +119,7 @@ int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
 void print_time(uint8_t * buf) {
   int64_t i;
   TIME * t = time();
-  printf("%d/%d/%d %d:%d:%d\t", t->day, t->month, t->year, t->hour, t->min, t->sec);
+  printf("%d/%d/%d %d:%d:%d\n", t->day, t->month, t->year, t->hour, t->min, t->sec);
   free(t);
 }
 
@@ -128,4 +128,8 @@ int64_t rand() {
 }
 void srand (uint64_t seed) {
   return;
+}
+
+void clear_screen() {
+  clear();
 }
