@@ -717,7 +717,7 @@ int printBoard(const Game_p g)
 	  printSymbol(b->board[i][j], '\n');
 	  printf("  ");
 	  for (j=0;j<cols-1;j++){
-	       printf(" |%c ",c);
+	       printf(" | %c",c);
 	       c = minorChangeSlash(c);
 	  }
 	  printf(" | \n");
