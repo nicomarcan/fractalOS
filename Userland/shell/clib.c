@@ -69,7 +69,8 @@ int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
   int64_t ret = 0;
   int64_t count = 0;
   int64_t j = 0;
-  uint8_t * bufp = buf;
+  uint8_t bufaux [BUFSIZ];
+  uint8_t * bufp = bufaux;
   uint8_t ent_bool = 0;
   uint64_t pulse = 0;
   uint8_t pchar = ' ';
@@ -96,6 +97,12 @@ int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
             j--;
           }
         }
+        else if (bufp[i] == '\t') {
+          for (int a = 0; a < 4 && j < len - 1; a++, j++) {
+            buf[j] = ' ';
+            putchar(' ');
+          }
+        }
         else {
           if (j < len - 1) {
             buf[j] = bufp[i];
@@ -104,7 +111,7 @@ int64_t fread(uint64_t fd, uint8_t * buf, int64_t len) {
           }
         }
       }
-      bufp = buf + j;
+      bufp = bufaux;
     }
     else {
       sleep(0);
