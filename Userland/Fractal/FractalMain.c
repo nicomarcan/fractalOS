@@ -23,6 +23,7 @@ int main(uint64_t argc, uint8_t** argv) {
 		if(strcmp("big",argv[0])==0){
 		} else if(strcmp("small",argv[0])==0){
 			size=256;
+			i=7;
 		} else {
 			return 1;
 		}
