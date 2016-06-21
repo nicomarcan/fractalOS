@@ -26,6 +26,22 @@ From the x64-Kernel project directory run:
 
 5- Test the functionalities of the kernel. Type 'help' for a list of commands. Among other features, you will be able to change both font and background colour, play Fanorona ©, and display a fractal (Dragon Curve).
 
+Programming instructions:
+
+There is a small set of system calls available, which are mainly focused in interacting with the key peripherals of the system, such as the keyboard and the screen. Among these syscalls you will find the following:
+
+0-  sys_read            Read from a file descriptor (Only keyboard implemented)
+1-  sys_write           Write to a file descriptor  (Only screen available)
+8-  sys_mem             Obtain memory from the system
+9-  sys_sleep           Sleep n ticks (timer tick)
+10  sys_pixel           Write a pixel
+11- sys_clearscreen     Clear the screen
+12- sys_time            Get the time from the RTC
+13- sys_set_color       Set font color
+14- sys_set_back_color  Set background color
+
+All of these syscalls are available through int 80h. The syscall number is the value passed at rax. See syscalls.h for further details. 
+
 x64-Kernel
 Authors: Tomas Raies, M. Alejo Saques
 
