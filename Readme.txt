@@ -7,7 +7,7 @@ nasm qemu gcc make
 
 2- Build the Toolchain
 
-Execute the following commands on the x64BareBones project directory:
+Execute the following commands on the x64-Kernel project directory:
 
   user@linux:$ cd Toolchain
   user@linux:$ make all
