@@ -1,6 +1,5 @@
 #include <Stack.h>
-#include <stdlib.h>
-
+#include <lib.h>
 Stack * newStack(){
   Stack * ans = malloc(sizeof(Stack));
   ans->first=ans->size=0;

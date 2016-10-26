@@ -2,7 +2,8 @@
 #include <Square.h>
 #include <Point.h>
 #include <Stack.h>
-#include <asmlib.h>
+#include <c_syscall.h>
+#include <clib.h>
 #define RED 	0x00000AFF
 #define GREEN 	0x0000FFA0
 
@@ -15,7 +16,7 @@ static uint32_t colour=RED;
 void initializeFractal(Square * s){
 	squares = newStack();
 	push(squares,s);
-	clearscreen(); 
+	clear_screen(); 
 	printSquare(s);
 }
 
@@ -24,7 +25,7 @@ void step(){
 	Square * s;
 	Square * s00,* s01,* s10,* s11;
 	Stack * ans = newStack();
-	clearscreen();
+	clear_screen();
 	while(!isEmpty(squares)){
 		s = (Square *)pop(squares);
 		x=s->p.x;y=s->p.y;

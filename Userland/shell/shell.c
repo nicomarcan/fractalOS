@@ -3,6 +3,7 @@
 #include <fanorona.h>
 #include <command.h>
 #include <scanf.h>
+#include <fractal.h>
 #define NULL 0
 
 void * memset(void * destiny, int32_t c, uint64_t length);
@@ -132,7 +133,7 @@ void init_shell(){
   add_entry("hello-world", "simple debug hello, world",hello_world);
   add_entry("echo", "prints input, escapes with \"\"",echo);
   add_entry("exit", "terminate shell", exit);
-  add_entry("fractal", "prints beautiful fractal", (uint64_t *) 0x600000);
+  add_entry("fractal", "prints beautiful fractal", fractalMain);
   add_entry("time", "prints current time", curr_time);
   add_entry("fanorona", "play Fanorona(tm).", fanorona_main);
   add_entry("clear", "clear screen", clear_screen);

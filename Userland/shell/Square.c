@@ -1,5 +1,6 @@
 #include <Square.h>
 #include <Point.h>
+#include <lib.h>
 
 Square * newSquare(uint32_t x,uint32_t y,uint32_t height,uint32_t width){
   Square * ans = malloc(sizeof(Square));

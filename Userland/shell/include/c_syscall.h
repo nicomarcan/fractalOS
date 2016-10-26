@@ -17,5 +17,5 @@ void sleep(uint64_t ticks);
 void clear();
 void set_color(uint8_t r, uint8_t g, uint8_t b);
 void set_back_color(uint8_t r, uint8_t g, uint8_t b);
-
+void pixel(uint32_t x,uint32_t y,uint32_t ccoord);
 #endif

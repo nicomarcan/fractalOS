@@ -1,4 +1,4 @@
-GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color
+GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color, pixel
 
 section .text
 
@@ -194,3 +194,23 @@ set_back_color:
 
 	leave
 	ret
+	
+pixel:
+push rbp
+mov rbp,rsp
+  push rbx
+  push rbp
+  push r12
+  push r13
+  push r14
+  push r15
+mov rax,10
+int 0x80
+  pop r15
+  pop r14
+  pop r13
+  pop r12
+  pop rbp
+  pop rbx
+leave
+ret

@@ -14,9 +14,6 @@ extern uint8_t endOfKernel;
 
 static const uint64_t PageSize = 0x1000;
 
-static void * const sampleCodeModuleAddress = (void*)0x400000;
-static void * const sampleDataModuleAddress = (void*)0x500000;
-static void * const fractalModuleAddress = (void*)0x600000;
 static void * const shellModuleAddress = (void*)0x700000;
 
 typedef int (*EntryPoint)();
@@ -44,9 +41,6 @@ void * initializeKernelBinary()
 	 * Load modules
 	 */
 	void * moduleAddresses[] = {
-		sampleCodeModuleAddress,
-		sampleDataModuleAddress,
-		fractalModuleAddress,
 		shellModuleAddress
 	};
 	loadModules(&endOfKernelBinary, moduleAddresses);
@@ -70,10 +64,7 @@ int main()
 	_sti();
 
 	initialize_driver();
-//	ncPrintDec(20);
-//	c = getchar();
-//	init_shell();
-//	while(!shell());
+
 	((EntryPoint)shellModuleAddress)();
 
 	for(;;);
