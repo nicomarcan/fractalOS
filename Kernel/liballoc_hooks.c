@@ -1,34 +1,28 @@
 #include <asmlib.h>
-
-static const int PSIZE = 4096;
 #include <stdint.h>
-static const int PNUM  = 4096;
-static const int PTABLE_BASE = 0xB00000;
-static const int PSTART = 0xC00000;
+#define NULL 0
+#define PSIZE  4096
+#define PNUM   4096
+#define PSTART 0xA00000
 
-struct page {
-	void * start;
-	struct page * next ;
+extern void * memset(void * p, int32_t c, uint64_t length);
+
+struct page_table {
+	char marks[PNUM];
 };
 
-struct page * top;
-struct page * used_top = NULL;
-
+struct page_table * table = (struct page_table *)NULL;
 
 void liballoc_pagealloc_init(){
-	top = (struct page *)PTABLE_BASE;
-	int i;
-	struct page * current;
-	struct page * next;
-	for(i = 0 , current = top ; i<PNUM ; i++ , current = next ){
-		current -> start = PSTART + i*PSIZE;
-		next = (struct page *)(PTABLE_BASE + sizeof(page)*(i+1));
-		if(i != PNUM-1){
-			current -> next = next;
-		} else {
-			current -> next = NULL;
-		}
+	int npages = sizeof(struct page_table)/PSIZE ;
+	npages += (sizeof(struct page_table)%PSIZE == 0 ? 0 : 1);
+	struct page_table * t = (struct page_table *)PSTART;
+	memset(t,0,sizeof(struct page_table));
+	for( int i=0 ; i<npages ; i++) {
+		t->marks[i]=1;
 	}
+	table = t;
+	return;
 }
 
 int liballoc_lock(){
@@ -41,50 +35,54 @@ int liballoc_unlock(){
 	return 0;
 }
 
-/*
- * This should be modified to
- * recursively find all possible
- * solutions
- */
+
 void* liballoc_alloc(int npages){
-	struct page * first_taken = top;
-	top = top -> next;
-	first_taken -> next = NULL;
-	struct page * last_taken = first_taken;
-	void * ret;
-	void * nextp;
-	int i;
-	for (i = 0; i<(npages - 1) ; i++){
-		nextp = last_taken -> start + PSIZE;
-		int found = 0;
-		for(struct page * curr = top; top != NULL ; curr = curr -> next){
-			if( curr -> start == nextp) {
-				
-				
-				
-				found = 1;
+	uint64_t start = -1;
+	for( uint64_t i=0 ; i < PNUM ; i++){
+		if ( !table->marks[i] ){
+			int found = 1;
+			for( uint64_t j=i ; j<i+npages ; j++){
+				if( table->marks[j] ){
+					/*
+					 * A marked page has been found.
+					 */
+					i = j+1;
+					found = 0;
+					break;
+				}
+			}
+			if(found){
+				/*
+				 * Contiguous npages have been found,
+				 * therefore they must be marked and
+				 * returned.
+				 */
+				for( uint64_t j=i; j<i+npages ; j++){
+					table->marks[j]=1;
+				}
+				start = i;
 				break;
 			}
-			
-			
-			
-		}
-		if(!found){
-			/*
-			 * A contiguous page has not been
-			 * found for the current settings.
-			 */
 		}
 	}
-	ret = first_taken ->start;
-	return ret;
-	
+	if(start != -1){
+		/*
+		 * the i-th page is the beginning of the
+		 * required contiguous space.
+		 */
+		 return (void *)(PSTART + PSIZE*start);
+	}
+	return NULL;
 }
 
 int liballoc_free(void * p,int npages){
-	
-	
-	
+	uint64_t i = (uint64_t)p;
+	i-=PSTART;
+	i/=PSIZE;
+	for( ; i<npages ; i++){
+		table->marks[i] = 0;
+	}
+	return 0;
 } 
 
 

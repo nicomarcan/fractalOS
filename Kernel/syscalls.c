@@ -4,6 +4,7 @@
 #include <asmlib.h>
 #include <lib.h>
 #include <rtc.h>
+#include <liballoc.h>
 #define SYS_OUT_COLOR			0x29
 #define SYS_ERR_COLOR			0x49
 
@@ -72,8 +73,13 @@ void sys_sleep(uint64_t ticks){
 	}
 }
 
-void * sys_mem(uint32_t size) {
-	return malloc(size);
+void * sys_mem(uint64_t size) {
+	return la_malloc(size);
+}
+
+void sys_free_mem(void * p){
+	la_free(p);
+	return;
 }
 
 void sys_pixel(uint32_t x,uint32_t y,uint32_t ccoord){

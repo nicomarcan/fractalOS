@@ -18,9 +18,11 @@ void * pop(Stack * s){
   if(isEmpty(s)){
     return 0;
   }
-  void * ans = s->first->data;
+  Node * n = s->first;
+  void * ans = n->data;
   s->first=s->first->next;
   s->size--;
+  free(n);
   return ans;
 }
 

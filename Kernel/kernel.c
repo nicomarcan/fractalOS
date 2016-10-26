@@ -4,6 +4,7 @@
 #include <moduleLoader.h>
 #include <idtr_config.h>
 #include <video_driver.h>
+#include <liballoc.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -64,6 +65,7 @@ int main()
 	_sti();
 
 	initialize_driver();
+	liballoc_pagealloc_init();
 
 	((EntryPoint)shellModuleAddress)();
 

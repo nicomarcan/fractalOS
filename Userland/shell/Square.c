@@ -16,3 +16,8 @@ Point * topLeftCorner(Square * s){
   q=s->p.y-(s->height)/2;
   return newPoint(p,q);
 }
+
+void deleteSquare(Square * s){
+	deletePoint(&(s->p));
+	free(s);
+}

@@ -6,5 +6,5 @@
 #define STDERR 2
 int64_t write(uint64_t fd,const uint8_t * buf, uint64_t count );
 int64_t read(uint64_t fd, const uint8_t * buf, uint8_t count);
-void *  memory(uint32_t size);
+void *  memory(uint64_t size);
 #endif

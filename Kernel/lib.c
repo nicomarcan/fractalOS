@@ -56,6 +56,7 @@ void * memcpy(void * destination, const void * source, uint64_t length)
  * Outstanding O(1) implementation of
  * malloc and free functions.
  */
+/*
 void * malloc(uint32_t size){
 	void * ans = base + i;
 	i+=size;
@@ -65,4 +66,5 @@ void * malloc(uint32_t size){
 void free(void * ptr){
 	return;
 }
+*/
 

@@ -57,6 +57,10 @@ void int_33() {
  		case 1:
  			ret = sys_write(rdi,(const uint8_t*)rsi,rdx);
  			break;
+ 		case 7:
+			sys_free_mem((void *)rdi);
+			return;
+			break;
  		case 8:
 			return sys_mem(rdi);
 			break;

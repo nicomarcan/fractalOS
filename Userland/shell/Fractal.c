@@ -58,6 +58,7 @@ void step(){
 		push(ans,(void *)s01);
 		push(ans,(void *)s10);
 		push(ans,(void *)s11);
+		deleteSquare(s);
 	}
 	mode=!mode;
 	squares=ans;

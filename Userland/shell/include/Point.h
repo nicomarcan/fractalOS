@@ -7,5 +7,6 @@ typedef struct Point{
 } Point ;
 
 Point * newPoint(uint32_t x,uint32_t y);
+void deletePoint(Point * p);
 
 #endif

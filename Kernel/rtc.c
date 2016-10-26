@@ -2,6 +2,7 @@
 #include <asmlib.h>
 #include <rtc.h>
 #include <lib.h>
+#include <liballoc.h>
 
 char * timeStr(char * buffer){
 	char * backup=buffer;	
@@ -18,7 +19,7 @@ char * timeStr(char * buffer){
 }
 
 TIME * time(){
-	TIME * ans = malloc(sizeof(TIME));
+	TIME * ans = la_malloc(sizeof(TIME));
 	ans->sec=(uint8_t)rtc(RTC_SECONDS);
 	ans->min=(uint8_t)rtc(RTC_MINUTES);
 	ans->hour=(uint8_t)rtc(RTC_HOURS);
