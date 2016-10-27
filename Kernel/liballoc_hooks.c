@@ -39,7 +39,7 @@ int liballoc_unlock(){
 
 void* liballoc_alloc(int npages){
 	uint64_t start = -1;
-	for( uint64_t i=0 ; i < PNUM-npages ; i++){
+	for( uint64_t i=0 ; i < PNUM-npages+1 ; i++){
 		if ( table->marks[i] == 0 ){
 			int found = 1;
 			for( uint64_t j=i ; j<i+npages ; j++){
@@ -87,6 +87,4 @@ int liballoc_free(void * p,int npages){
 		table->marks[i] = 0;
 	}
 	return 0;
-} 
-
-
+}
