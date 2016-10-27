@@ -248,8 +248,7 @@ static struct boundary_tag* allocate_new_tag( unsigned int size )
 		if ( pages < l_pageCount ) pages = l_pageCount;
 
 		tag = (struct boundary_tag*)liballoc_alloc( pages );
-
-		if ( tag == NULL ) return NULL;	// uh oh, we ran out of memory.
+		if ( tag == NULL ) return NULL;	
 		
 				tag->magic 		= LIBALLOC_MAGIC;
 				tag->size 		= size;
@@ -285,9 +284,8 @@ void * la_malloc(size_t size)
 
 		if ( l_initialized == 0 )
 		{
-			#ifdef DEBUG
-			printf("%s\n","liballoc initializing.");
-			#endif
+			
+			
 			for ( index = 0; index < MAXEXP; index++ )
 			{
 				l_freePages[index] = NULL;
@@ -380,8 +378,6 @@ void * la_malloc(size_t size)
 	printf("malloc: %x,  %i, %i\n", ptr, (int)l_inuse / 1024, (int)l_allocated / 1024 );
 	dump_array();
 	#endif
-
-
 	liballoc_unlock();
 	return ptr;
 }
@@ -459,7 +455,6 @@ void la_free(void *ptr)
 				printf("Resource freeing %x of %i pages\n", tag, pages );
 				dump_array();
 				#endif
-
 				liballoc_unlock();
 				return;
 			}
@@ -478,7 +473,6 @@ void la_free(void *ptr)
 	printf("Returning tag with %i bytes (requested %i bytes), which has exponent: %i\n", tag->real_size, tag->size, index ); 
 	dump_array();
 	#endif
-
 	liballoc_unlock();
 }
 

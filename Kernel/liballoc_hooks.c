@@ -2,8 +2,9 @@
 #include <stdint.h>
 #define NULL 0
 #define PSIZE  4096
-#define PNUM   4096
+#define PNUM   65536
 #define PSTART 0xA00000
+
 
 extern void * memset(void * p, int32_t c, uint64_t length);
 
@@ -38,11 +39,11 @@ int liballoc_unlock(){
 
 void* liballoc_alloc(int npages){
 	uint64_t start = -1;
-	for( uint64_t i=0 ; i < PNUM ; i++){
-		if ( !table->marks[i] ){
+	for( uint64_t i=0 ; i < PNUM-npages ; i++){
+		if ( table->marks[i] == 0 ){
 			int found = 1;
 			for( uint64_t j=i ; j<i+npages ; j++){
-				if( table->marks[j] ){
+				if( table->marks[j] == 1 ){
 					/*
 					 * A marked page has been found.
 					 */
@@ -76,10 +77,13 @@ void* liballoc_alloc(int npages){
 }
 
 int liballoc_free(void * p,int npages){
-	uint64_t i = (uint64_t)p;
-	i-=PSTART;
-	i/=PSIZE;
-	for( ; i<npages ; i++){
+	if ( (uint64_t)p < (uint64_t)PSTART){
+		return -1;
+	}
+	uint64_t start = (uint64_t)p;
+	start-=PSTART;
+	start/=PSIZE;
+	for( uint64_t i=start ; i<start+npages ; i++){
 		table->marks[i] = 0;
 	}
 	return 0;
