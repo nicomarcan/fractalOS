@@ -3,11 +3,12 @@
 #include <Point.h>
 #include <Square.h>
 #include <c_string.h>
+#include <Stack.h>
 #define CENTRE_X 384
 #define CENTRE_Y 512
 
 void initializeFractal(Square * s);
-void step();
+Stack * step();
 
 int fractalMain(uint64_t argc, uint8_t** argv) {
 	uint32_t size=512;
@@ -26,13 +27,20 @@ int fractalMain(uint64_t argc, uint8_t** argv) {
 	
 	initializeFractal(newSquare(CENTRE_X,CENTRE_Y,size,size));
 	
+	Stack * s;
 	while(i){
 		sleep(18*2);
-		step();
+		s = step();
 		i--;
 	}
 	sleep(18*2);
 	clear_screen();
+	Square * sq;
+	while(!isEmpty(s)){
+		sq = pop(s);
+		deleteSquare(sq);
+	}
+	free(s);
 	
 	return 0;
 }

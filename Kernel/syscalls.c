@@ -73,6 +73,10 @@ void sys_sleep(uint64_t ticks){
 	}
 }
 
+void * sys_realloc(void * p,uint64_t nsize){
+	return la_realloc(p,nsize);
+}
+
 void * sys_mem(uint64_t size) {
 	return la_malloc(size);
 }

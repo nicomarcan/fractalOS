@@ -2,7 +2,7 @@
 #include <stdint.h>
 #define NULL 0
 #define PSIZE  4096
-#define PNUM   65536
+#define PNUM   4096*2
 #define PSTART 0xA00000
 
 

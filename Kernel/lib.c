@@ -1,8 +1,5 @@
 #include <stdint.h>
 
-static const void * base = 0xA00000;
-static uint32_t i=0;
-
 void * memset(void * destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
@@ -51,20 +48,4 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 
 	return destination;
 }
-
-/*
- * Outstanding O(1) implementation of
- * malloc and free functions.
- */
-/*
-void * malloc(uint32_t size){
-	void * ans = base + i;
-	i+=size;
-	return ans;
-}
-
-void free(void * ptr){
-	return;
-}
-*/
 

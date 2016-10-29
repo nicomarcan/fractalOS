@@ -20,7 +20,7 @@ void initializeFractal(Square * s){
 	printSquare(s);
 }
 
-void step(){
+Stack * step(){
 	uint32_t x,y;
 	Square * s;
 	Square * s00,* s01,* s10,* s11;
@@ -62,6 +62,7 @@ void step(){
 	}
 	mode=!mode;
 	squares=ans;
+	return ans;
 }
 
 static void printSquare(Square * s){

@@ -5,6 +5,7 @@
 #include <idtr_config.h>
 #include <video_driver.h>
 #include <liballoc.h>
+#include <Scheduler.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -62,12 +63,15 @@ int main()
 	picMasterMask(0xFC);
 	picSlaveMask(0xFF);
 
-	_sti();
-
+	
 	initialize_driver();
 	liballoc_pagealloc_init();
-
-	((EntryPoint)shellModuleAddress)();
+	
+	insertProcess(shellModuleAddress);
+	
+	//((EntryPoint)shellModuleAddress)();
+	
+	_sti();
 
 	for(;;);
 	return 0;

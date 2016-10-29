@@ -4,7 +4,7 @@ GLOBAL _cli,_sti,_eax,_ebx,_ecx,_edx
 GLOBAL _lidt,picMasterMask,picSlaveMask,_irq00handler,_irq01handler
 GLOBAL _int80handler,kb_read,rtc,_out,_in
 GLOBAL _syscall_handler,_hlt
-EXTERN irqDispatcher, int_80, syscall_dispatcher
+EXTERN irqDispatcher, int_80, syscall_dispatcher, switchStackPointer
 
 section .text
 
@@ -142,22 +142,19 @@ picSlaveMask:
 	mov rbp, rsp
 
 	push rbx
-  push rbp
-  push r12
-  push r13
-  push r14
-  push r15
-
+	push rbp
+	push r12
+	push r13
+	push r14
+	push r15
 	mov rdi, %1
 	call irqDispatcher
-
-
 	pop r15
-  pop r14
-  pop r13
-  pop r12
-  pop rbp
-  pop rbx
+	pop r14
+	pop r13
+	pop r12
+	pop rbp
+	pop rbx
 
 	;signal pic
 	mov al, 20h
@@ -168,8 +165,66 @@ picSlaveMask:
 	iretq
 %endMacro
 
+%macro	pushState 0
+	push rax
+	push rbx
+	push rcx
+	push rdx
+	push rbp
+	push rdi
+	push rsi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+	push fs
+	push gs
+%endmacro
+
+%macro	popState 0
+	pop gs
+	pop fs
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rsi
+	pop rdi
+	pop rbp
+	pop rdx
+	pop rcx
+	pop rbx
+	pop rax
+%endmacro
+
 _irq00handler:
-	irqHandlerMaster 0
+	cli
+	pushState
+	
+	
+	mov rdi, 0
+	call irqDispatcher
+	
+	mov rdi,rsp
+	
+	call switchStackPointer
+	
+	mov rsp,rax
+	
+	mov al, 20h
+	out 20h, al
+	
+	popState
+	sti
+	iretq
 
 _irq01handler:
 	irqHandlerMaster 1
