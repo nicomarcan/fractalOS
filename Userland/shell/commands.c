@@ -6,7 +6,10 @@
 /* simple debug hello, world */
 int64_t hello_world(uint64_t argc, uint8_t * argv[]) {
   printf("hello, world\n");
+  /*
   return 0;
+  */
+  for(;;);
 }
 
 /* prints current time */

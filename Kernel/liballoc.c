@@ -258,7 +258,6 @@ void *PREFIX(malloc)(size_t req_size)
 				// to save space.
 
 	liballoc_lock();
-
 	if ( size == 0 )
 	{
 		l_warningCount += 1;
@@ -570,7 +569,6 @@ void *PREFIX(malloc)(size_t req_size)
 
 
 	liballoc_unlock();		// release the lock
-
 	#ifdef DEBUG
 	printf( "All cases exhausted. No memory available.\n");
 	FLUSH();

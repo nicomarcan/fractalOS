@@ -5,6 +5,7 @@
 
 char *cpuVendor(char *result);
 
+void _lrax(uint64_t rax);
 uint64_t _rax();
 uint64_t _rbx();
 uint64_t _rcx();
@@ -21,13 +22,14 @@ uint64_t _r12();
 uint64_t _r13();
 uint64_t _r14();
 uint64_t _r15();
+uint64_t _rip();
 
 uint32_t _eax();
 uint32_t _ebx();
 uint32_t _ecx();
 uint32_t _edx();
 
-
+uint16_t _readfl();
 void _hlt();
 void _lidt(void * idtr);
 void picMasterMask(uint8_t mask);

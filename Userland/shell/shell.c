@@ -188,7 +188,17 @@ uint8_t shell() {
       arg_err();
     }
     else {
-      retval=comm->func_ptr(argc, argv);
+	  
+	  if(c_strcmp("hello-world",comm->command)==0){
+		  if(fork()==0){
+			  exec(comm->func_ptr);
+		  } else {
+			  printf("father");
+		  }
+	  } else {
+		 retval=comm->func_ptr(argc, argv);
+	  }
+      
       if(retval!=0) {
         printf("Process ended with errors\n");
 	    }

@@ -7,6 +7,7 @@
 #include <syscalls.h>
 #include <utils.h>
 #include <video_driver.h>
+#include <Scheduler.h>
 
 void int_32();
 void int_33();
@@ -57,6 +58,12 @@ void int_33() {
  		case 1:
  			ret = sys_write(rdi,(const uint8_t*)rsi,rdx);
  			break;
+ 		case 4:
+			fork();
+			break;
+ 		case 5:
+			exec((void *)rdi);
+			break;
  		case 6:
 			sys_realloc((void *)rdi,rsi);
 			break;

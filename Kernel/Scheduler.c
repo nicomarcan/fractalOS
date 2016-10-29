@@ -1,5 +1,6 @@
 #include <Scheduler.h>
 #include <Process.h>
+#include <liballoc.h>
 #define NULL 0
 
 struct ProcessNode {
@@ -12,8 +13,8 @@ void schedule();
 
 ProcessNode * current = NULL;
 
-void insertProcess(void * entry_point){
-	Process * p = newProcess(entry_point);
+void insertProcess(void * entry_point,uint64_t rax){
+	Process * p = newProcess(entry_point,rax);
 	ProcessNode * pnode = la_malloc(sizeof(ProcessNode));
 	pnode->p = p;
 	if(current == NULL){
@@ -36,4 +37,15 @@ void * switchStackPointer(void * rsp){
 	current->p->stack_pointer = rsp;
 	schedule();
 	return current->p->stack_pointer;
+}
+
+void fork(){
+	Process * parent = current->p;
+	uint64_t rip = _rip();
+	_lrax(1);
+	insertProcess(rip,0);
+}
+
+void exec(void * rip){
+	((void (*)(void))rip)();
 }

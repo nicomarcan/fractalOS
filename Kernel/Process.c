@@ -2,6 +2,8 @@
 #include <liballoc.h>
 #define INIT_STACK_PAGES 2
 
+static uint64_t pids = 0;
+
 struct StackFrame {
 	//Registers restore context
 	uint64_t gs;
@@ -34,13 +36,14 @@ struct StackFrame {
 typedef struct StackFrame StackFrame;
 void * toStackAddress(void * page);
 
-Process * newProcess(void * entry_point){
+Process * newProcess(void * entry_point,uint64_t rax){
 	void * stack_base = liballoc_alloc(INIT_STACK_PAGES);
 	Process * ans = (Process *)la_malloc(sizeof(Process));
 	ans->entry_point = entry_point;
 	ans->stack_base = stack_base;
 	ans->stack_npages = INIT_STACK_PAGES;
-	ans->stack_pointer = fillStackFrame(entry_point,toStackAddress(stack_base));
+	ans->stack_pointer = fillStackFrame(entry_point,toStackAddress(stack_base),rax);
+	ans->pid = pids++;
 	return ans;
 }
 
@@ -57,8 +60,8 @@ void * toStackAddress(void * page){
 	return (uint8_t *)page + PSIZE;
 }
 
-void * fillStackFrame(void * entry_point, void * stack_base) {
-	StackFrame * frame = (StackFrame*)stack_base - 1;
+void * fillStackFrame(void * entry_point, void * stack_base,uint64_t rax) {
+	StackFrame * frame = (StackFrame*)(stack_base - sizeof(StackFrame) -1);
 	frame->gs =		0x001;
 	frame->fs =		0x002;
 	frame->r15 =	0x003;
@@ -75,7 +78,7 @@ void * fillStackFrame(void * entry_point, void * stack_base) {
 	frame->rdx =	0x00E;
 	frame->rcx =	0x00F;
 	frame->rbx =	0x010;
-	frame->rax =	0x011;
+	frame->rax =	rax;
 	
 	frame->rip =	(uint64_t)entry_point;
 	frame->cs =		0x008;

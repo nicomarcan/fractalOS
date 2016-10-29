@@ -26,13 +26,23 @@ void liballoc_pagealloc_init(){
 	return;
 }
 
+int cleari = 1;
 int liballoc_lock(){
-	_cli();
+	uint16_t fl = _readfl();
+	if(!(fl&0x200)){
+		cleari = 0;
+	} else {
+		_cli();
+	}
 	return 0;
 }
 
 int liballoc_unlock(){
-	_sti();
+	if(!cleari){
+		cleari = 1;
+	} else {
+		_sti();
+	}
 	return 0;
 }
 

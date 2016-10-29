@@ -14,7 +14,7 @@ extern uint8_t bss;
 extern uint8_t endOfKernelBinary;
 extern uint8_t endOfKernel;
 
-static const uint64_t PageSize = 0x1000;
+static const uint64_t PageSize = 4096;
 
 static void * const shellModuleAddress = (void*)0x700000;
 
@@ -59,19 +59,16 @@ int main()
 	setup_IDT_entry(0x80,0x8,(uint64_t)&_syscall_handler,0x8E);
 
 	_cli();
-
 	picMasterMask(0xFC);
 	picSlaveMask(0xFF);
-
 	
 	initialize_driver();
 	liballoc_pagealloc_init();
 	
-	insertProcess(shellModuleAddress);
-	
-	//((EntryPoint)shellModuleAddress)();
-	
+	insertProcess(_hlt,0);
+	insertProcess(shellModuleAddress,0);
 	_sti();
+	
 
 	for(;;);
 	return 0;

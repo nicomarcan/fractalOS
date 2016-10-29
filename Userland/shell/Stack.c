@@ -1,5 +1,6 @@
 #include <Stack.h>
 #include <lib.h>
+#define NULL 0
 Stack * newStack(){
   Stack * ans = malloc(sizeof(Stack));
   ans->first=ans->size=0;
@@ -32,4 +33,16 @@ uint8_t isEmpty(Stack * s){
 
 uint32_t size(Stack * s){
   return s->size;
+}
+
+void apply(Stack * s,void p(void*)){
+	apply_r(s->first,p);
+	return;
+}
+
+void apply_r(Node *n,void p(void*)){
+	if(n == NULL) return;
+	p(n->data);
+	apply_r(n->next,p);
+	return;
 }

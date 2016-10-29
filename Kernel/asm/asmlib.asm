@@ -3,15 +3,18 @@ GLOBAL _r8,_r9,_r10,_r11,_r12,_r13,_r14,_r15,
 GLOBAL _cli,_sti,_eax,_ebx,_ecx,_edx
 GLOBAL _lidt,picMasterMask,picSlaveMask,_irq00handler,_irq01handler
 GLOBAL _int80handler,kb_read,rtc,_out,_in
-GLOBAL _syscall_handler,_hlt
+GLOBAL _syscall_handler,_hlt,_readfl,_rip,_lrax
 EXTERN irqDispatcher, int_80, syscall_dispatcher, switchStackPointer
 
 section .text
 
-_hlt:
+
+_readfl:
 	push rbp
-	mov rbp,rsp
-	hlt
+	mov rbp, rsp
+	mov rax,0
+	pushf
+	pop ax
 	leave
 	ret
 
@@ -55,6 +58,14 @@ _ecx:
 _edx:
 	mov rax,0
 	mov eax,edx
+	ret
+
+_rip:
+	mov rax,$
+	ret
+	
+_lrax:
+	mov rax,rdi
 	ret
 
 _rax:
@@ -138,6 +149,7 @@ picSlaveMask:
 	retn
 
 %macro irqHandlerMaster 1
+	cli
 	push rbp
 	mov rbp, rsp
 
@@ -162,6 +174,7 @@ picSlaveMask:
 
 	mov rax, 0
 	leave
+	sti
 	iretq
 %endMacro
 
@@ -206,7 +219,6 @@ picSlaveMask:
 %endmacro
 
 _irq00handler:
-	cli
 	pushState
 	
 	
@@ -223,13 +235,13 @@ _irq00handler:
 	out 20h, al
 	
 	popState
-	sti
 	iretq
 
 _irq01handler:
 	irqHandlerMaster 1
 
 _syscall_handler:
+	cli
 	push rbp
 	mov rbp, rsp
 	push rcx
@@ -252,6 +264,7 @@ _syscall_handler:
 
 	mov rsp, rbp;
 	pop rbp
+	sti
 	iretq
 
 
@@ -275,6 +288,9 @@ kb_read:
 .ret:
 	ret
 
+_hlt:
+	hlt
+	ret
 
 rtc:
 	call bin_fmt

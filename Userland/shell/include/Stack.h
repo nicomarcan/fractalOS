@@ -22,5 +22,6 @@ void push(Stack * s,void * data);
 void * pop(Stack * s);
 uint8_t isEmpty(Stack *s);
 uint32_t size(Stack *s);
+void apply(Stack * s,void p(void*));
 
 #endif
