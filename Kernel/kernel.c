@@ -14,7 +14,7 @@ extern uint8_t bss;
 extern uint8_t endOfKernelBinary;
 extern uint8_t endOfKernel;
 
-static const uint64_t PageSize = 4096;
+static const uint64_t PageSize = 0x1000;
 
 static void * const shellModuleAddress = (void*)0x700000;
 
@@ -61,13 +61,10 @@ int main()
 	_cli();
 	picMasterMask(0xFC);
 	picSlaveMask(0xFF);
-	
 	initialize_driver();
 	liballoc_pagealloc_init();
-	
-	insertProcess(_hlt,0);
 	insertProcess(shellModuleAddress,0);
-	_sti();
+	begin();
 	
 
 	for(;;);

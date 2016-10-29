@@ -11,15 +11,15 @@ void initializeFractal(Square * s);
 Stack * step();
 
 int fractalMain(uint64_t argc, uint8_t** argv) {
-	uint32_t size=512;
-	uint8_t i=8;
+	uint32_t size=256;
+	uint8_t i=7;
 	
 	if(argc){
 		if(argc!=1) return 1;
 		if(c_strcmp("big",argv[0])==0){
+			size=512;
+			i=8;
 		} else if(c_strcmp("small",argv[0])==0){
-			size=256;
-			i=7;
 		} else {
 			return 1;
 		}

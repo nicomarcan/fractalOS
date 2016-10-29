@@ -189,12 +189,9 @@ uint8_t shell() {
     }
     else {
 	  
-	  if(c_strcmp("hello-world",comm->command)==0){
-		  if(fork()==0){
-			  exec(comm->func_ptr);
-		  } else {
-			  printf("father");
-		  }
+	  if(c_strcmp("hello-world",comm->command)==0 ||
+		 c_strcmp("time",comm->command)==0){
+		 fkexec(comm->func_ptr);
 	  } else {
 		 retval=comm->func_ptr(argc, argv);
 	  }

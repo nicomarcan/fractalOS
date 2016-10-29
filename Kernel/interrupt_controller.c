@@ -59,10 +59,10 @@ void int_33() {
  			ret = sys_write(rdi,(const uint8_t*)rsi,rdx);
  			break;
  		case 4:
-			fork();
+			exit();
 			break;
  		case 5:
-			exec((void *)rdi);
+			fkexec((void *)rdi);
 			break;
  		case 6:
 			sys_realloc((void *)rdi,rsi);

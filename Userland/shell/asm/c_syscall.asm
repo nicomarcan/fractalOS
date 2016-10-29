@@ -1,8 +1,36 @@
-GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color, pixel,free_mem,fork,exec
+GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color, pixel,free_mem,fkexec,_hlt,mem_realloc,exit
 
 section .text
 
-fork:
+_hlt:
+	hlt
+	ret
+	
+ mem_realloc:
+  push rbp
+  mov rbp, rsp
+
+  push rbx
+  push rbp
+  push r12
+  push r13
+  push r14
+  push r15
+
+  mov rax, 6
+  int 80h
+
+  pop r15
+  pop r14
+  pop r13
+  pop r12
+  pop rbp
+  pop rbx
+
+  leave
+  ret
+  
+ exit:
   push rbp
   mov rbp, rsp
 
@@ -24,9 +52,9 @@ fork:
   pop rbx
 
   leave
-  ret	
-
-exec:
+  ret		
+ 
+ fkexec:
   push rbp
   mov rbp, rsp
 

@@ -31,6 +31,8 @@ struct StackFrame {
 	uint64_t rsp;
 	uint64_t ss;
 	uint64_t base;
+	
+	uint64_t ret;
 };
 
 typedef struct StackFrame StackFrame;

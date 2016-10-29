@@ -6,17 +6,14 @@
 /* simple debug hello, world */
 int64_t hello_world(uint64_t argc, uint8_t * argv[]) {
   printf("hello, world\n");
-  /*
-  return 0;
-  */
-  for(;;);
+  exit();
 }
 
 /* prints current time */
 int64_t curr_time(uint64_t argc, uint8_t * argv[]) {
   static uint8_t str [50];
   print_time(str);
-  return 0;
+  exit();
 }
 
 /* prints input, escapes with "" */

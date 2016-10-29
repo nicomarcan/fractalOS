@@ -12,16 +12,21 @@ void insertProcess(void * entry_point,uint64_t rax);
 void * switchStackPointer(void * rsp);
 
 /*
- * Forks the current process.
- * rax is set to 1 in the invoking process,
- * and to 0 in the newly created process.
+ * Called only once after initializing
+ * the kernel. Clears interrupts and calls
+ * first process.
  */
-void fork();
+void begin();
 
 /*
- * Changes the instruction pointer of
- * the current process to the passed value.
+ * Creates a new process using
+ * the parameter as the entry point
  */
-void exec(void * rip);
+void fkexec(void * entry_point);
 
+/*
+ * Removes the current process from the
+ * process table
+ */
+void exit();
 #endif

@@ -1,14 +1,17 @@
 #include <Scheduler.h>
 #include <Process.h>
 #include <liballoc.h>
+#include <asmlib.h>
 #define NULL 0
 
 struct ProcessNode {
 	Process * p;
 	struct ProcessNode * next;
+	struct ProcessNode * prev;
 };
 
 typedef struct ProcessNode ProcessNode;
+extern changeContextFromRsp(uint64_t rsp);
 void schedule();
 
 ProcessNode * current = NULL;
@@ -20,10 +23,13 @@ void insertProcess(void * entry_point,uint64_t rax){
 	if(current == NULL){
 		current = pnode;
 		pnode->next = pnode;
+		pnode->prev = pnode;
 	} else {
 		ProcessNode * tmp = current->next;
 		current->next = pnode;
 		pnode->next = tmp;
+		pnode->prev = current;
+		tmp->prev  = pnode;
 	}
 	return;
 }
@@ -39,13 +45,23 @@ void * switchStackPointer(void * rsp){
 	return current->p->stack_pointer;
 }
 
-void fork(){
-	Process * parent = current->p;
-	uint64_t rip = _rip();
-	_lrax(1);
-	insertProcess(rip,0);
+void fkexec(void * entry_point){
+	insertProcess(entry_point,0);
 }
 
-void exec(void * rip){
-	((void (*)(void))rip)();
+void begin(){
+	_sti();
+	((void (*)(void))(current->p->entry_point))();
+}
+
+void exit(){
+	ProcessNode * cn = current;
+	ProcessNode * prev = cn->prev;
+	ProcessNode * next = cn->next;
+	prev->next = next;
+	next->prev = prev;
+	deleteProcess(cn->p);
+	la_free(cn);
+	schedule();
+	changeContextFromRsp(current->p->stack_pointer);
 }

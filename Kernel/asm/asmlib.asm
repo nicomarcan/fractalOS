@@ -3,7 +3,7 @@ GLOBAL _r8,_r9,_r10,_r11,_r12,_r13,_r14,_r15,
 GLOBAL _cli,_sti,_eax,_ebx,_ecx,_edx
 GLOBAL _lidt,picMasterMask,picSlaveMask,_irq00handler,_irq01handler
 GLOBAL _int80handler,kb_read,rtc,_out,_in
-GLOBAL _syscall_handler,_hlt,_readfl,_rip,_lrax
+GLOBAL _syscall_handler,_hlt,_readfl,_rip,_lrax,changeContextFromRsp
 EXTERN irqDispatcher, int_80, syscall_dispatcher, switchStackPointer
 
 section .text
@@ -219,11 +219,13 @@ picSlaveMask:
 %endmacro
 
 _irq00handler:
+	cli
 	pushState
 	
-	
+	push rsp
 	mov rdi, 0
 	call irqDispatcher
+	pop rsp
 	
 	mov rdi,rsp
 	
@@ -235,7 +237,17 @@ _irq00handler:
 	out 20h, al
 	
 	popState
+	sti
 	iretq
+
+;see exit syscall
+changeContextFromRsp:
+	call switchStackPointer
+	mov rsp,rax
+	popState
+	sti
+	iretq
+
 
 _irq01handler:
 	irqHandlerMaster 1

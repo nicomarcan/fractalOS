@@ -61,9 +61,8 @@ void * malloc(uint32_t size){
 void free(void * ptr){
 	free_mem(ptr);
 }
-/*
- * will add
- */
+
+
 void * realloc(void * ptr, uint64_t size) {
-	return 0;
+	return mem_realloc(ptr,size);
 }
