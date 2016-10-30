@@ -10,16 +10,17 @@ section .text
 
 
 enter_region:
-	xor rcx,rcx
-	inc rcx
-.retry:
+	xor rdx,rdx
 	xor rax,rax
-	lock; cmpxchgl [rdi],rcx
+	xor rcx,rcx
+	xor rbx,rbx
+	inc rbx
+	lock cmpxchg8b [rdi]
 	jnz .yid
 	ret
 .yid:
 	call yield
-	jmp .retry
+	jmp enter_region
 	ret
 	
 leave_region:
