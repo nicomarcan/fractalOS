@@ -38,13 +38,13 @@ struct StackFrame {
 typedef struct StackFrame StackFrame;
 void * toStackAddress(void * page);
 
-Process * newProcess(void * entry_point,uint64_t rax){
+Process * newProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi){
 	void * stack_base = liballoc_alloc(INIT_STACK_PAGES);
 	Process * ans = (Process *)la_malloc(sizeof(Process));
 	ans->entry_point = entry_point;
 	ans->stack_base = stack_base;
 	ans->stack_npages = INIT_STACK_PAGES;
-	ans->stack_pointer = fillStackFrame(entry_point,toStackAddress(stack_base),rax);
+	ans->stack_pointer = fillStackFrame(entry_point,toStackAddress(stack_base),rax,rdi,rsi);
 	ans->pid = pids++;
 	return ans;
 }
@@ -62,7 +62,7 @@ void * toStackAddress(void * page){
 	return (uint8_t *)page + PSIZE;
 }
 
-void * fillStackFrame(void * entry_point, void * stack_base,uint64_t rax) {
+void * fillStackFrame(void * entry_point, void * stack_base,uint64_t rax,uint64_t rdi, uint64_t rsi) {
 	StackFrame * frame = (StackFrame*)(stack_base - sizeof(StackFrame) -1);
 	frame->gs =		0x001;
 	frame->fs =		0x002;
@@ -74,8 +74,8 @@ void * fillStackFrame(void * entry_point, void * stack_base,uint64_t rax) {
 	frame->r10 =	0x008;
 	frame->r9 =		0x009;
 	frame->r8 =		0x00A;
-	frame->rsi =	0x00B;
-	frame->rdi =	0x00C;
+	frame->rsi =	rsi;
+	frame->rdi =	rdi;
 	frame->rbp =	0x00D;
 	frame->rdx =	0x00E;
 	frame->rcx =	0x00F;

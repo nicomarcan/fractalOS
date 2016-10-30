@@ -99,6 +99,15 @@ itoa(int64_t value, uint64_t radix, uint64_t uppercase, uint64_t unsig,
 	return len;
 }
 
+uint64_t c_atoi(uint8_t *p) {
+    uint64_t k = 0;
+    while (*p) {
+        k = (k<<3)+(k<<1)+(*p)-'0';
+        p++;
+     }
+     return k;
+}
+
 int
 vfprintf(int8_t *fmt, va_list va)
 {

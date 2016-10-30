@@ -4,6 +4,7 @@
 #include <command.h>
 #include <scanf.h>
 #include <fractal.h>
+#include <c_syscall.h>
 #define NULL 0
 
 void * memset(void * destiny, int32_t c, uint64_t length);
@@ -48,11 +49,6 @@ int64_t shell_main() {
   while(!shell());
 }
 
-/* exit command */
-static int64_t exit(uint64_t argc, uint8_t * argv[]) {
-  exit_val = 1;
-  return 0;
-}
 
 static int64_t scan(uint64_t argc, uint8_t * argv[]) {
   int64_t i;
@@ -132,7 +128,6 @@ void init_shell(){
   /* init command table. */
   add_entry("hello-world", "simple debug hello, world",hello_world);
   add_entry("echo", "prints input, escapes with \"\"",echo);
-  add_entry("exit", "terminate shell", exit);
   add_entry("fractal", "prints beautiful fractal", fractalMain);
   add_entry("time", "prints current time", curr_time);
   add_entry("fanorona", "play Fanorona(tm).", fanorona_main);
@@ -141,6 +136,9 @@ void init_shell(){
   add_entry("scan", "scanf debug", scan);
   add_entry("set-color", "set text color", set_shell_color);
   add_entry("set-back", "set background color", set_shell__background_color);
+  add_entry("ps", "list current processes", _ps);
+  add_entry("kill", "delete a process", _kill);
+  add_entry("infiloop", "infinite loop process", infiloop);
 }
 
 /* command entry initialization */
@@ -188,10 +186,16 @@ uint8_t shell() {
       arg_err();
     }
     else {
-	  
+	  Args * args = malloc(sizeof(Args));
+	  args->argc=argc;
+	  args->argv=argv;
 	  if(c_strcmp("hello-world",comm->command)==0 ||
-		 c_strcmp("time",comm->command)==0){
-		 fkexec(comm->func_ptr);
+		 c_strcmp("time",comm->command)==0 ||
+		 c_strcmp("ps",comm->command)==0 ||
+		 c_strcmp("kill",comm->command)==0 ||
+		 c_strcmp("infiloop",comm->command)==0){
+		 fkexec(comm->func_ptr,comm->command,args);
+		 free(args);
 	  } else {
 		 retval=comm->func_ptr(argc, argv);
 	  }

@@ -12,4 +12,5 @@ uint8_t c_tolower(uint8_t c);
 uint8_t c_toupper(uint8_t c);
 uint8_t * c_strcpy ( uint8_t * destination, const uint8_t * source );
 uint64_t c_strlen(const uint8_t * str);
+uint64_t c_atoi(uint8_t *p);
 #endif

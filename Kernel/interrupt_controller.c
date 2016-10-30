@@ -58,11 +58,17 @@ void int_33() {
  		case 1:
  			ret = sys_write(rdi,(const uint8_t*)rsi,rdx);
  			break;
+ 		case 2:
+			ret = ps();
+			break;
+ 		case 3:
+			yield();
+			break;
  		case 4:
 			exit();
 			break;
  		case 5:
-			fkexec((void *)rdi);
+			fkexec((void *)rdi,(uint8_t *)rsi,(void*)rdx);
 			break;
  		case 6:
 			sys_realloc((void *)rdi,rsi);
@@ -95,6 +101,9 @@ void int_33() {
 			break;
 		case 14:
 			sys_set_back_color(rdi, rsi, rdx);
+			break;
+		case 15:
+			deleteProcessScheduler(rdi);
 			break;
  		default:
  			break;
