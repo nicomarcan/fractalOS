@@ -1,10 +1,59 @@
-GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color, pixel,free_mem,fkexec,_hlt,mem_realloc,exit,yield,ps,kill
+GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color, pixel,free_mem,fkexec,_hlt,mem_realloc,exit,yield,ps,kill,mutex_lock,mutex_unlock
 
 section .text
 
 _hlt:
 	hlt
 	ret
+	
+	
+ mutex_lock:
+  push rbp
+  mov rbp, rsp
+
+  push rbx
+  push rbp
+  push r12
+  push r13
+  push r14
+  push r15
+
+  mov rax, 16
+  int 80h
+
+  pop r15
+  pop r14
+  pop r13
+  pop r12
+  pop rbp
+  pop rbx
+
+  leave
+  ret
+  
+ mutex_unlock:
+  push rbp
+  mov rbp, rsp
+
+  push rbx
+  push rbp
+  push r12
+  push r13
+  push r14
+  push r15
+
+  mov rax, 17
+  int 80h
+
+  pop r15
+  pop r14
+  pop r13
+  pop r12
+  pop rbp
+  pop rbx
+
+  leave
+  ret
 	
  kill:
   push rbp

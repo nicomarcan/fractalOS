@@ -105,6 +105,12 @@ void int_33() {
 		case 15:
 			deleteProcessScheduler(rdi);
 			break;
+		case 16:
+			mutex_lock((uint8_t *)rdi);
+			break;
+		case 17:
+			mutex_unlock((uint8_t *)rdi);
+			break;
  		default:
  			break;
  	}
