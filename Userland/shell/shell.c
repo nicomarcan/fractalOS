@@ -56,7 +56,7 @@ static int64_t scan(uint64_t argc, uint8_t * argv[]) {
   uint8_t buf[10];
   scanf("%s %d %f ", buf, &i, &d);
   printf("%s|%d|%d\n", buf, i, (int64_t)d);
-  return 0;
+  exit();
 }
 
 /* display available commands */
@@ -65,7 +65,7 @@ static int64_t help(uint64_t argc, uint8_t * argv[]) {
   for (int i=0; i<comm_table_size;i++) {
     printf("\t%s - %s\n", comm_table[i]->command, comm_table[i]->descr);
   }
-  return 0;
+  exit();
 }
 
 static int64_t get_colors_from_argv(uint64_t argc, uint8_t * argv[],uint8_t * r, uint8_t * g, uint8_t * b) {
@@ -91,27 +91,32 @@ static int64_t get_colors_from_argv(uint64_t argc, uint8_t * argv[],uint8_t * r,
 static int64_t set_shell_color(uint64_t argc, uint8_t * argv[]) {
   int64_t r = 0, g = 0, b = 0, ret;
   if (argc == 0 || argc > 3) {
-    return 1;
+    exit();
   }
   if (get_colors_from_argv(argc, argv, &r,&g,&b)) {
-    return 1;
+    exit();
   }
   set_color((uint8_t) r, (uint8_t) g, (uint8_t) b);
-  return 0;
+  exit();
 }
 
 static int64_t set_shell__background_color(uint64_t argc, uint8_t * argv[]) {
   int64_t r = 0, g = 0, b = 0, ret;
   if (argc == 0 || argc > 3) {
-    return 1;
+    exit();
   }
   if (get_colors_from_argv(argc, argv, &r,&g,&b)) {
-    return 1;
+    exit();
   }
 
   set_back_color((uint8_t) r, (uint8_t) g, (uint8_t) b);
   // printf("%x %x %x", r, g, b);
-  return 0;
+  exit();
+}
+
+static int64_t clearscr(){
+  clear_screen();
+  exit();
 }
 
 
@@ -131,7 +136,7 @@ void init_shell(){
   add_entry("fractal", "prints beautiful fractal", fractalMain);
   add_entry("time", "prints current time", curr_time);
   add_entry("fanorona", "play Fanorona(tm).", fanorona_main);
-  add_entry("clear", "clear screen", clear_screen);
+  add_entry("clear", "clear screen", clearscr);
   add_entry("help", "display available commands", help);
   add_entry("scan", "scanf debug", scan);
   add_entry("set-color", "set text color", set_shell_color);
@@ -189,20 +194,8 @@ uint8_t shell() {
 	  Args * args = malloc(sizeof(Args));
 	  args->argc=argc;
 	  args->argv=argv;
-	  if(c_strcmp("hello-world",comm->command)==0 ||
-		 c_strcmp("time",comm->command)==0 ||
-		 c_strcmp("ps",comm->command)==0 ||
-		 c_strcmp("kill",comm->command)==0 ||
-		 c_strcmp("infiloop",comm->command)==0){
-		 fkexec(comm->func_ptr,comm->command,args);
-		 free(args);
-	  } else {
-		 retval=comm->func_ptr(argc, argv);
-	  }
-      
-      if(retval!=0) {
-        printf("Process ended with errors\n");
-	    }
+  	 fkexec(comm->func_ptr,comm->command,args);
+  	 free(args);
     }
   }
 

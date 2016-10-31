@@ -22,7 +22,7 @@ enter_region:
 	call yield
 	jmp enter_region
 	ret
-	
+
 leave_region:
 	mov QWORD [rdi],0
 	ret
@@ -81,7 +81,7 @@ _edx:
 _rip:
 	mov rax,$
 	ret
-	
+
 _lrax:
 	mov rax,rdi
 	ret
@@ -238,21 +238,21 @@ picSlaveMask:
 
 _irq00handler:
 	pushState
-	
+
 	push rsp
 	mov rdi, 0
 	call irqDispatcher
 	pop rsp
-	
+
 	mov rdi,rsp
-	
+
 	call switchStackPointer
-	
+
 	mov rsp,rax
-	
+
 	mov al, 20h
 	out 20h, al
-	
+
 	popState
 	iretq
 

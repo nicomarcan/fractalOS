@@ -60,6 +60,8 @@ int64_t sys_read(uint64_t fd,uint8_t *buf,uint64_t count){
 TIME * sys_time() {
 	return time();
 }
+
+
 void sys_sleep(uint64_t ticks){
 	if (ticks == 0) {
 		_sti();
@@ -72,6 +74,7 @@ void sys_sleep(uint64_t ticks){
 		_hlt();
 	}
 }
+
 
 void * sys_realloc(void * p,uint64_t nsize){
 	return la_realloc(p,nsize);

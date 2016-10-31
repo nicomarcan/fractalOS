@@ -11,6 +11,7 @@
 */
 
 #include <c_string.h>
+#include <c_syscall.h>
 #include <clib.h>
 #include <printf.h>
 #include <fanorona.h>
@@ -1115,6 +1116,6 @@ int fanorona_main(void)
 	{
 		quit_flag = mainMenu();
     }
-     return 0;
+    exit();
 
 }

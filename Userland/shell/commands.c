@@ -50,5 +50,5 @@ int64_t echo(uint64_t argc, uint8_t * argv[]) {
     printf(argv[i]);
   }
   putchar('\n');
-  return 0;
+  exit();
 }

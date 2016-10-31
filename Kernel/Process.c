@@ -31,21 +31,22 @@ struct StackFrame {
 	uint64_t rsp;
 	uint64_t ss;
 	uint64_t base;
-	
+
 	uint64_t ret;
 };
 
 typedef struct StackFrame StackFrame;
-void * toStackAddress(void * page);
+void * toStackAddress(void * page,uint64_t n);
 
-Process * newProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi){
+Process * newProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi, uint64_t ppid){
 	void * stack_base = liballoc_alloc(INIT_STACK_PAGES);
 	Process * ans = (Process *)la_malloc(sizeof(Process));
 	ans->entry_point = entry_point;
 	ans->stack_base = stack_base;
 	ans->stack_npages = INIT_STACK_PAGES;
-	ans->stack_pointer = fillStackFrame(entry_point,toStackAddress(stack_base),rax,rdi,rsi);
+	ans->stack_pointer = fillStackFrame(entry_point,toStackAddress(stack_base,ans->stack_npages),rax,rdi,rsi);
 	ans->pid = pids++;
+	ans->ppid = ppid;
 	return ans;
 }
 
@@ -58,8 +59,8 @@ void deleteProcess(Process * p){
 /*
  * Stack grows downwards
  */
-void * toStackAddress(void * page){
-	return (uint8_t *)page + PSIZE;
+void * toStackAddress(void * page,uint64_t n){
+	return (uint8_t *)page + n*PSIZE;
 }
 
 void * fillStackFrame(void * entry_point, void * stack_base,uint64_t rax,uint64_t rdi, uint64_t rsi) {
@@ -81,7 +82,7 @@ void * fillStackFrame(void * entry_point, void * stack_base,uint64_t rax,uint64_
 	frame->rcx =	0x00F;
 	frame->rbx =	0x010;
 	frame->rax =	rax;
-	
+
 	frame->rip =	(uint64_t)entry_point;
 	frame->cs =		0x008;
 	frame->eflags = 0x202;
