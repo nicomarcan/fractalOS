@@ -5,13 +5,12 @@
 #include <lib.h>
 #include <rtc.h>
 #include <liballoc.h>
+#include <Scheduler.h>
 #define SYS_OUT_COLOR			0x29
 #define SYS_ERR_COLOR			0x49
 
 static int64_t sys_write_out(const uint8_t * buf, uint64_t count);
 static int64_t sys_write_err(const uint8_t * buf, uint64_t count);
-
-uint64_t counter;
 
 /*
  * EAX:4
@@ -61,20 +60,6 @@ TIME * sys_time() {
 	return time();
 }
 
-/*
-void sys_sleep(uint64_t ticks){
-	if (ticks == 0) {
-		_sti();
-		_hlt();
-		return;
-	}
-	counter=ticks;
-	_sti();
-	while(counter){
-		_hlt();
-	}
-*/
-
 
 void * sys_realloc(void * p,uint64_t nsize){
 	return la_realloc(p,nsize);
@@ -103,4 +88,24 @@ void sys_set_color(uint8_t r, uint8_t g, uint8_t b) {
 
 void sys_set_back_color(uint8_t r, uint8_t g, uint8_t b) {
 	set_back_color(r,g,b);
+}
+
+void sys_kill(uint64_t pid,uint64_t mode){
+	switch(mode){
+		/* kill 0: eliminate a process */
+		case 0:
+			deleteProcessScheduler(pid);
+			break;
+		/* kill 1: wake a process */
+		case 1:
+			wake(pid);
+			break;
+		/* kill 2: make a process wait */
+		case 2:
+			mkwait(pid);
+			break;
+		default:
+			break;
+	}
+	return;
 }

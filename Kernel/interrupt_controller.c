@@ -18,23 +18,13 @@ char buffer[10];
 
 void irqDispatcher(uint64_t irq){
 	switch(irq) {
-		case 0:
-			int_32();
-			break;
 		case 1:
 			int_33();
 			break;
+		default:
+			break;
 	}
 	return;
-}
-
-
-/*
- * Timer tick
- * (irq 0)
- */
-void int_32(){
-	counter--;
 }
 
 /*
@@ -60,6 +50,9 @@ void int_33() {
  			break;
  		case 2:
 			ret = ps();
+			break;
+		case 3:
+			wait();
 			break;
  		case 4:
 			exit();
@@ -100,7 +93,8 @@ void int_33() {
 			sys_set_back_color(rdi, rsi, rdx);
 			break;
 		case 15:
-			deleteProcessScheduler(rdi);
+			/* pid,mode */
+			sys_kill(rdi,rsi);
 			break;
 		case 16:
 			mutex_lock((uint8_t *)rdi);

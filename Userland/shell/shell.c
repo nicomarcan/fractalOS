@@ -144,6 +144,7 @@ void init_shell(){
   add_entry("ps", "list current processes", _ps);
   add_entry("kill", "delete a process", _kill);
   add_entry("infiloop", "infinite loop process", infiloop);
+  add_entry("waiter", "wait test process", waiter);
 }
 
 /* command entry initialization */

@@ -117,10 +117,18 @@ void * ps(){
 	ans->process_count = process_count;
 	ans->PIDs = la_malloc(sizeof(uint64_t)*process_count);
 	ans->descrs = la_malloc(sizeof(uint8_t *)*process_count);
+	ans->status = la_malloc(sizeof(uint8_t *)*process_count);
 	ProcessNode * curr = current;
 	for(int i=0; i<process_count ; i++ , curr = curr->next){
 		(ans->PIDs)[i]=curr->p->pid;
 		(ans->descrs)[i]=curr->descr;
+		if(curr == current){
+			(ans->status)[i]="running";
+		} else if (curr->skip){
+			(ans->status)[i]="sleeping";
+		} else {
+			(ans->status)[i]="waiting";
+		}
 	}
 	return (void *)ans;
 }
@@ -167,4 +175,34 @@ static ProcessNode * deleteProcessNode(ProcessNode * n){
 	prev->next = next;
 	next->prev = prev;
 	return next;
+}
+
+void wake(uint64_t pid){
+	ProcessNode * pn = current;
+	for(int i=0 ; i<process_count ; i++ , pn=pn->next){
+		if(pn->p->pid == pid){
+			pn->skip = 0;
+			break;
+		}
+	}
+}
+
+void mkwait(uint64_t pid){
+	ProcessNode * pn = current;
+	if(pn->p->pid == pid && pid!=0 && pid!=1){
+		wait();
+		return;
+	}
+	for(int i=0 ; i<process_count ; i++ , pn=pn->next){
+		if(pn->p->pid == pid && pid!=0 && pid!=1){
+			pn->skip = 1;
+			break;
+		}
+	}
+}
+
+void wait(){
+	current->skip = 1;
+	yield();
+	return;
 }

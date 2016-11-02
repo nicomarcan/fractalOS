@@ -8,4 +8,5 @@ int64_t echo(uint64_t argc, uint8_t * argv[]);
 int64_t _ps(uint64_t argc, uint8_t * argv[]);
 int64_t _kill(uint64_t argc, uint8_t * argv[]);
 int64_t infiloop(uint64_t argc, uint8_t * argv[]);
+int64_t waiter(uint64_t argc, uint8_t * argv[]);
 #endif

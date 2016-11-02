@@ -14,6 +14,7 @@ typedef struct ProcessInfo{
 	uint64_t process_count;
 	uint64_t * PIDs;
 	uint8_t ** descrs;
+	uint8_t ** status;
 }ProcessInfo;
 
 typedef struct Args{
@@ -32,5 +33,6 @@ void clear();
 void set_color(uint8_t r, uint8_t g, uint8_t b);
 void set_back_color(uint8_t r, uint8_t g, uint8_t b);
 void pixel(uint32_t x,uint32_t y,uint32_t ccoord);
-void kill(uint64_t pid);
+void kill(uint64_t pid,uint64_t mode);
+void _wait();
 #endif

@@ -12,6 +12,7 @@ struct ProcessInfo{
 	uint64_t process_count;
 	uint64_t * PIDs;
 	uint8_t ** descrs;
+	uint8_t ** status;
 };
 typedef struct ProcessInfo ProcessInfo;
 typedef struct Args Args;
@@ -27,6 +28,12 @@ void insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,ui
  * it yields.
  */
 void deleteProcessScheduler(uint64_t pid);
+
+/*
+ * Wakes a sleeping or waiting
+ * process.
+ */
+void wake(uint64_t pid);
 /*
  * Receives the previous process' stack
  * pointer and returns the stack pointer
@@ -65,4 +72,15 @@ void exit();
  * their PIDs and stored descriptions.
  */
 void * ps();
+
+/*
+ * Waits until a wake or kill signal
+ * is sent.
+ */
+ void wait();
+ 
+ /*
+  * Make a process wait.
+  */
+  void mkwait(uint64_t pid);
 #endif
