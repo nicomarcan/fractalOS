@@ -18,6 +18,7 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const shellModuleAddress = (void*)0x700000;
 
+
 typedef int (*EntryPoint)();
 void int_08();
 
@@ -63,7 +64,7 @@ int main()
 	picSlaveMask(0xFF);
 	initialize_driver();
 	liballoc_pagealloc_init();
-	insertProcess(_hlt,0,0,0,"init");
+	insertProcess(_lhlt,0,0,0,"init");
 	insertProcess(shellModuleAddress,0,0,0,"shell");
 	begin();
 

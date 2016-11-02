@@ -61,7 +61,7 @@ TIME * sys_time() {
 	return time();
 }
 
-
+/*
 void sys_sleep(uint64_t ticks){
 	if (ticks == 0) {
 		_sti();
@@ -73,7 +73,7 @@ void sys_sleep(uint64_t ticks){
 	while(counter){
 		_hlt();
 	}
-}
+*/
 
 
 void * sys_realloc(void * p,uint64_t nsize){

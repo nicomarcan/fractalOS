@@ -15,20 +15,18 @@ typedef struct SleepNode {
 	uint64_t ticks;
 	ProcessNode * pn;
 	struct SleepNode * next;
-	struct SleepNode * prev;
 } SleepNode;
 
 extern changeContextFromRsp(uint64_t rsp);
 void schedule();
 void sleep(uint64_t ticks);
 static ProcessNode * deleteProcessNode(ProcessNode * p);
-static SleepNode * deleteSleepNode(SleepNode * n);
+static SleepNode * decrementTicksR(SleepNode * sn);
 
 ProcessNode * current = NULL;
 static int process_count = 0;
 
 SleepNode * sleeping = NULL;
-static int sleep_count = 0;
 
 void insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,uint8_t * descr){
 	Process * p;
@@ -77,7 +75,6 @@ void deleteProcessScheduler(uint64_t pid){
 }
 
 void schedule(){
-	//decrementTicks();
 	current = current->next;
 	return;
 }
@@ -95,11 +92,6 @@ void fkexec(void * entry_point,uint8_t * descr,Args * args){
 void begin(){
 	_sti();
 	((void (*)(void))(current->p->entry_point))();
-}
-
-void yield(){
-	schedule();
-	changeContextFromRsp(current->p->stack_pointer);
 }
 
 void exit(){
@@ -120,18 +112,6 @@ static ProcessNode * deleteProcessNode(ProcessNode * n){
 	return next;
 }
 
-static SleepNode * deleteSleepNode(SleepNode * n){
-	SleepNode * cn = n;
-	SleepNode * prev = cn->prev;
-	SleepNode * next = cn->next;
-	if (next == prev){
-		return NULL;
-	}
-	prev->next = next;
-	next->prev = prev;
-	return next;
-}
-
 
 void * ps(){
 	ProcessInfo * ans = la_malloc(sizeof(ProcessInfo));
@@ -146,42 +126,45 @@ void * ps(){
 	return (void *)ans;
 }
 
-/*
+
 void sys_sleep(uint64_t ticks){
 	ProcessNode * cn = current;
-	current = deleteProcessNode(cn);
+	deleteProcessNode(cn);
 	process_count--;
 	SleepNode * sn = la_malloc(sizeof(SleepNode));
 	sn->ticks = ticks;
 	sn->pn = cn;
 	if (sleeping == NULL){
 		sleeping = sn;
-		sn->next = sn;
-		sn->prev = sn;
+		sn->next = NULL;
 	} else {
-		SleepNode * tmp = sleeping->next;
-		sleeping->next = sn;
-		sn->next = tmp;
-		sn->prev = sleeping;
-		tmp->prev  = sn;
+		sn->next = sleeping;
+		sleeping = sn;
 	}
-	sleep_count ++;
+	yield();
 }
 
 void decrementTicks(){
-	SleepNode * sn = sleeping;
-	for(int i = 0 ; i<sleep_count ; i++ , sn = sn->next){
-		sn->ticks -- ;
-		if (sn->ticks == 0){
-			sleeping = deleteSleepNode(sn);
-			ProcessNode * tmp = current->next;
-			current->next = sn->pn;
-			sn->pn->next = tmp;
-			sn->pn->prev = current;
-			tmp->prev  = sn->pn;
-			sleep_count--;
-			process_count++;
-		}
-	}
+	sleeping = decrementTicksR(sleeping);
 }
-*/
+
+static SleepNode * decrementTicksR(SleepNode * sn){
+	if(sn == NULL){
+		return NULL;
+	}
+	if(sn->ticks == 0){
+		SleepNode * t = sn->next;
+
+		ProcessNode * tmp  = current->next;
+		current->next = sn->pn;
+		sn->pn->prev = current;
+		sn->pn->next = tmp;
+		tmp->prev = sn->pn;
+		process_count ++;
+		la_free(sn);
+		return decrementTicksR(t);
+	}
+	sn->ticks --;
+	sn->next = decrementTicksR(sn->next);
+	return sn;
+}

@@ -31,6 +31,7 @@ uint32_t _edx();
 
 uint16_t _readfl();
 void _hlt();
+void _lhlt();
 void _lidt(void * idtr);
 void picMasterMask(uint8_t mask);
 void picSlaveMask(uint8_t mask);

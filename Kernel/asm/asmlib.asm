@@ -3,8 +3,9 @@ GLOBAL _r8,_r9,_r10,_r11,_r12,_r13,_r14,_r15,
 GLOBAL _cli,_sti,_eax,_ebx,_ecx,_edx
 GLOBAL _lidt,picMasterMask,picSlaveMask,_irq00handler,_irq01handler
 GLOBAL _int80handler,kb_read,rtc,_out,_in
-GLOBAL _syscall_handler,_hlt,_readfl,_rip,_lrax,changeContextFromRsp,enter_region,leave_region
-EXTERN irqDispatcher, int_80, syscall_dispatcher, switchStackPointer,yield
+GLOBAL _syscall_handler,_hlt,_lhlt,_readfl,_rip,_lrax,changeContextFromRsp,enter_region,leave_region,yield
+EXTERN irqDispatcher, int_80, syscall_dispatcher, switchStackPointer
+EXTERN decrementTicks
 
 section .text
 
@@ -239,10 +240,12 @@ picSlaveMask:
 _irq00handler:
 	pushState
 
-	push rsp
-	mov rdi, 0
-	call irqDispatcher
-	pop rsp
+	;push rsp
+	;mov rdi, 0
+	;call irqDispatcher
+	;pop rsp
+
+	call decrementTicks
 
 	mov rdi,rsp
 
@@ -253,6 +256,14 @@ _irq00handler:
 	mov al, 20h
 	out 20h, al
 
+	popState
+	iretq
+
+yield:
+	pushState
+	mov rdi,rsp
+	call switchStackPointer
+	mov rsp,rax
 	popState
 	iretq
 
@@ -315,6 +326,11 @@ kb_read:
 
 _hlt:
 	hlt
+	ret
+
+_lhlt:
+	hlt
+	jmp _lhlt
 	ret
 
 rtc:
