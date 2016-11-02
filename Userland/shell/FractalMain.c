@@ -44,5 +44,5 @@ int fractalMain(uint64_t argc, uint8_t** argv) {
 	}
 	free(s);
 
-	return 0;
+	exit();
 }
