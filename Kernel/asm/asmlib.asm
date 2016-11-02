@@ -260,12 +260,32 @@ _irq00handler:
 	iretq
 
 yield:
+
+	;push iretq hook
+	
+	mov rax,rsp
+	push QWORD 0
+	push QWORD 0
+	push rax
+	pushfq
+	push QWORD 0x008
+	push .ret
+	
+	;uint64_t rip
+	;uint64_t cs
+	;uint64_t eflags
+	;uint64_t rsp
+	;uint64_t ss
+	;uint64_t base
+
 	pushState
 	mov rdi,rsp
 	call switchStackPointer
 	mov rsp,rax
 	popState
 	iretq
+.ret:
+	ret
 
 ;see exit syscall
 changeContextFromRsp:

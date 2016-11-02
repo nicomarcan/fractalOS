@@ -4,9 +4,12 @@
 #include <asmlib.h>
 #define NULL 0
 
+static void * const shellModuleAddress = (void*)0x700000;
+
 typedef struct ProcessNode {
 	Process * p;
 	uint8_t * descr;
+	uint8_t skip;
 	struct ProcessNode * next;
 	struct ProcessNode * prev;
 } ProcessNode;
@@ -17,7 +20,7 @@ typedef struct SleepNode {
 	struct SleepNode * next;
 } SleepNode;
 
-extern changeContextFromRsp(uint64_t rsp);
+extern void changeContextFromRsp(uint64_t rsp);
 void schedule();
 void sleep(uint64_t ticks);
 static ProcessNode * deleteProcessNode(ProcessNode * p);
@@ -38,6 +41,7 @@ void insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,ui
 	ProcessNode * pnode = la_malloc(sizeof(ProcessNode));
 	pnode->p = p;
 	pnode->descr = descr;
+	pnode->skip = 0;
 	if(current == NULL){
 		current = pnode;
 		pnode->next = pnode;
@@ -76,6 +80,11 @@ void deleteProcessScheduler(uint64_t pid){
 
 void schedule(){
 	current = current->next;
+	for(int i=0; i<process_count ; i++ , current = current->next){
+		if(!current->skip){
+			break;
+		}
+	}
 	return;
 }
 
@@ -103,16 +112,6 @@ void exit(){
 	changeContextFromRsp(current->p->stack_pointer);
 }
 
-static ProcessNode * deleteProcessNode(ProcessNode * n){
-	ProcessNode * cn = n;
-	ProcessNode * prev = cn->prev;
-	ProcessNode * next = cn->next;
-	prev->next = next;
-	next->prev = prev;
-	return next;
-}
-
-
 void * ps(){
 	ProcessInfo * ans = la_malloc(sizeof(ProcessInfo));
 	ans->process_count = process_count;
@@ -128,12 +127,10 @@ void * ps(){
 
 
 void sys_sleep(uint64_t ticks){
-	ProcessNode * cn = current;
-	deleteProcessNode(cn);
-	process_count--;
+	current->skip = 1;
 	SleepNode * sn = la_malloc(sizeof(SleepNode));
 	sn->ticks = ticks;
-	sn->pn = cn;
+	sn->pn = current;
 	if (sleeping == NULL){
 		sleeping = sn;
 		sn->next = NULL;
@@ -154,17 +151,20 @@ static SleepNode * decrementTicksR(SleepNode * sn){
 	}
 	if(sn->ticks == 0){
 		SleepNode * t = sn->next;
-
-		ProcessNode * tmp  = current->next;
-		current->next = sn->pn;
-		sn->pn->prev = current;
-		sn->pn->next = tmp;
-		tmp->prev = sn->pn;
-		process_count ++;
+		sn->pn->skip = 0;
 		la_free(sn);
 		return decrementTicksR(t);
 	}
 	sn->ticks --;
 	sn->next = decrementTicksR(sn->next);
 	return sn;
+}
+
+static ProcessNode * deleteProcessNode(ProcessNode * n){
+	ProcessNode * cn = n;
+	ProcessNode * prev = cn->prev;
+	ProcessNode * next = cn->next;
+	prev->next = next;
+	next->prev = prev;
+	return next;
 }

@@ -61,9 +61,6 @@ void int_33() {
  		case 2:
 			ret = ps();
 			break;
- 		case 3:
-			yield();
-			break;
  		case 4:
 			exit();
 			break;

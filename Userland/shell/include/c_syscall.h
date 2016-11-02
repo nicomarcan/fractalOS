@@ -24,7 +24,6 @@ typedef struct Args{
 int64_t write(uint64_t fd,const uint8_t * buf, uint64_t count );
 int64_t read(uint64_t fd, const uint8_t * buf, uint8_t count);
 ProcessInfo * ps();
-void yield();
 void fkexec(void * ptr,uint8_t * descr,Args * args);
 void exit();
 TIME * time();
