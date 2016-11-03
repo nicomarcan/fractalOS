@@ -88,6 +88,19 @@ static int64_t get_colors_from_argv(uint64_t argc, uint8_t * argv[],uint8_t * r,
   return 0;
 }
 
+static int64_t set_shell_color_complement(uint64_t argc,uint8_t * argv[]){
+  int64_t r = 0, g = 0, b = 0, ret;
+  if (argc == 0 || argc > 3) {
+    exit();
+  }
+  if (get_colors_from_argv(argc, argv, &r,&g,&b)) {
+    exit();
+  }
+  set_color((uint8_t) r, (uint8_t) g, (uint8_t) b);
+  set_back_color((uint8_t) ~r, (uint8_t) ~g, (uint8_t) ~b);
+  exit();
+}
+
 static int64_t set_shell_color(uint64_t argc, uint8_t * argv[]) {
   int64_t r = 0, g = 0, b = 0, ret;
   if (argc == 0 || argc > 3) {
@@ -145,6 +158,7 @@ void init_shell(){
   add_entry("kill", "delete a process", _kill);
   add_entry("infiloop", "infinite loop process", infiloop);
   add_entry("waiter", "wait test process", waiter);
+  add_entry("set-color-complement","sets text color and background as complement to the first",set_shell_color_complement);
 }
 
 /* command entry initialization */
