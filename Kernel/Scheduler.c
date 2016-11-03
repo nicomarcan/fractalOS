@@ -4,26 +4,30 @@
 #include <asmlib.h>
 #define NULL 0
 
-static void * const shellModuleAddress = (void*)0x700000;
+typedef struct ProcessNode ProcessNode;
+typedef struct SleepNode SleepNode;
 
-typedef struct ProcessNode {
+struct ProcessNode {
 	Process * p;
 	uint8_t * descr;
 	uint8_t skip;
-	struct ProcessNode * next;
-	struct ProcessNode * prev;
-} ProcessNode;
+	SleepNode * sn;
+	ProcessNode * next;
+	ProcessNode * prev;
+};
 
-typedef struct SleepNode {
+struct SleepNode {
 	uint64_t ticks;
 	ProcessNode * pn;
-	struct SleepNode * next;
-} SleepNode;
+	SleepNode * next;
+	SleepNode * prev;
+};
 
 extern void changeContextFromRsp(uint64_t rsp);
 void schedule();
 void sleep(uint64_t ticks);
 static ProcessNode * deleteProcessNode(ProcessNode * p);
+static void deleteSleepNode(SleepNode * sn);
 static SleepNode * decrementTicksR(SleepNode * sn);
 
 ProcessNode * current = NULL;
@@ -42,6 +46,7 @@ void insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,ui
 	pnode->p = p;
 	pnode->descr = descr;
 	pnode->skip = 0;
+	pnode->sn = NULL;
 	if(current == NULL){
 		current = pnode;
 		pnode->next = pnode;
@@ -136,14 +141,22 @@ void * ps(){
 
 void sys_sleep(uint64_t ticks){
 	current->skip = 1;
-	SleepNode * sn = la_malloc(sizeof(SleepNode));
+	SleepNode * sn = current->sn ;
+	if(sn != NULL){
+		sn->ticks = ticks;
+		return;
+	} 
+	sn = la_malloc(sizeof(SleepNode));
 	sn->ticks = ticks;
 	sn->pn = current;
+	current->sn = sn;
 	if (sleeping == NULL){
 		sleeping = sn;
 		sn->next = NULL;
+		sn->prev = NULL;
 	} else {
 		sn->next = sleeping;
+		sleeping->prev = sn;
 		sleeping = sn;
 	}
 	yield();
@@ -160,6 +173,7 @@ static SleepNode * decrementTicksR(SleepNode * sn){
 	if(sn->ticks == 0){
 		SleepNode * t = sn->next;
 		sn->pn->skip = 0;
+		sn->pn->sn = NULL;
 		la_free(sn);
 		return decrementTicksR(t);
 	}
@@ -174,6 +188,10 @@ static ProcessNode * deleteProcessNode(ProcessNode * n){
 	ProcessNode * next = cn->next;
 	prev->next = next;
 	next->prev = prev;
+	SleepNode * sn = n->sn;
+	if(sn != NULL){
+		deleteSleepNode(sn);
+	}
 	return next;
 }
 
@@ -182,9 +200,28 @@ void wake(uint64_t pid){
 	for(int i=0 ; i<process_count ; i++ , pn=pn->next){
 		if(pn->p->pid == pid){
 			pn->skip = 0;
+			SleepNode * sn = current->sn;
+			if(sn != NULL){
+				deleteSleepNode(sn);
+				current->sn = NULL;
+			}
 			break;
 		}
 	}
+}
+
+static void deleteSleepNode(SleepNode * sn){
+	if(sn->prev == NULL && sn->next == NULL){
+		sleeping == NULL;
+	} else if(sn->prev == NULL){
+		sleeping = sn->next;
+	} else if(sn->next == NULL){
+		sn->prev->next = NULL;
+	} else {
+		sn->prev->next = sn->next;
+		sn->next->prev = sn->prev;
+	}	
+	la_free(sn);
 }
 
 void mkwait(uint64_t pid){
@@ -195,6 +232,11 @@ void mkwait(uint64_t pid){
 	}
 	for(int i=0 ; i<process_count ; i++ , pn=pn->next){
 		if(pn->p->pid == pid && pid!=0 && pid!=1){
+			SleepNode * sn = pn->sn;
+			if(sn != NULL){
+				deleteSleepNode(sn);
+				pn->sn = NULL;
+			}
 			pn->skip = 1;
 			break;
 		}
@@ -203,6 +245,11 @@ void mkwait(uint64_t pid){
 
 void wait(){
 	current->skip = 1;
+	SleepNode * sn = current->sn;
+	if(sn != NULL){
+		deleteSleepNode(sn);
+		current->sn = NULL;
+	}
 	yield();
 	return;
 }
