@@ -3,6 +3,7 @@
 #include <printf.h>
 #include <stdint.h>
 #include <c_syscall.h>
+#include <fifo.h>
 
 /* simple debug hello, world */
 int64_t hello_world(uint64_t argc, uint8_t * argv[]) {
@@ -77,5 +78,25 @@ int64_t echo(uint64_t argc, uint8_t * argv[]) {
     printf(argv[i]);
   }
   putchar('\n');
+  exit();
+}
+
+int64_t fifo_test2(uint64_t argc, uint8_t * argv[]) {
+  char buf2[10] ;
+  read_fifo("addr",(uint8_t *)buf2,9);
+  printf(buf2);
+  putchar('\n');
+  exit();
+}
+
+int64_t fifo_test(uint64_t argc, uint8_t * argv[]) {
+  int64_t ans = mkfifo("addr");
+  if (ans < 1){
+    printf("failed");
+      putchar('\n');
+    exit();
+  }
+  char buf[10] = "probando";
+  write_fifo("addr",(uint8_t *)buf,9);
   exit();
 }

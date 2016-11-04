@@ -161,6 +161,8 @@ void init_shell(){
   add_entry("mutextest", "mutex lock test", mutextest);
   add_entry("philosophers", "philosophers problem", philosophers);
   add_entry("set-color-complement","sets text color and background as complement to the first",set_shell_color_complement);
+  add_entry("fifo-test","tests a fifo",fifo_test);
+    add_entry("fifo-test2","tests a fifo",fifo_test2);
 }
 
 /* command entry initialization */

@@ -1,4 +1,5 @@
 #include <syscalls.h>
+#include <fifo.h>
 #include <kb_driver.h>
 #include <video_driver.h>
 #include <asmlib.h>
@@ -6,6 +7,7 @@
 #include <rtc.h>
 #include <liballoc.h>
 #include <Scheduler.h>
+
 #define SYS_OUT_COLOR			0x29
 #define SYS_ERR_COLOR			0x49
 
@@ -58,6 +60,23 @@ int64_t sys_read(uint64_t fd,uint8_t *buf,uint64_t count){
 	}
 	return i;
 }
+
+
+int64_t sys_mkfifo(const char * addr){
+	return mkfifo(addr);
+}
+
+int64_t sys_rmfifo(const char * addr){
+	return rmfifo(addr);
+}
+int64_t sys_write_fifo(const char * addr,const uint8_t * buf, uint64_t count ){
+	return write_fifo(addr,buf,count);
+}
+
+int64_t sys_read_fifo(const char * addr, uint8_t * buf, uint64_t count ){
+	return read_fifo(addr,buf,count);
+}
+
 
 TIME * sys_time() {
 	return time();

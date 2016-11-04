@@ -10,6 +10,7 @@
 #include <Scheduler.h>
 #include <Mutex.h>
 
+
 typedef int64_t (*syscall_proto)(uint64_t,uint64_t,uint64_t);
 
 
@@ -44,7 +45,7 @@ void int_33() {
 
  int64_t syscall_dispatcher(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
 	int64_t ret = 0;
-	uint64_t count = 20;
+	uint64_t count = 24;
 	syscall_proto syscalls[] = {
 		(syscall_proto)sys_read,
 		(syscall_proto)sys_write,
@@ -65,7 +66,11 @@ void int_33() {
 		(syscall_proto)mutex_lock,
 		(syscall_proto)mutex_unlock,
 		(syscall_proto)currPid,
-		(syscall_proto)currPpid
+		(syscall_proto)currPpid,
+		(syscall_proto)sys_mkfifo,
+		(syscall_proto)sys_rmfifo,
+		(syscall_proto)sys_write_fifo,
+		(syscall_proto)sys_read_fifo
 	};
 	if(rax>=0 && rax<count){
 		ret = syscalls[rax](rdi,rsi,rdx);

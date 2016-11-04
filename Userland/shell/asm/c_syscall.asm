@@ -1,16 +1,16 @@
-GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color, pixel,free_mem,fkexec,_hlt,mem_realloc,exit,yield,ps,kill,mutex_lock,mutex_unlock,_wait,getPid,getPpid
+GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color, pixel,free_mem,fkexec,_hlt,mem_realloc,exit,yield,ps,kill,mutex_lock,mutex_unlock,_wait,getPid,getPpid,s_mkfifo,s_rmfifo,s_write_fifo,s_read_fifo
 
 section .text
 
 _hlt:
 	hlt
 	ret
-	
+
 
 %macro pushrg 0
 	push rbp
 	mov rbp,rsp
-	
+
 	push rbx
 	push rbp
 	push r12
@@ -26,27 +26,27 @@ _hlt:
 	pop r12
 	pop rbp
 	pop rbx
-	
+
 	leave
 %endMacro
 
  getPid:
 
   pushrg
-  
+
   mov rax, 18
   int 80h
-  
+
   poprg
   ret
 
  getPpid:
 
   pushrg
-  
+
   mov rax, 19
   int 80h
-  
+
   poprg
   ret
 
@@ -54,32 +54,32 @@ _hlt:
  _wait:
 
   pushrg
-  
+
   mov rax, 3
   int 80h
-  
+
   poprg
   ret
 
  mutex_lock:
 
   pushrg
-  
+
   mov rax, 16
   int 80h
-  
+
   poprg
   ret
-  
+
  mutex_unlock:
   pushrg
-  
+
   mov rax, 17
   int 80h
-  
+
   poprg
   ret
-	
+
  kill:
   pushrg
 
@@ -88,7 +88,7 @@ _hlt:
 
   poprg
   ret
-  
+
  mem_realloc:
   pushrg
 
@@ -97,7 +97,7 @@ _hlt:
 
   poprg
   ret
-  
+
  ps:
   pushrg
 
@@ -106,7 +106,7 @@ _hlt:
 
   poprg
   ret
-  
+
  exit:
   pushrg
 
@@ -114,8 +114,8 @@ _hlt:
   int 80h
 
   poprg
-  ret		
- 
+  ret
+
  fkexec:
   pushrg
 
@@ -123,7 +123,7 @@ _hlt:
   int 80h
 
   poprg
-  ret	
+  ret
 
 memory:
   pushrg
@@ -133,7 +133,7 @@ memory:
 
   poprg
   ret
-  
+
  free_mem:
   pushrg
 
@@ -206,12 +206,49 @@ set_back_color:
 
   poprg
   ret
-	
+
 pixel:
   pushrg
-  
+
   mov rax,10
   int 0x80
-  
+
   poprg
   ret
+
+
+	s_mkfifo:
+	  pushrg
+
+	  mov rax,20
+	  int 0x80
+
+	  poprg
+	  ret
+
+		s_rmfifo:
+			pushrg
+
+			mov rax,21
+			int 0x80
+
+			poprg
+			ret
+
+			s_write_fifo:
+				pushrg
+
+				mov rax,22
+				int 0x80
+
+				poprg
+				ret
+
+				s_read_fifo:
+					pushrg
+
+					mov rax,23
+					int 0x80
+
+					poprg
+					ret

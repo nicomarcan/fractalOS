@@ -1,3 +1,4 @@
+#include <stdint.h>
 void charToString(char*buffer,char c){
 	buffer[0]=c;
 	buffer[1]=0;
@@ -33,4 +34,20 @@ int strlen(const char * s){
 		s++;
 	}
 	return i;
+}
+
+uint8_t * strcpy ( uint8_t * destination, const uint8_t * source ) {
+  uint8_t * retp = destination;
+  do{
+    *destination++ = *source;
+  } while(*source++ != '\0');
+  return retp;
+}
+
+int64_t strcmp(const uint8_t * a, const uint8_t * b) {
+  while (*a == *b && *a != '\0') {
+    a++;
+    b++;
+  }
+  return *a - *b;
 }
