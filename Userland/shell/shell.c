@@ -209,6 +209,12 @@ uint8_t shell() {
 	  Args * args = malloc(sizeof(Args));
 	  args->argc=argc;
 	  args->argv=argv;
+	  if(c_strcmp("&",argv[argc-1])==0){
+		  args->argc --;
+		  args->fg=1;
+	  } else {
+		  args->fg=0;
+	  }
   	 fkexec(comm->func_ptr,comm->command,args);
   	 free(args);
     }

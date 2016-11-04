@@ -6,6 +6,7 @@
 struct Args{
 	uint64_t argc;
 	uint8_t ** argv;
+	uint8_t fg;
 };
 
 struct ProcessInfo{
@@ -20,7 +21,7 @@ typedef struct Args Args;
  * Creates a process and inserts it into the
  * process' list
  */
-void insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,uint8_t * descr);
+void insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,uint8_t * descr,uint8_t fg);
 
 /*
  * Deletes a process from the scheduler's internal
@@ -82,5 +83,16 @@ void * ps();
  /*
   * Make a process wait.
   */
-  void mkwait(uint64_t pid);
+ void mkwait(uint64_t pid);
+  
+  
+  /*
+   * Tells whether the current process
+   * is the foreground process or not.
+   */
+ uint8_t isFg();
+  
+ uint64_t currPid();
+ 
+ uint64_t currPpid();
 #endif

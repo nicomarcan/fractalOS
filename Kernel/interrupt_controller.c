@@ -8,13 +8,16 @@
 #include <utils.h>
 #include <video_driver.h>
 #include <Scheduler.h>
+#include <Mutex.h>
+
+typedef int64_t (*syscall_proto)(uint64_t,uint64_t,uint64_t);
+
 
 void int_32();
 void int_33();
 
 char buffer[10];
 
-	extern uint64_t counter;
 
 void irqDispatcher(uint64_t irq){
 	switch(irq) {
@@ -41,69 +44,31 @@ void int_33() {
 
  int64_t syscall_dispatcher(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
 	int64_t ret = 0;
- 	switch(rax){
- 		case 0:
- 			ret = sys_read(rdi,(uint8_t *)rsi,rdx);
- 			break;
- 		case 1:
- 			ret = sys_write(rdi,(const uint8_t*)rsi,rdx);
- 			break;
- 		case 2:
-			ret = ps();
-			break;
-		case 3:
-			wait();
-			break;
- 		case 4:
-			exit();
-			break;
- 		case 5:
-			fkexec((void *)rdi,(uint8_t *)rsi,(void*)rdx);
-			break;
- 		case 6:
-			sys_realloc((void *)rdi,rsi);
-			break;
- 		case 7:
-			sys_free_mem((void *)rdi);
-			break;
- 		case 8:
-			return sys_mem(rdi);
-			break;
- 		case 9:
-			sys_sleep(rdi);
-			break;
- 		case 10:
-			/*
-			 * rdi: x coord
-			 * rsi: y coord
-			 * rdx: colour coord
-			 */
-			sys_pixel((uint32_t) rdi,(uint32_t)rsi,(uint32_t)rdx);
-			break;
-		case 11:
-			sys_clearscreen();
-			break;
-		case 12:
-			ret = (int64_t) sys_time();
-			break;
-		case 13:
-			sys_set_color(rdi, rsi, rdx);
-			break;
-		case 14:
-			sys_set_back_color(rdi, rsi, rdx);
-			break;
-		case 15:
-			/* pid,mode */
-			sys_kill(rdi,rsi);
-			break;
-		case 16:
-			mutex_lock((uint8_t *)rdi);
-			break;
-		case 17:
-			mutex_unlock((uint8_t *)rdi);
-			break;
- 		default:
- 			break;
- 	}
+	uint64_t count = 20;
+	syscall_proto syscalls[] = {
+		(syscall_proto)sys_read,
+		(syscall_proto)sys_write,
+		(syscall_proto)ps,
+		(syscall_proto)wait,
+		(syscall_proto)exit,
+		(syscall_proto)fkexec,
+		(syscall_proto)sys_realloc,
+		(syscall_proto)sys_free_mem,
+		(syscall_proto)sys_mem,
+		(syscall_proto)sys_sleep,
+		(syscall_proto)sys_pixel,
+		(syscall_proto)sys_clearscreen,
+		(syscall_proto)sys_time,
+		(syscall_proto)sys_set_color,
+		(syscall_proto)sys_set_back_color,
+		(syscall_proto)sys_kill,
+		(syscall_proto)mutex_lock,
+		(syscall_proto)mutex_unlock,
+		(syscall_proto)currPid,
+		(syscall_proto)currPpid
+	};
+	if(rax>=0 && rax<count){
+		ret = syscalls[rax](rdi,rsi,rdx);
+	}
  	return ret;
  }

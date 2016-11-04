@@ -1,4 +1,4 @@
-GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color, pixel,free_mem,fkexec,_hlt,mem_realloc,exit,yield,ps,kill,mutex_lock,mutex_unlock,_wait
+GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color, pixel,free_mem,fkexec,_hlt,mem_realloc,exit,yield,ps,kill,mutex_lock,mutex_unlock,_wait,getPid,getPpid
 
 section .text
 
@@ -29,6 +29,27 @@ _hlt:
 	
 	leave
 %endMacro
+
+ getPid:
+
+  pushrg
+  
+  mov rax, 18
+  int 80h
+  
+  poprg
+  ret
+
+ getPpid:
+
+  pushrg
+  
+  mov rax, 19
+  int 80h
+  
+  poprg
+  ret
+
 
  _wait:
 

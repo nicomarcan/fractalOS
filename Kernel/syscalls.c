@@ -39,6 +39,9 @@ static int64_t sys_write_err(const uint8_t * buf, uint64_t count){
 }
 
 int64_t sys_read(uint64_t fd,uint8_t *buf,uint64_t count){
+	while(!isFg()){
+		yield();
+	}
 	int64_t i = 0;
 	int8_t c;
 	switch(fd){

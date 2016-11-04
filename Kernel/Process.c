@@ -38,7 +38,7 @@ struct StackFrame {
 typedef struct StackFrame StackFrame;
 void * toStackAddress(void * page,uint64_t n);
 
-Process * newProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi, uint64_t ppid){
+Process * newProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi, uint64_t ppid,uint8_t fg){
 	void * stack_base = liballoc_alloc(INIT_STACK_PAGES);
 	Process * ans = (Process *)la_malloc(sizeof(Process));
 	ans->entry_point = entry_point;
@@ -47,6 +47,7 @@ Process * newProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,
 	ans->stack_pointer = fillStackFrame(entry_point,toStackAddress(stack_base,ans->stack_npages),rax,rdi,rsi);
 	ans->pid = pids++;
 	ans->ppid = ppid;
+	ans->fg = fg;
 	return ans;
 }
 

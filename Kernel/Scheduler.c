@@ -29,18 +29,28 @@ void sleep(uint64_t ticks);
 static ProcessNode * deleteProcessNode(ProcessNode * p);
 static void deleteSleepNode(SleepNode * sn);
 static SleepNode * decrementTicksR(SleepNode * sn);
+static void giveFg(uint64_t pid);
 
 ProcessNode * current = NULL;
+Process * foreground = NULL;
 static int process_count = 0;
 
 SleepNode * sleeping = NULL;
 
-void insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,uint8_t * descr){
+void insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,uint8_t * descr,uint8_t fg){
 	Process * p;
 	if(current == NULL){
-		p=newProcess(entry_point,rax,rdi,rsi,0);
+		p=newProcess(entry_point,rax,rdi,rsi,0,fg);
 	} else {
-		p=newProcess(entry_point,rax,rdi,rsi,current->p->ppid);
+		p=newProcess(entry_point,rax,rdi,rsi,current->p->ppid,fg);
+	}
+	if(fg){
+		if(foreground == NULL){
+			foreground = p;
+		} else {
+			foreground->fg = 0;
+			foreground = p;
+		}
 	}
 	ProcessNode * pnode = la_malloc(sizeof(ProcessNode));
 	pnode->p = p;
@@ -100,7 +110,7 @@ void * switchStackPointer(void * rsp){
 }
 
 void fkexec(void * entry_point,uint8_t * descr,Args * args){
-	insertProcess(entry_point,0,args->argc,args->argv,descr);
+	insertProcess(entry_point,0,args->argc,args->argv,descr,args->fg);
 }
 
 void begin(){
@@ -110,6 +120,9 @@ void begin(){
 
 void exit(){
 	ProcessNode * cn = current;
+	if(cn->p->pid == foreground->pid){
+		giveFg(cn->p->ppid);
+	}
 	current = deleteProcessNode(cn);
 	deleteProcess(cn->p);
 	la_free(cn);
@@ -252,4 +265,43 @@ void wait(){
 	}
 	yield();
 	return;
+}
+
+uint8_t isFg(){
+	return current->p->fg;
+}
+
+uint64_t currPid(){
+	return current->p->pid;
+}
+
+uint64_t currPpid(){
+	return current->p->ppid;
+}
+/*
+ * This assumes that the current process
+ * is the foreground process
+ */
+static void giveFg(uint64_t pid){
+	foreground->fg = 0;
+	foreground = NULL;
+	Process * shellpr = NULL;
+	ProcessNode * pn = current;
+	uint8_t found = 0;
+	for(int i=0 ; i<process_count ; i++ , pn=pn->next){
+		if(pn->p->pid == 1){
+			shellpr = pn->p;
+		}
+		if(pn->p->pid == pid){
+			pn->p->fg = 1;
+			foreground = pn->p;
+			found = 1;
+			break;
+		}
+		
+	}
+	if(!found){
+		shellpr->fg = 1;
+		foreground = shellpr;
+	}
 }
