@@ -161,8 +161,9 @@ void init_shell(){
   add_entry("mutextest", "mutex lock test", mutextest);
   add_entry("philosophers", "philosophers problem", philosophers);
   add_entry("set-color-complement","sets text color and background as complement to the first",set_shell_color_complement);
-  add_entry("fifo-test","tests a fifo",fifo_test);
-    add_entry("fifo-test2","tests a fifo",fifo_test2);
+  add_entry("mkfifo","makes a fifo",mkfifoc);
+  add_entry("write-fifo","writes on a fifo",write_fifoc);
+  add_entry("read-fifo","reads from a fifo",read_fifoc);
 }
 
 /* command entry initialization */

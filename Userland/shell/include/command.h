@@ -10,6 +10,7 @@ int64_t _kill(uint64_t argc, uint8_t * argv[]);
 int64_t infiloop(uint64_t argc, uint8_t * argv[]);
 int64_t waiter(uint64_t argc, uint8_t * argv[]);
 int64_t mutextest(uint64_t argc, uint8_t * argv[]);
-int64_t fifo_test(uint64_t argc, uint8_t * argv[]);
-int64_t fifo_test2(uint64_t argc, uint8_t * argv[]);
+int64_t mkfifoc(uint64_t argc, uint8_t * argv[]);
+int64_t write_fifoc(uint64_t argc, uint8_t * argv[]);
+int64_t read_fifoc(uint64_t argc, uint8_t * argv[]);
 #endif
