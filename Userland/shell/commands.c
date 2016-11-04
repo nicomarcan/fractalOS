@@ -22,19 +22,21 @@ int64_t waiter(uint64_t argc, uint8_t * argv[]) {
 }
 
 int64_t mutextest(uint64_t argc, uint8_t * argv[]) {
-	uint64_t mutex = 0;
-	mutex_lock(&mutex);
-	if(mutex == 1){
+	mutex m;
+	mutex_init(&m);
+	mutex_lock(&m);
+	if(m.m == 1){
 		printf("Locked successfully\n");
 	} else {
 		printf("Lock failed\n");
 	}
-	mutex_unlock(&mutex);
-	if(mutex == 0){
+	mutex_unlock(&m);
+	if(m.m == 0){
 		printf("Unlocked successfully\n");
 	} else {
 		printf("Unlock failed\n");
 	}
+	mutex_destroy(&m);
 	exit();
 }
 
