@@ -15,28 +15,28 @@ extern int forkState[PHILOCOUNT];
 
 State state[PHILOCOUNT];
 
-uint64_t mutex;
-uint64_t semaphores[PHILOCOUNT];
+mutex m;
+mutex semaphores[PHILOCOUNT];
 int philosopherId[PHILOCOUNT];
 
 void * philosopher(uint64_t argc, uint8_t ** argv) {
 	while(1) {
 		//Think
 		//sleep(10);	
-		sleep(randRange(10, 20));
+		sleep(randRange(30, 40));
 
 		takeForks(argc);
 
 		//Eat
 		//sleep(10);
-		sleep(randRange(10, 20));
+		sleep(randRange(30, 40));
 
 		putForks(argc);
 	}
 }
 
 void takeForks(int id) {
-	mutex_lock(&mutex);				//Crit zone
+	mutex_lock(&m);				//Crit zone
 
 	//Set state
 	state[id] = Hungry;
@@ -44,12 +44,12 @@ void takeForks(int id) {
 	render();
 
 	test(id);						//Try to acquire forks
-	mutex_unlock(&mutex);			//Crit zone exit
+	mutex_unlock(&m);			//Crit zone exit
 	mutex_lock(&semaphores[id]);	//Locks if forks not acquired
 }
 
 void putForks(int id) {
-	mutex_lock(&mutex);				//Crit zone
+	mutex_lock(&m);				//Crit zone
 
 	//Set state
 	state[id] = Thinking;
@@ -61,7 +61,7 @@ void putForks(int id) {
 
 	test(left(id));							//Try to acquire forks for left
 	test(right(id));						//Try to acquire forks for right
-	mutex_unlock(&mutex);			//Crit zone exit
+	mutex_unlock(&m);			//Crit zone exit
 }
 
 void test(int id) {
@@ -82,10 +82,10 @@ void test(int id) {
 }
 
 int64_t philosophers(uint64_t argc, uint8_t ** argv) {
-	mutex=0;
+	mutex_init(&m);
 	for (int i = 0; i < PHILOCOUNT; i++) {
 		forkState[i]=-1;
-		semaphores[i]=1;		//Philosophers start not having
+		mutex_init(&semaphores[i]);		//Philosophers start not having
 	}											//ownership of the forks
 
 	

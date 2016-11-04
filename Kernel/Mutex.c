@@ -1,11 +1,22 @@
 #include <Mutex.h>
 #include <asmlib.h>
 
+static uint64_t mutex_count = 0;
 
-void mutex_lock(uint64_t * mutex){
-	enter_region(mutex);
+
+void mutex_init(mutex * m){
+	m->m = 0;
+	mutex_count ++;
 }
 
-void mutex_unlock(uint64_t * mutex){
-	leave_region(mutex);
+void mutex_destroy(mutex * m){
+	mutex_count --;
+}
+
+void mutex_lock(mutex * m){
+	enter_region(&(m->m));
+}
+
+void mutex_unlock(mutex * m){
+	leave_region(&(m->m));
 }

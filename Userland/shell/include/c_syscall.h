@@ -23,6 +23,10 @@ typedef struct Args{
 	uint8_t fg;
 }Args;
 
+typedef struct mutex{
+	uint64_t m;
+} mutex ;
+
 int64_t write(uint64_t fd,const uint8_t * buf, uint64_t count );
 int64_t read(uint64_t fd, const uint8_t * buf, uint8_t count);
 int64_t s_mkfifo(const char * addr);
@@ -42,6 +46,8 @@ void kill(uint64_t pid,uint64_t mode);
 void _wait();
 uint64_t getPid();
 uint64_t getPpid();
-void mutex_lock(uint64_t * mutex);
-void mutex_unlock(uint64_t * mutex);
+void mutex_init(mutex * m);
+void mutex_destroy(mutex * m);
+void mutex_lock(mutex * m);
+void mutex_unlock(mutex * m);
 #endif

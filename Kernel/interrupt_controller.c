@@ -45,32 +45,34 @@ void int_33() {
 
  int64_t syscall_dispatcher(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
 	int64_t ret = 0;
-	uint64_t count = 24;
+	uint64_t count = 26;
 	syscall_proto syscalls[] = {
-		(syscall_proto)sys_read,
-		(syscall_proto)sys_write,
-		(syscall_proto)ps,
-		(syscall_proto)wait,
-		(syscall_proto)exit,
-		(syscall_proto)fkexec,
-		(syscall_proto)sys_realloc,
-		(syscall_proto)sys_free_mem,
-		(syscall_proto)sys_mem,
-		(syscall_proto)sys_sleep,
-		(syscall_proto)sys_pixel,
-		(syscall_proto)sys_clearscreen,
-		(syscall_proto)sys_time,
-		(syscall_proto)sys_set_color,
-		(syscall_proto)sys_set_back_color,
-		(syscall_proto)sys_kill,
-		(syscall_proto)mutex_lock,
-		(syscall_proto)mutex_unlock,
-		(syscall_proto)currPid,
-		(syscall_proto)currPpid,
-		(syscall_proto)sys_mkfifo,
-		(syscall_proto)sys_rmfifo,
-		(syscall_proto)sys_write_fifo,
-		(syscall_proto)sys_read_fifo
+		/* 00 */(syscall_proto)sys_read,
+		/* 01 */(syscall_proto)sys_write,
+		/* 02 */(syscall_proto)ps,
+		/* 03 */(syscall_proto)wait,
+		/* 04 */(syscall_proto)exit,
+		/* 05 */(syscall_proto)fkexec,
+		/* 06 */(syscall_proto)sys_realloc,
+		/* 07 */(syscall_proto)sys_free_mem,
+		/* 08 */(syscall_proto)sys_mem,
+		/* 09 */(syscall_proto)sys_sleep,
+		/* 10 */(syscall_proto)sys_pixel,
+		/* 11 */(syscall_proto)sys_clearscreen,
+		/* 12 */(syscall_proto)sys_time,
+		/* 13 */(syscall_proto)sys_set_color,
+		/* 14 */(syscall_proto)sys_set_back_color,
+		/* 15 */(syscall_proto)sys_kill,
+		/* 16 */(syscall_proto)mutex_lock,
+		/* 17 */(syscall_proto)mutex_unlock,
+		/* 18 */(syscall_proto)currPid,
+		/* 19 */(syscall_proto)currPpid,
+		/* 20 */(syscall_proto)sys_mkfifo,
+		/* 21 */(syscall_proto)sys_rmfifo,
+		/* 22 */(syscall_proto)sys_write_fifo,
+		/* 23 */(syscall_proto)sys_read_fifo,
+		/* 24 */(syscall_proto)mutex_init,
+		/* 25 */(syscall_proto)mutex_destroy
 	};
 	if(rax>=0 && rax<count){
 		ret = syscalls[rax](rdi,rsi,rdx);
