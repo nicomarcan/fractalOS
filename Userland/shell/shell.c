@@ -38,7 +38,7 @@ static void comm_err(uint8_t * comm_str);
 
 /* input error */
 static void arg_err();
-
+extern int64_t philosophers(uint64_t argc, uint8_t ** argv);
 
 
 int64_t shell_main() {
@@ -158,6 +158,8 @@ void init_shell(){
   add_entry("kill", "delete a process", _kill);
   add_entry("infiloop", "infinite loop process", infiloop);
   add_entry("waiter", "wait test process", waiter);
+  add_entry("mutextest", "mutex lock test", mutextest);
+  add_entry("philosophers", "philosophers problem", philosophers);
   add_entry("set-color-complement","sets text color and background as complement to the first",set_shell_color_complement);
 }
 

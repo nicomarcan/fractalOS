@@ -38,4 +38,6 @@ void kill(uint64_t pid,uint64_t mode);
 void _wait();
 uint64_t getPid();
 uint64_t getPpid();
+void mutex_lock(uint64_t * mutex);
+void mutex_unlock(uint64_t * mutex);
 #endif

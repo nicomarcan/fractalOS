@@ -6,12 +6,12 @@
  * Atomically locks the mutex.
  * If the mutex is locked, yields.
  */
-void mutex_lock(uint8_t * mutex);
+void mutex_lock(uint64_t * mutex);
 
 /*
  * Unlocks the mutex.
  */
-void mutex_unlock(uint8_t * mutex);
+void mutex_unlock(uint64_t * mutex);
 
 
 #endif

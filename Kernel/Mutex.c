@@ -2,10 +2,10 @@
 #include <asmlib.h>
 
 
-void mutex_lock(uint8_t * mutex){
+void mutex_lock(uint64_t * mutex){
 	enter_region(mutex);
 }
 
-void mutex_unlock(uint8_t * mutex){
+void mutex_unlock(uint64_t * mutex){
 	leave_region(mutex);
 }
