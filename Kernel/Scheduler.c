@@ -29,7 +29,6 @@ void sleep(uint64_t ticks);
 static ProcessNode * deleteProcessNode(ProcessNode * p);
 static void deleteSleepNode(SleepNode * sn);
 static SleepNode * decrementTicksR(SleepNode * sn);
-static void giveFg(uint64_t pid);
 
 ProcessNode * current = NULL;
 Process * foreground = NULL;
@@ -37,12 +36,12 @@ static int process_count = 0;
 
 SleepNode * sleeping = NULL;
 
-void insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,uint8_t * descr,uint8_t fg){
+uint64_t insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,uint8_t * descr,uint8_t fg){
 	Process * p;
 	if(current == NULL){
 		p=newProcess(entry_point,rax,rdi,rsi,0,fg);
 	} else {
-		p=newProcess(entry_point,rax,rdi,rsi,current->p->ppid,fg);
+		p=newProcess(entry_point,rax,rdi,rsi,current->p->pid,fg);
 	}
 	if(fg){
 		if(foreground == NULL){
@@ -69,7 +68,7 @@ void insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,ui
 		tmp->prev  = pnode;
 	}
 	process_count++;
-	return;
+	return p->pid;
 }
 
 void deleteProcessScheduler(uint64_t pid){
@@ -83,6 +82,9 @@ void deleteProcessScheduler(uint64_t pid){
 		for(int i=0; i<process_count ; i++ , curr = curr->next){
 			if(curr->p->pid == pid){
 				ProcessNode * cn = curr;
+				if( cn->p->fg == 1){
+					giveFg(cn->p->ppid);
+				}
 				deleteProcessNode(cn);
 				deleteProcess(cn->p);
 				la_free(cn);
@@ -109,8 +111,8 @@ void * switchStackPointer(void * rsp){
 	return current->p->stack_pointer;
 }
 
-void fkexec(void * entry_point,uint8_t * descr,Args * args){
-	insertProcess(entry_point,0,args->argc,args->argv,descr,args->fg);
+uint64_t fkexec(void * entry_point,uint8_t * descr,Args * args){
+	return insertProcess(entry_point,0,args->argc,args->argv,descr,args->fg);
 }
 
 void begin(){
@@ -120,7 +122,7 @@ void begin(){
 
 void exit(){
 	ProcessNode * cn = current;
-	if(cn->p->pid == foreground->pid){
+	if(cn->p->fg == 1){
 		giveFg(cn->p->ppid);
 	}
 	current = deleteProcessNode(cn);
@@ -156,7 +158,9 @@ void sys_sleep(uint64_t ticks){
 	current->skip = 1;
 	SleepNode * sn = current->sn ;
 	if(sn != NULL){
+		/* No process should enter here */
 		sn->ticks = ticks;
+		yield();
 		return;
 	} 
 	sn = la_malloc(sizeof(SleepNode));
@@ -282,7 +286,7 @@ uint64_t currPpid(){
  * This assumes that the current process
  * is the foreground process
  */
-static void giveFg(uint64_t pid){
+void giveFg(uint64_t pid){
 	foreground->fg = 0;
 	foreground = NULL;
 	Process * shellpr = NULL;

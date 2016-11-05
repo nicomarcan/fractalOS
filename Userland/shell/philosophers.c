@@ -18,6 +18,7 @@ State state[PHILOCOUNT];
 mutex m;
 mutex semaphores[PHILOCOUNT];
 int philosopherId[PHILOCOUNT];
+uint64_t philosopherPID[PHILOCOUNT];
 
 void * philosopher(uint64_t argc, uint8_t ** argv) {
 	while(1) {
@@ -95,13 +96,21 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 		Args * args = malloc(sizeof(Args));
 		args->argc=i;
 		args->fg=0;
-		fkexec(philosopher,"philo",args);
+		philosopherPID[i] = fkexec(philosopher,"philo",args);
 		free(args);
 	}
 
 	printf("running\n");
-	getchar();
-
+	
+	uint8_t run = 1;
+	while(run){
+		if(getchar()=='q'){
+			for(int i = 0; i<PHILOCOUNT ; i++){
+				kill(philosopherPID[i],0);
+			}
+			run = 0;
+		}
+	}
 	exit();
 }
 

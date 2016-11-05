@@ -2,6 +2,7 @@
 #define SCHEDULER_H
 #include <stdint.h>
 
+#define SHELLPID 1
 
 struct Args{
 	uint64_t argc;
@@ -21,7 +22,7 @@ typedef struct Args Args;
  * Creates a process and inserts it into the
  * process' list
  */
-void insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,uint8_t * descr,uint8_t fg);
+uint64_t insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,uint8_t * descr,uint8_t fg);
 
 /*
  * Deletes a process from the scheduler's internal
@@ -53,7 +54,7 @@ void begin();
  * Creates a new process using
  * the parameter as the entry point
  */
-void fkexec(void * entry_point,uint8_t * descr,Args * args);
+uint64_t fkexec(void * entry_point,uint8_t * descr,Args * args);
 
 /*
  * Switches the context to the next
@@ -91,8 +92,21 @@ void * ps();
    * is the foreground process or not.
    */
  uint8_t isFg();
-  
+ 
+ /*
+  * Gives the foreground to the process
+  * with process id pid.
+  */
+ void giveFg(uint64_t pid);
+ 
+ /*
+  * Returns the pid of the current process.
+  */
  uint64_t currPid();
  
+ /*
+  * Returns the parent pid of the current
+  * process.
+  */
  uint64_t currPpid();
 #endif

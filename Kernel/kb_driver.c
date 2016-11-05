@@ -1,9 +1,11 @@
 #include <asmlib.h>
 #include <kb_layout.h>
 #include <kb_driver.h>
+#include <Scheduler.h>
 
 #define BUFF_SIZE 0xFF
 
+static char ctrl=0;
 static char shift=0;
 static char blockm=0;
 
@@ -26,6 +28,12 @@ char fetch(){
 	unsigned char c=(unsigned char)kb_read();
 	unsigned char p;
 	switch (c){
+		case KRLEFT_CTRL:
+			ctrl=1;
+			break;
+		case KRLEFT_CTRL_BK:
+			ctrl=0;
+			break;
 		case KRLEFT_SHIFT:
 			shift=1;
 			break;
@@ -41,6 +49,16 @@ char fetch(){
 	if(c>0x80){
 		return 0;
 	}
+	if (ctrl) {
+		p=asciiNonShift[c];
+		switch(p){
+			case 's':
+				giveFg(SHELLPID);
+				return 1;
+			default:
+				break;
+		}
+	} 
 	if (shift) {
 		p=asciiShift[c];
 		if(blockm && isAlpha(p))

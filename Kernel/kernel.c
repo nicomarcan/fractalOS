@@ -64,8 +64,8 @@ int main()
 	picSlaveMask(0xFF);
 	initialize_driver();
 	liballoc_pagealloc_init();
-	insertProcess(shellModuleAddress,0,0,0,"shell",1);
 	insertProcess(_lhlt,0,0,0,"init",0);
+	insertProcess(shellModuleAddress,0,0,0,"shell",1);
 	begin();
 
 

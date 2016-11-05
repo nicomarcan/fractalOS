@@ -59,6 +59,7 @@
 #define    KMENU    ( KRWIN + 1 )
 
 #define    KRLEFT_CTRL        0x1D
+#define    KRLEFT_CTRL_BK     0x9D
 #define    KRRIGHT_CTRL       0x1D
 
 #define    KRLEFT_ALT         0x38

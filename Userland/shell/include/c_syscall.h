@@ -34,7 +34,7 @@ int64_t s_rmfifo(const char * addr);
 int64_t s_write_fifo(const char * addr,const uint8_t * buf, uint64_t count );
 int64_t s_read_fifo(const char * addr, uint8_t * buf, uint64_t count );
 ProcessInfo * ps();
-void fkexec(void * ptr,uint8_t * descr,Args * args);
+uint64_t fkexec(void * ptr,uint8_t * descr,Args * args);
 void exit();
 TIME * time();
 void sleep(uint64_t ticks);
