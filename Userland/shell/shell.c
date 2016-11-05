@@ -164,6 +164,7 @@ void init_shell(){
   add_entry("mkfifo","makes a fifo",mkfifoc);
   add_entry("write-fifo","writes on a fifo",write_fifoc);
   add_entry("read-fifo","reads from a fifo",read_fifoc);
+  add_entry("fg","gives the foreground to a process",fg);
 }
 
 /* command entry initialization */

@@ -4,10 +4,8 @@
 #include <Stack.h>
 #include <c_syscall.h>
 #include <clib.h>
-#define RED 	0x00000AFF
-#define GREEN 	0x0000FFA0
+#include <libgph.h>
 
-static void printSquare(Square * s);
 
 static Stack * squares ;
 static uint8_t mode=0;
@@ -17,7 +15,7 @@ void initializeFractal(Square * s){
 	squares = newStack();
 	push(squares,s);
 	clear_screen(); 
-	printSquare(s);
+	printSquare(s,colour);
 }
 
 Stack * step(){
@@ -50,10 +48,10 @@ Stack * step(){
 			s11->p.y-=(s->height)/4;
 			colour=GREEN;
 		}
-		printSquare(s00);
-		printSquare(s01);
-		printSquare(s10);
-		printSquare(s11);
+		printSquare(s00,colour);
+		printSquare(s01,colour);
+		printSquare(s10,colour);
+		printSquare(s11,colour);
 		push(ans,(void *)s00);
 		push(ans,(void *)s01);
 		push(ans,(void *)s10);
@@ -63,14 +61,4 @@ Stack * step(){
 	mode=!mode;
 	squares=ans;
 	return ans;
-}
-
-static void printSquare(Square * s){
-	int i,j;
-	Point p = s->p;
-	for(i=p.x-s->width/2;i<p.x+s->width/2;i++){
-		for(j=p.y-s->height/2;j<p.y+s->height/2;j++){
-			pixel(i,j,colour);
-		}
-	}
 }

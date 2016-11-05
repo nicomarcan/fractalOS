@@ -21,6 +21,15 @@ int64_t waiter(uint64_t argc, uint8_t * argv[]) {
 	exit();
 }
 
+int64_t fg(uint64_t argc, uint8_t * argv[]){
+	if(argc!=1){
+		printf("Must pass target pid\n");
+		exit();
+	}
+	_fg(c_atoi(argv[0]));
+	exit();
+}
+
 int64_t mutextest(uint64_t argc, uint8_t * argv[]) {
 	mutex m;
 	mutex_init(&m);

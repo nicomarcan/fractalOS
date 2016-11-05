@@ -1,5 +1,5 @@
 GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color, pixel,free_mem,fkexec,_hlt,mem_realloc,exit,yield,ps,kill,mutex_lock,mutex_unlock,_wait,getPid,getPpid,s_mkfifo,s_rmfifo,s_write_fifo,s_read_fifo
-GLOBAL mutex_init,mutex_destroy
+GLOBAL mutex_init,mutex_destroy,_fg
 section .text
 
 _hlt:
@@ -29,6 +29,16 @@ _hlt:
 
 	leave
 %endMacro
+
+ _fg:
+
+  pushrg
+
+  mov rax, 26
+  int 80h
+
+  poprg
+  ret
 
  mutex_init:
 

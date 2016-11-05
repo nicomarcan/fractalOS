@@ -45,7 +45,7 @@ void int_33() {
 
  int64_t syscall_dispatcher(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
 	int64_t ret = 0;
-	uint64_t count = 26;
+	uint64_t count = 27;
 	syscall_proto syscalls[] = {
 		/* 00 */(syscall_proto)sys_read,
 		/* 01 */(syscall_proto)sys_write,
@@ -72,7 +72,8 @@ void int_33() {
 		/* 22 */(syscall_proto)sys_write_fifo,
 		/* 23 */(syscall_proto)sys_read_fifo,
 		/* 24 */(syscall_proto)mutex_init,
-		/* 25 */(syscall_proto)mutex_destroy
+		/* 25 */(syscall_proto)mutex_destroy,
+		/* 26 */(syscall_proto)giveFg
 	};
 	if(rax>=0 && rax<count){
 		ret = syscalls[rax](rdi,rsi,rdx);

@@ -10,7 +10,6 @@ void * philosopher(uint64_t argc, uint8_t ** argv);
 void takeForks(int id);
 void putForks(int id);
 void test(int i);
-int randRange(int min, int max);
 extern int forkState[PHILOCOUNT];
 
 State state[PHILOCOUNT];
@@ -19,18 +18,21 @@ mutex m;
 mutex semaphores[PHILOCOUNT];
 int philosopherId[PHILOCOUNT];
 uint64_t philosopherPID[PHILOCOUNT];
-
+uint8_t paused=0;
 void * philosopher(uint64_t argc, uint8_t ** argv) {
 	while(1) {
+		if(paused){
+			_wait();
+		}
 		//Think
 		//sleep(10);	
-		sleep(randRange(30, 40));
+		sleep(35);
 
 		takeForks(argc);
 
 		//Eat
 		//sleep(10);
-		sleep(randRange(30, 40));
+		sleep(35);
 
 		putForks(argc);
 	}
@@ -103,13 +105,35 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 	printf("running\n");
 	
 	uint8_t run = 1;
+	uint8_t c;
 	while(run){
-		if(getchar()=='q'){
-			for(int i = 0; i<PHILOCOUNT ; i++){
-				kill(philosopherPID[i],0);
-			}
-			run = 0;
+		c=getchar();
+		mutex_lock(&m);
+		switch(c){
+			case 'q':
+				/* quit */ 
+				for(int i = 0; i<PHILOCOUNT ; i++){
+					kill(philosopherPID[i],0);
+				}
+				run = 0;
+				break;
+			case 'p':
+				/* pause */
+				paused = 1;
+				break;
+			case 'r':
+				/* resume */
+				if(paused){
+					paused=0;
+					for(int i = 0; i<PHILOCOUNT ; i++){
+						kill(philosopherPID[i],1);
+					}
+				}
+				break;
+			default:
+				break;
 		}
+		mutex_unlock(&m);
 	}
 	exit();
 }
@@ -120,8 +144,4 @@ int left(int i) {
 
 int right(int i) {
 	return (i + 1) % PHILOCOUNT;
-}
-
-int randRange(int min, int max) {
-	return rand() % (max - min) + min;
 }
