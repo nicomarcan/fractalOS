@@ -4,6 +4,7 @@
 #include "philosophers.h"
 
 void render();
+void renderGM();
 void setPhiloState(int philo, State state);
 void setForkState(int fork, int owner);
 

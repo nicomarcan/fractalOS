@@ -1,7 +1,7 @@
 #ifndef PHILOSOPHERS_H
 #define PHILOSOPHERS_H
 
-#define PHILOCOUNT 2
+#define PHILOCOUNT 9
 
 typedef enum {
 	Hungry = 0,

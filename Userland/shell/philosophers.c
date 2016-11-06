@@ -4,6 +4,9 @@
 #include <philosophers.h>
 #include <philosophersGUI.h>
 
+typedef void (*voidfunc)(void);
+
+
 int left(int i);
 int right(int i);
 void * philosopher(uint64_t argc, uint8_t ** argv);
@@ -19,19 +22,21 @@ mutex semaphores[PHILOCOUNT];
 int philosopherId[PHILOCOUNT];
 uint64_t philosopherPID[PHILOCOUNT];
 uint8_t paused=0;
+
+voidfunc renderf=renderGM;
+
+
 void * philosopher(uint64_t argc, uint8_t ** argv) {
 	while(1) {
 		if(paused){
 			_wait();
 		}
 		//Think
-		//sleep(10);	
 		sleep(35);
 
 		takeForks(argc);
 
 		//Eat
-		//sleep(10);
 		sleep(35);
 
 		putForks(argc);
@@ -44,7 +49,7 @@ void takeForks(int id) {
 	//Set state
 	state[id] = Hungry;
 	setPhiloState(id, Hungry);
-	render();
+	renderf();
 
 	test(id);						//Try to acquire forks
 	mutex_unlock(&m);			//Crit zone exit
@@ -60,7 +65,7 @@ void putForks(int id) {
 	setPhiloState(id, Thinking);
 	setForkState(left(id), -1);
 	setForkState(id, -1);
-	render();
+	renderf();
 
 	test(left(id));							//Try to acquire forks for left
 	test(right(id));						//Try to acquire forks for right
@@ -78,7 +83,7 @@ void test(int id) {
 		setPhiloState(id, Eating);
 		setForkState(left(id), id);
 		setForkState(id, id);
-		render();
+		renderf();
 
 		mutex_unlock(&semaphores[id]);	//Forks acquired, unlock
 	}
@@ -87,7 +92,6 @@ void test(int id) {
 int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 	mutex_init(&m);
 	for (int i = 0; i < PHILOCOUNT; i++) {
-		forkState[i]=-1;
 		mutex_init(&semaphores[i]);		//Philosophers start not having
 	}											//ownership of the forks
 
