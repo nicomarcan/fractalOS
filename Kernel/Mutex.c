@@ -9,6 +9,10 @@ void mutex_init(mutex * m){
 	mutex_count ++;
 }
 
+void mutex_init_lock(mutex * m){
+	m->m = 1;
+	mutex_count++;
+}
 void mutex_destroy(mutex * m){
 	mutex_count --;
 }
