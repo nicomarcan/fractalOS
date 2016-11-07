@@ -162,6 +162,7 @@ void init_shell(){
   add_entry("philosophers", "philosophers problem", philosophers);
   add_entry("set-color-complement","sets text color and background as complement to the first",set_shell_color_complement);
   add_entry("mkfifo","makes a fifo",mkfifoc);
+  add_entry("rmfifo","destroys a fifo",rmfifoc);
   add_entry("write-fifo","writes on a fifo",write_fifoc);
   add_entry("read-fifo","reads from a fifo",read_fifoc);
   add_entry("fg","gives the foreground to a process",fg);
