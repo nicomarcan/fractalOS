@@ -125,10 +125,11 @@ void exit(){
 	if(cn->p->fg == 1){
 		giveFg(cn->p->ppid);
 	}
-	current = deleteProcessNode(cn);
+	deleteProcessNode(cn);
 	deleteProcess(cn->p);
 	la_free(cn);
 	process_count--;
+	schedule();
 	changeContextFromRsp(current->p->stack_pointer);
 }
 
@@ -162,7 +163,7 @@ void sys_sleep(uint64_t ticks){
 		sn->ticks = ticks;
 		yield();
 		return;
-	} 
+	}
 	sn = la_malloc(sizeof(SleepNode));
 	sn->ticks = ticks;
 	sn->pn = current;
@@ -237,7 +238,7 @@ static void deleteSleepNode(SleepNode * sn){
 	} else {
 		sn->prev->next = sn->next;
 		sn->next->prev = sn->prev;
-	}	
+	}
 	la_free(sn);
 }
 
@@ -302,7 +303,7 @@ void giveFg(uint64_t pid){
 			found = 1;
 			break;
 		}
-		
+
 	}
 	if(!found){
 		shellpr->fg = 1;
