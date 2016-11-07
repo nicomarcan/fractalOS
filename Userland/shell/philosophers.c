@@ -32,12 +32,12 @@ void * philosopher(uint64_t argc, uint8_t ** argv) {
 			_wait();
 		}
 		//Think
-		sleep(35);
+		sleep(25);
 
 		takeForks(argc);
 
 		//Eat
-		sleep(35);
+		sleep(25);
 
 		putForks(argc);
 	}
@@ -90,12 +90,13 @@ void test(int id) {
 }
 
 int64_t philosophers(uint64_t argc, uint8_t ** argv) {
+	paused = 0;
 	mutex_init(&m);
 	for (int i = 0; i < PHILOCOUNT; i++) {
 		mutex_init(&semaphores[i]);		//Philosophers start not having
 	}											//ownership of the forks
 
-	
+
 	for (int i = 0; i < PHILOCOUNT; i++) {
 		philosopherId[i] = i;
 		state[i] = Thinking;
@@ -107,19 +108,23 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 	}
 
 	printf("running\n");
-	
+
 	uint8_t run = 1;
 	uint8_t c;
 	while(run){
 		c=getchar();
-		mutex_lock(&m);
 		switch(c){
 			case 'q':
-				/* quit */ 
+				/* quit */
+				mutex_lock(&m);
+				mutex_destroy(&m);
 				for(int i = 0; i<PHILOCOUNT ; i++){
+					mutex_destroy(&semaphores[i]);
 					kill(philosopherPID[i],0);
 				}
 				run = 0;
+				paused = 1;
+				exit();
 				break;
 			case 'p':
 				/* pause */
@@ -137,7 +142,6 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 			default:
 				break;
 		}
-		mutex_unlock(&m);
 	}
 	exit();
 }

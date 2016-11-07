@@ -14,8 +14,8 @@ static mutex m;
 static uint8_t initGM = 0;
 
 void render() {
-	
-	
+
+
 	for(int i = 0; i < PHILOCOUNT; i++) {
 		printf("Philosopher %d: %s\n", i, stateStrings[philoState[i]]);
 		printf("Fork - ");
@@ -30,20 +30,20 @@ void render() {
 }
 
 void renderGM(){
-	
+
 	if(!initGM){
 		mutex_init(&m);
 		initGM = 1;
 	}
-	
+
 	mutex_lock(&m);
 	/* Just a demo */
 	uint32_t colours[PHILOCOUNT];
-	
+
 	/* 0-RED   -  Hungry */
 	/* 1-BLUE  -  Thinking */
 	/* 2-GREEN -  Eating */
-	
+
 	for(int i=0;i<PHILOCOUNT ; i++){
 		switch(philoState[i]){
 			case 0:
@@ -59,10 +59,10 @@ void renderGM(){
 				break;
 		}
 	}
-	
+
 	uint64_t ypos = CENTRE_Y - Y_DELTA;
 	uint64_t xpos = CENTRE_X - X_DELTA;
-	
+
 	/* 3 per line */
 	for (int i=0; i<PHILOCOUNT ; i++){
 		if(i%3 == 0 && i!=0){
@@ -72,14 +72,9 @@ void renderGM(){
 		printSquare2(xpos,ypos,SQUARESIZE,SQUARESIZE,colours[i]);
 		ypos += Y_DELTA;
 	}
-	/*
-	printSquare2(CENTRE_X,CENTRE_Y-80,64,64,colours[0]);
-	printSquare2(CENTRE_X,CENTRE_Y,64,64,colours[1]);
-	printSquare2(CENTRE_X,CENTRE_Y+80,64,64,colours[2]);
-	*/
-	sleep(10);
+	sleep(5);
 	mutex_unlock(&m);
-	
+
 }
 
 void setPhiloState(int philo, State state) {
