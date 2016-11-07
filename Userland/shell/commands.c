@@ -12,6 +12,16 @@ int64_t hello_world(uint64_t argc, uint8_t * argv[]) {
   exit();
 }
 
+int64_t fkbomb(uint64_t argc, uint8_t * argv[]) {
+  Args a;
+  a.argc = 0;
+  a.fg = 0;
+  printf("fork!");
+  fkexec(fkbomb,"fkbomb",&a);
+  fkexec(fkbomb,"fkbomb",&a);
+  exit();
+}
+
 /* waits, if not prints messages */
 int64_t waiter(uint64_t argc, uint8_t * argv[]) {
 	_wait();
