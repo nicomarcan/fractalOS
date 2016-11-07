@@ -100,9 +100,13 @@ int64_t read_fifoc(uint64_t argc, uint8_t * argv[]) {
     putchar('\n');
     exit();
   }
-
-  if(read_fifo(argv[0],(uint8_t *)buf2,argv[1][0]-'0') < 0){
-    printf("failed" );
+  if(c_atoi(argv[1]) > 100){
+         printf("Ingrese una cantidad a leer menor a 100" );
+         putchar('\n');
+         exit();
+  }
+  if(read_fifo(argv[0],(uint8_t *)buf2,c_atoi(argv[1])) < 0){
+    printf("El fifo no está inicializado" );
     putchar('\n');
     exit();
   }
@@ -120,14 +124,26 @@ int64_t mkfifoc(uint64_t argc, uint8_t * argv[]) {
   }
   ans = mkfifo(argv[0]);
   if (ans < 1){
-    printf("failed");
+    printf("Esa direccion ya fue usada");
       putchar('\n');
     exit();
   }
-  printf("succeed");
+  printf("El fifo se creo con exito");
     putchar('\n');
   exit();
 }
+
+int64_t rmfifoc(uint64_t argc, uint8_t * argv[]) {
+  int64_t ans;
+  if(argc < 1){
+    printf("Ingrese una direccion" );
+    putchar('\n');
+    exit();
+  }
+  rmfifo(argv[0]);
+  exit();
+}
+
 
 int64_t write_fifoc(uint64_t argc, uint8_t * argv[]) {
   int64_t ans;
@@ -136,13 +152,16 @@ int64_t write_fifoc(uint64_t argc, uint8_t * argv[]) {
     putchar('\n');
     exit();
   }
-
-  putchar('\n');
+  if(c_strlen(argv[1]) > 100){
+          printf("La longitud del string debe ser menor a 100" );
+          putchar('\n');
+          exit();
+  }
   if (write_fifo(argv[0],argv[1],c_strlen(argv[1])) < 0){
     printf("failed" );
     putchar('\n');
   }
-
+   putchar('\n');
   exit();
 
 }

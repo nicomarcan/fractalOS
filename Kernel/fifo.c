@@ -1,6 +1,8 @@
 #include <utils.h>
 #include <fifo.h>
 #include <liballoc.h>
+#include <lib.h>
+#include <Mutex.h>
 
 typedef struct{
 	 char * addr;
@@ -12,6 +14,7 @@ typedef struct{
 
 int fifo_count = 0;
 FIFO * fifos;
+mutex * fifos_m;
 
 static void insert(FIFO * f,unsigned char c);
 static int8_t getChar(FIFO * f);
@@ -37,15 +40,16 @@ int64_t mkfifo(const char * addr){
         if(repeated){
                 return 0;
         }
-        FIFO * f = la_malloc(sizeof(FIFO));
-      	f->addr = la_malloc(sizeof(strlen(addr)));
-        strcpy((uint8_t *)f->addr,(uint8_t *)addr);
-        f->w = 0;
-        f->r = 0;
-        f->not_read = 0;
-        fifo_count++;
-        fifos = la_realloc(fifos,fifo_count*sizeof(FIFO *));
-        fifos[fifo_count - 1] = *f;
+	fifo_count++;
+	fifos = la_realloc(fifos,fifo_count*sizeof(FIFO ));
+	fifos_m = la_realloc(fifos_m,fifo_count*sizeof(mutex));
+	mutex_init(&fifos_m[fifo_count-1]);
+      	fifos[fifo_count-1].addr = la_malloc(sizeof(strlen(addr)));
+        strcpy((uint8_t *)fifos[fifo_count-1].addr,(uint8_t *)addr);
+        fifos[fifo_count-1].w = 0;
+        fifos[fifo_count-1].r = 0;
+        fifos[fifo_count-1].not_read = 0;
+
         return fifo_count;
 }
 
@@ -76,9 +80,11 @@ int64_t write_fifo(const char * addr,const uint8_t * buf, uint64_t count ){
         if(!found ){
                 return -1;
         }
+	mutex_lock(&(fifos_m[i-1]));
         for(j = 0; j < count ; j++){
                 insert(&fifos[i-1],buf[j]);
         }
+	mutex_unlock(&(fifos_m[i-1]));
         return count;
 }
 
@@ -92,12 +98,17 @@ int64_t read_fifo(const char * addr, uint8_t * buf, uint64_t count ){
 		if(strcmp((uint8_t *)fifos[i].addr,(uint8_t *)addr) == 0)
 			found= 1;
 	}
-        if(!found || fifos[i-1].not_read < count){
+        if(!found ){
                 return -1;
         }
+	while(fifos[i-1].not_read < count){
+		yield();
+	}
+	mutex_lock(&(fifos_m[i-1]));
         for(j = 0; j < count ; j++){
                 buf[j] = getChar(&fifos[i-1]);
         }
+	mutex_unlock(&(fifos_m[i-1]));
         return count;
 }
 
