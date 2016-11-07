@@ -21,8 +21,8 @@ mutex m;
 mutex semaphores[PHILOCOUNT];
 int philosopherId[PHILOCOUNT];
 uint64_t philosopherPID[PHILOCOUNT];
-uint8_t paused=0;
-
+static uint8_t paused=0;
+static uint8_t run = 1;
 voidfunc renderf=renderGM;
 
 
@@ -32,15 +32,16 @@ void * philosopher(uint64_t argc, uint8_t ** argv) {
 			_wait();
 		}
 		//Think
-		sleep(35);
+		sleep(25);
 
 		takeForks(argc);
 
 		//Eat
-		sleep(35);
+		sleep(25);
 
 		putForks(argc);
 	}
+	exit();
 }
 
 void takeForks(int id) {
@@ -90,12 +91,14 @@ void test(int id) {
 }
 
 int64_t philosophers(uint64_t argc, uint8_t ** argv) {
+	paused = 0;
+	run = 1;
 	mutex_init(&m);
 	for (int i = 0; i < PHILOCOUNT; i++) {
 		mutex_init(&semaphores[i]);		//Philosophers start not having
 	}											//ownership of the forks
 
-	
+
 	for (int i = 0; i < PHILOCOUNT; i++) {
 		philosopherId[i] = i;
 		state[i] = Thinking;
@@ -107,19 +110,26 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 	}
 
 	printf("running\n");
-	
-	uint8_t run = 1;
+
 	uint8_t c;
 	while(run){
 		c=getchar();
-		mutex_lock(&m);
 		switch(c){
 			case 'q':
-				/* quit */ 
-				for(int i = 0; i<PHILOCOUNT ; i++){
-					kill(philosopherPID[i],0);
+				/* quit */
+				if(paused){
+					mutex_lock(&m);
+					printf("Locked mutex\n");
+					for(int i = 0; i<PHILOCOUNT ; i++){
+						mutex_destroy(&semaphores[i]);
+						kill(philosopherPID[i],0);
+					}
+					run = 0;
+					paused = 1;
+					printf("Exiting\n");
+					mutex_destroy(&m);
+					exit();
 				}
-				run = 0;
 				break;
 			case 'p':
 				/* pause */
@@ -137,7 +147,6 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 			default:
 				break;
 		}
-		mutex_unlock(&m);
 	}
 	exit();
 }
