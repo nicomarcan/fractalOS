@@ -199,7 +199,6 @@ uint8_t shell() {
   uint8_t retval;
   CommDescr * comm;
   putchars("$ ", 2);
-
   get_input(shell_buf_ptr, BUFSIZ);
 
   read_comm(comm_str, &shell_buf_ptr);

@@ -3,20 +3,25 @@
 #include <c_syscall.h>
 #include <philosophersGUI.h>
 #include <libgph.h>
+#include <math.h>
 #define SQUARESIZE 64
 #define Y_DELTA 80
 #define X_DELTA 200
+#define RADIUS 164
 
 char * stateStrings[3] = { "Hungry", "Thinking", "Eating" };
-State philoState[PHILOCOUNT];
-int forkState[PHILOCOUNT];
+State philoState[PHILOMAX];
+int forkState[PHILOMAX];
 static mutex m;
 static uint8_t initGM = 0;
+uint64_t prev = -1;
+void render(uint64_t philos) {
 
-void render() {
-
-
-	for(int i = 0; i < PHILOCOUNT; i++) {
+	if(philos != prev){
+		prev = philos;
+		clear();
+	}
+	for(int i = 0; i < philos; i++) {
 		printf("Philosopher %d: %s\n", i, stateStrings[philoState[i]]);
 		printf("Fork - ");
 
@@ -29,22 +34,26 @@ void render() {
 	putchar('\n');
 }
 
-void renderGM(){
+void renderGM(uint64_t philos){
 
 	if(!initGM){
 		mutex_init(&m);
 		initGM = 1;
 	}
+	if(philos != prev){
+		prev = philos;
+		clear();
+	}
 
 	mutex_lock(&m);
-	/* Just a demo */
-	uint32_t colours[PHILOCOUNT];
-
+	uint32_t colours[PHILOMAX];
+	uint64_t perline = philos/NLINES;
+	perline += philos%NLINES != 0 ? 1:0;
 	/* 0-RED   -  Hungry */
 	/* 1-BLUE  -  Thinking */
 	/* 2-GREEN -  Eating */
 
-	for(int i=0;i<PHILOCOUNT ; i++){
+	for(int i=0;i<philos ; i++){
 		switch(philoState[i]){
 			case 0:
 				colours[i]=RED;
@@ -60,17 +69,11 @@ void renderGM(){
 		}
 	}
 
-	uint64_t ypos = CENTRE_Y - Y_DELTA;
-	uint64_t xpos = CENTRE_X - X_DELTA;
-
-	/* 3 per line */
-	for (int i=0; i<PHILOCOUNT ; i++){
-		if(i%3 == 0 && i!=0){
-			xpos += X_DELTA;
-			ypos = CENTRE_Y - Y_DELTA;
-		}
-		printSquare2(xpos,ypos,SQUARESIZE,SQUARESIZE,colours[i]);
-		ypos += Y_DELTA;
+	double incr = 2*PI/philos;
+	double ang = 0;
+	uint64_t sqsize = SQUARESIZE + 4*(PHILOINIT-philos);
+	for (int i=0; i<philos ; i++ , ang+=incr){
+		printSquare2(CENTRE_X + RADIUS*sin(ang),CENTRE_Y + RADIUS*cos(ang),sqsize,sqsize,colours[i]);
 	}
 	sleep(5);
 	mutex_unlock(&m);
