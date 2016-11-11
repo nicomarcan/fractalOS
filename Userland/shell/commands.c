@@ -63,8 +63,24 @@ int64_t mutextest(uint64_t argc, uint8_t * argv[]) {
 int64_t _ps(uint64_t argc, uint8_t * argv[]){
 	ProcessInfo * pi = (ProcessInfo *)ps();
 	printf("Number of processes: %d\n",pi->process_count);
+	uint8_t * status;
 	for( int i=0; i<pi->process_count ; i++){
-		printf("%d ---- %s ---- %s\n",(pi->PIDs)[i],(pi->descrs)[i],(pi->status)[i]);
+		switch((pi->status)[i]){
+			case 0:
+				status = "running";
+				break;
+			case 1:
+				status = "sleeping";
+				break;
+			case 2:
+				status = "ready";
+				break;
+				
+			default:
+				status = "unknown";
+				break;
+		}
+		printf("%d ---- %s ---- %s\n",(pi->PIDs)[i],(pi->descrs)[i],status);
 	}
 	free(pi->PIDs);
 	free(pi->descrs);
