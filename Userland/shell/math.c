@@ -69,3 +69,11 @@ double cos(double x){
 	}
 	return cos;
 }
+
+int64_t signum(int64_t x){
+	return x < 0 ? -1 : 1;
+}
+
+uint64_t abs(int64_t x){
+	return x*signum(x);
+}
