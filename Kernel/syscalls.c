@@ -69,12 +69,19 @@ int64_t sys_mkfifo(const char * addr){
 int64_t sys_rmfifo(const char * addr){
 	return rmfifo(addr);
 }
-int64_t sys_write_fifo(const char * addr,const uint8_t * buf, uint64_t count ){
-	return write_fifo(addr,buf,count);
+int64_t sys_write_fifo(uint64_t fd,const uint8_t * buf, uint64_t count ){
+	return write_fifo(fd,buf,count);
 }
 
-int64_t sys_read_fifo(const char * addr, uint8_t * buf, uint64_t count ){
-	return read_fifo(addr,buf,count);
+int64_t sys_read_fifo(uint64_t fd, uint8_t * buf, uint64_t count ){
+	return read_fifo(fd,buf,count);
+}
+
+int64_t sys_open_fifo(const char * addr,uint64_t mode){
+	 return open_fifo(addr,mode);
+}
+int64_t sys_close_fifo(const char * addr,uint64_t mode){
+	 return close_fifo(addr,mode);
 }
 
 
