@@ -11,64 +11,56 @@
 #define RADIUS 164
 
 char * stateStrings[3] = { "Hungry", "Thinking", "Eating" };
-State philoState[PHILOMAX];
-int forkState[PHILOMAX];
-static mutex m;
-static uint8_t initGM = 0;
-uint64_t prev = -1;
 
 circleprinter cpr = printCircleFilled2;
 
-void render(uint64_t philos) {
+void render(uint64_t philos,guistruct * gs) {
 
-	if(philos != prev){
-		prev = philos;
+	if(philos != gs->prev){
+		gs->prev = philos;
 		clear();
 	}
 	for(int i = 0; i < philos; i++) {
-		printf("Philosopher %d: %s\n", i, stateStrings[philoState[i]]);
+		printf("Philosopher %d: %s\n", i, stateStrings[gs->philoState[i]]);
 		printf("Fork - ");
 
-		if (forkState[i] == -1)
+		if (gs->forkState[i] == -1)
 			printf("Free\n");
 		else
-			printf("Owner %d\n", forkState[forkState[i]]);
+			printf("Owner %d\n", gs->forkState[gs->forkState[i]]);
 	}
 	putchar('\n');
 	putchar('\n');
 }
 
-void renderGM(uint64_t philos){
-	static uint32_t prevColours[PHILOMAX];
-	static double cosang[PHILOMAX];
-	static double sinang[PHILOMAX];
-	if(!initGM){
-		mutex_init(&m);
-		initGM = 1;
+void renderGM(uint64_t philos,guistruct * gs){
+	if(!gs->initGM){
+		mutex_init(&gs->m);
+		gs->initGM = 1;
 		for(int i=0 ; i<PHILOMAX ; i++){
-			prevColours[i]=-1;
+			gs->prevColours[i]=-1;
 		}
 	}
-	if(philos != prev){
-		prev = philos;
+	if(philos != gs->prev){
+		gs->prev = philos;
 		double incr = 2*PI/philos;
 		double ang = 0;
 		for(int i=0 ; i<PHILOMAX ; i++ , ang+=incr){
-			prevColours[i]=-1;
-			cosang[i]=cos(ang);
-			sinang[i]=sin(ang);
+			gs->prevColours[i]=-1;
+			gs->cosang[i]=cos(ang);
+			gs->sinang[i]=sin(ang);
 		}
 		clear();
 	}
 
-	mutex_lock(&m);
-	uint32_t colours[PHILOMAX];
+	mutex_lock(&gs->m);
+	int32_t colours[PHILOMAX];
 	/* 0-RED   -  Hungry */
 	/* 1-BLUE  -  Thinking */
 	/* 2-GREEN -  Eating */
 
 	for(int i=0;i<philos ; i++){
-		switch(philoState[i]){
+		switch(gs->philoState[i]){
 			case 0:
 				colours[i]=RED;
 				break;
@@ -79,25 +71,26 @@ void renderGM(uint64_t philos){
 				colours[i]=GREEN;
 				break;
 			default:
+				colours[i]=RED;
 				break;
 		}
 	}
 	uint64_t rad = SQUARESIZE + 1*(PHILOINIT-philos);
 	for (int i=0; i<philos ; i++){
-		if(prevColours[i] != colours[i]){
-			prevColours[i] = colours[i];
-			cpr(CENTRE_X + RADIUS*sinang[i],CENTRE_Y + RADIUS*cosang[i],rad,colours[i]);
+		if(gs->prevColours[i] != colours[i]){
+			gs->prevColours[i] = colours[i];
+			cpr(CENTRE_X + RADIUS*gs->sinang[i],CENTRE_Y + RADIUS*gs->cosang[i],rad,colours[i]);
 		}
 	}
 	sleep(5);
-	mutex_unlock(&m);
+	mutex_unlock(&gs->m);
 
 }
 
-void setPhiloState(int philo, State state) {
-	philoState[philo] = state;
+void setPhiloState(int philo, State state,guistruct * gs) {
+	gs->philoState[philo] = state;
 }
 
-void setForkState(int fork, int owner) {
-	forkState[fork] = owner;
+void setForkState(int fork, int owner,guistruct * gs) {
+	gs->forkState[fork] = owner;
 }
