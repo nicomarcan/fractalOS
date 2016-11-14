@@ -4,16 +4,20 @@
 #include <scanf.h>
 #include <clib.h>
 #include <stdbool.h>
+#include <prodconsgui.h>
 #define MIN_SPEED 10
 
 static void * producer(uint64_t argc, uint8_t ** argv) {
 	SQueue * pq = (SQueue *) argv[0];
 	int * prod_speed = (int *) argv[2];
+	guiprodcon * pcg = (guiprodcon *) argv[3];
 	int i = 0;
+
 	while(1) {
 		//Think
 		sleep(*prod_speed);
 		senque(pq, i);
+		renderdeque(pcg);
 		printf("Producido %d. Ahora hay %d/%d items en la cola.\n", i, squeue_size(pq), squeue_max_size(pq));
 		i++;
 	}
@@ -23,13 +27,16 @@ static void * producer(uint64_t argc, uint8_t ** argv) {
 static void * consumer(uint64_t argc, uint8_t ** argv) {
 	SQueue * pq = (SQueue *) argv[0];
 	int * cons_speed = (int *) argv[1];
+	guiprodcon * pcg = (guiprodcon *) argv[3];
 	int i = 0;
 
 	while(1) {
 		//Think
 		sleep(*cons_speed);
 		i = sdeque(pq);
+		renderenque(pcg);
 		printf("Consumido %d. Ahora hay %d/%d items en la cola.\n", i, squeue_size(pq), squeue_max_size(pq));
+
 	}
 	exit();
 }
@@ -51,16 +58,18 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 
 	SQueue * sq = squeue_init(max_capacity);
 	Args * arg = malloc(sizeof(Args));
+	guiprodcon * pcg = renderinit(max_capacity);
 	cons_speed = malloc(sizeof(int));
 	prod_speed = malloc(sizeof(int));
 
 	*cons_speed = 5;
 	*prod_speed = 5;
 	arg->argc = 1;
-	arg->argv = malloc(3 * sizeof(SQueue *));
+	arg->argv = malloc(4 * sizeof(SQueue *));
 	arg->argv[0] = sq;
 	arg->argv[1] = cons_speed;
 	arg->argv[2] = prod_speed;
+	arg->argv[3] = pcg;
 	int prod_pid = fkexec(producer, "producer", arg);
 	int cons_pid = fkexec(consumer, "consumer", arg);
 

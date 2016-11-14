@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "philosophers.h"
 
-#define NLINES 3 
+#define NLINES 3
 
 typedef struct guistruct{
 	State philoState[PHILOMAX];
