@@ -2,6 +2,8 @@
 #include <Process.h>
 #include <liballoc.h>
 #include <asmlib.h>
+#include <stdbool.h>
+#include <Mutex.h>
 #define NULL 0
 
 typedef struct ProcessNode ProcessNode;
@@ -33,7 +35,7 @@ static SleepNode * decrementTicksR(SleepNode * sn);
 ProcessNode * current = NULL;
 Process * foreground = NULL;
 static int process_count = 0;
-
+static bool schelduler_interrupts = true;
 SleepNode * sleeping = NULL;
 
 uint64_t insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,uint8_t * descr,uint8_t fg){
@@ -162,7 +164,7 @@ void sys_sleep(uint64_t ticks){
 		sn->ticks = ticks;
 		yield();
 		return;
-	} 
+	}
 	sn = la_malloc(sizeof(SleepNode));
 	sn->ticks = ticks;
 	sn->pn = current;
@@ -237,7 +239,7 @@ static void deleteSleepNode(SleepNode * sn){
 	} else {
 		sn->prev->next = sn->next;
 		sn->next->prev = sn->prev;
-	}	
+	}
 	la_free(sn);
 }
 
@@ -302,10 +304,27 @@ void giveFg(uint64_t pid){
 			found = 1;
 			break;
 		}
-		
+
 	}
 	if(!found){
 		shellpr->fg = 1;
 		foreground = shellpr;
 	}
+}
+
+void enable_interrupts()
+{
+	_sti();
+}
+
+void disable_interrupts()
+{
+	_cli();
+}
+void release_lock_and_sleep(mutex * m){
+	disable_interrupts();
+	mutex_unlock(m);
+	current->skip = true;
+	enable_interrupts();
+	yield();
 }

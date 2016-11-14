@@ -50,5 +50,6 @@ void mutex_init(mutex * m);
 void mutex_destroy(mutex * m);
 void mutex_lock(mutex * m);
 void mutex_unlock(mutex * m);
+void release_lock_and_sleep(mutex * m);
 void _fg(uint64_t pid);
 #endif

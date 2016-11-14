@@ -5,6 +5,7 @@
 #include <scanf.h>
 #include <fractal.h>
 #include <c_syscall.h>
+#include <prod_con.h>
 #define NULL 0
 
 void * memset(void * destiny, int32_t c, uint64_t length);
@@ -165,6 +166,7 @@ void init_shell(){
   add_entry("write-fifo","writes on a fifo",write_fifoc);
   add_entry("read-fifo","reads from a fifo",read_fifoc);
   add_entry("fg","gives the foreground to a process",fg);
+  add_entry("prod_con","display producer/cosumer problem",prod_con);
 }
 
 /* command entry initialization */

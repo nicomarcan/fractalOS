@@ -1,6 +1,7 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 #include <stdint.h>
+#include <Mutex.h>
 
 #define SHELLPID 1
 
@@ -80,33 +81,36 @@ void * ps();
  * is sent.
  */
  void wait();
- 
+
  /*
   * Make a process wait.
   */
  void mkwait(uint64_t pid);
-  
-  
+
+
   /*
    * Tells whether the current process
    * is the foreground process or not.
    */
  uint8_t isFg();
- 
+
  /*
   * Gives the foreground to the process
   * with process id pid.
   */
  void giveFg(uint64_t pid);
- 
+
  /*
   * Returns the pid of the current process.
   */
  uint64_t currPid();
- 
+
  /*
   * Returns the parent pid of the current
   * process.
   */
  uint64_t currPpid();
+
+ void release_lock_and_sleep(mutex * m);
+
 #endif
