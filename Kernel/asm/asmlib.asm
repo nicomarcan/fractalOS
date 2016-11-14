@@ -3,7 +3,7 @@ GLOBAL _r8,_r9,_r10,_r11,_r12,_r13,_r14,_r15,
 GLOBAL _cli,_sti,_eax,_ebx,_ecx,_edx
 GLOBAL _lidt,picMasterMask,picSlaveMask,_irq00handler,_irq01handler
 GLOBAL _int80handler,kb_read,rtc,_out,_in
-GLOBAL _syscall_handler,_hlt,_lhlt,_readfl,_rip,_lrax,changeContextFromRsp,enter_region,leave_region,yield
+GLOBAL _syscall_handler,_hlt,_lhlt,_readfl,_rip,_lrax,changeContextFromRsp,enter_region,leave_region,yield,try_to_lock
 EXTERN irqDispatcher, int_80, syscall_dispatcher, switchStackPointer
 EXTERN decrementTicks
 
@@ -27,6 +27,16 @@ enter_region:
 leave_region:
 	mov QWORD [rdi],0
 	ret
+
+try_to_lock:
+	xor rdx,rdx
+	xor rax,rax
+	xor rcx,rcx
+	xor rbx,rbx
+	inc rbx
+	lock cmpxchg8b [rdi]
+	ret
+
 
 _readfl:
 	push rbp
