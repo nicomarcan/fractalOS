@@ -75,7 +75,7 @@ int64_t _ps(uint64_t argc, uint8_t * argv[]){
 			case 2:
 				status = "ready";
 				break;
-				
+
 			default:
 				status = "unknown";
 				break;
@@ -121,6 +121,7 @@ int64_t echo(uint64_t argc, uint8_t * argv[]) {
 
 int64_t read_fifoc(uint64_t argc, uint8_t * argv[]) {
   char buf2[100] ;
+  int64_t read;
   if(argc < 2){
     printf("Ingrese una direccion y una cantidad a leer menor a 100" );
     putchar('\n');
@@ -131,13 +132,19 @@ int64_t read_fifoc(uint64_t argc, uint8_t * argv[]) {
          putchar('\n');
          exit();
   }
-  if(read_fifo(argv[0],(uint8_t *)buf2,c_atoi(argv[1])) < 0){
+  read = open_fifo(argv[0],READ);
+  if(read < 2){
+    printf("failed" );
+    putchar('\n');
+  }
+  if(read_fifo(read,(uint8_t *)buf2,c_atoi(argv[1])) < 0){
     printf("El fifo no está inicializado" );
     putchar('\n');
     exit();
   }
   printf(buf2);
   putchar('\n');
+  close_fifo(argv[0],READ);
   exit();
 }
 
@@ -154,6 +161,7 @@ int64_t mkfifoc(uint64_t argc, uint8_t * argv[]) {
       putchar('\n');
     exit();
   }
+
   printf("El fifo se creo con exito");
     putchar('\n');
   exit();
@@ -173,6 +181,7 @@ int64_t rmfifoc(uint64_t argc, uint8_t * argv[]) {
 
 int64_t write_fifoc(uint64_t argc, uint8_t * argv[]) {
   int64_t ans;
+  int64_t write;
   if(argc < 2){
     printf("Ingrese una direccion y un string" );
     putchar('\n');
@@ -183,11 +192,16 @@ int64_t write_fifoc(uint64_t argc, uint8_t * argv[]) {
           putchar('\n');
           exit();
   }
-  if (write_fifo(argv[0],argv[1],c_strlen(argv[1])) < 0){
+  write = open_fifo(argv[0],WRITE);
+  if(write < 2){
     printf("failed" );
     putchar('\n');
   }
-   putchar('\n');
+  if (write_fifo(write,argv[1],c_strlen(argv[1])) < 0){
+    printf("failed" );
+    putchar('\n');
+  }
+  close_fifo(argv[0],WRITE);
   exit();
 
 }

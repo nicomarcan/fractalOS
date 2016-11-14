@@ -1,5 +1,7 @@
-GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color, pixel,free_mem,fkexec,_hlt,mem_realloc,exit,yield,ps,kill,mutex_lock,mutex_unlock,_wait,getPid,getPpid,s_mkfifo,s_rmfifo,s_write_fifo,s_read_fifo
+
+GLOBAL read, write, time, sleep, memory, clear, set_color, set_back_color, pixel,free_mem,fkexec,_hlt,mem_realloc,exit,yield,ps,kill,mutex_lock,mutex_unlock,_wait,getPid,getPpid,s_mkfifo,s_rmfifo,s_write_fifo,s_read_fifo, s_open_fifo,s_close_fifo
 GLOBAL mutex_init,mutex_destroy,_fg, release_lock_and_sleep
+
 section .text
 
 _hlt:
@@ -113,7 +115,7 @@ _hlt:
  release_lock_and_sleep:
   pushrg
 
-  mov rax, 27
+  mov rax, 29
   int 80h
 
   poprg
@@ -274,6 +276,25 @@ s_rmfifo:
 
 	poprg
 	ret
+
+
+	s_open_fifo:
+		pushrg
+
+		mov rax,27
+		int 0x80
+
+		poprg
+		ret
+
+		s_close_fifo:
+			pushrg
+
+			mov rax,28
+			int 0x80
+
+			poprg
+			ret
 
 s_write_fifo:
 	pushrg

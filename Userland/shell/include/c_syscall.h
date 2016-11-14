@@ -4,6 +4,8 @@
 #define STDIN  0
 #define STDOUT 1
 #define STDERR 2
+#define READ 2
+#define WRITE 1
 
 typedef struct{
 	uint8_t sec,min,hour,day,month;
@@ -31,8 +33,10 @@ int64_t write(uint64_t fd,const uint8_t * buf, uint64_t count );
 int64_t read(uint64_t fd, const uint8_t * buf, uint8_t count);
 int64_t s_mkfifo(const char * addr);
 int64_t s_rmfifo(const char * addr);
-int64_t s_write_fifo(const char * addr,const uint8_t * buf, uint64_t count );
-int64_t s_read_fifo(const char * addr, uint8_t * buf, uint64_t count );
+int64_t s_write_fifo(uint64_t fd,const uint8_t * buf, uint64_t count );
+int64_t s_read_fifo(uint64_t fd, uint8_t * buf, uint64_t count );
+int64_t s_open_fifo(const char * addr,  uint64_t mode );
+int64_t s_close_fifo(const char * addr,  uint64_t mode );
 ProcessInfo * ps();
 uint64_t fkexec(void * ptr,uint8_t * descr,Args * args);
 void exit();

@@ -5,27 +5,23 @@
 #include <c_syscall.h>
 #include <clib.h>
 #include <libgph.h>
+#include <fractal.h>
 
-
-static Stack * squares ;
-static uint8_t mode=0;
-static uint32_t colour=RED;
-
-void initializeFractal(Square * s){
-	squares = newStack();
-	push(squares,s);
+void initializeFractal(Square * s,status * st){
+	st->squares = newStack();
+	push(st->squares,s);
 	clear_screen(); 
-	printSquare(s,colour);
+	printSquare(s,st->colour);
 }
 
-Stack * step(){
+Stack * step(status * st){
 	uint32_t x,y;
 	Square * s;
 	Square * s00,* s01,* s10,* s11;
 	Stack * ans = newStack();
 	clear_screen();
-	while(!isEmpty(squares)){
-		s = (Square *)pop(squares);
+	while(!isEmpty(st->squares)){
+		s = (Square *)pop(st->squares);
 		x=s->p.x;y=s->p.y;
 		s00 = newSquare(x-(s->width)/4,y-(s->height)/4,
 					      (s->width)/2,(s->height)/2);
@@ -35,30 +31,30 @@ Stack * step(){
 					      (s->width)/2,(s->height)/2);	
 		s11 = newSquare(x+(s->width)/4,y+(s->height)/4,
 					      (s->width)/2,(s->height)/2);
-		if(mode){
+		if(st->mode){
 			s00->p.x-=(s->width)/4;
 			s01->p.x-=(s->width)/4;
 			s10->p.x+=(s->width)/4;
 			s11->p.x+=(s->width)/4;
-			colour=RED;
+			st->colour=RED;
 		} else {
 			s00->p.y+=(s->height)/4;
 			s10->p.y+=(s->height)/4;
 			s01->p.y-=(s->height)/4;
 			s11->p.y-=(s->height)/4;
-			colour=GREEN;
+			st->colour=GREEN;
 		}
-		printSquare(s00,colour);
-		printSquare(s01,colour);
-		printSquare(s10,colour);
-		printSquare(s11,colour);
+		printSquare(s00,st->colour);
+		printSquare(s01,st->colour);
+		printSquare(s10,st->colour);
+		printSquare(s11,st->colour);
 		push(ans,(void *)s00);
 		push(ans,(void *)s01);
 		push(ans,(void *)s10);
 		push(ans,(void *)s11);
 		deleteSquare(s);
 	}
-	mode=!mode;
-	squares=ans;
+	st->mode=!st->mode;
+	st->squares=ans;
 	return ans;
 }
