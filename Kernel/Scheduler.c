@@ -99,7 +99,7 @@ void deleteProcessScheduler(uint64_t pid){
 
 void schedule(){
 	current = current->next;
-	for(int i=0; i<process_count ; i++ , current = current->next){
+	for(int i=1; i<process_count ; i++ , current = current->next){
 		if(!current->skip){
 			break;
 		}
@@ -127,10 +127,11 @@ void exit(){
 	if(cn->p->fg == 1){
 		giveFg(cn->p->ppid);
 	}
-	current = deleteProcessNode(cn);
+	deleteProcessNode(cn);
 	deleteProcess(cn->p);
 	la_free(cn);
 	process_count--;
+	schedule();
 	changeContextFromRsp(current->p->stack_pointer);
 }
 
@@ -145,11 +146,14 @@ void * ps(){
 		(ans->PIDs)[i]=curr->p->pid;
 		(ans->descrs)[i]=curr->descr;
 		if(curr == current){
-			(ans->status)[i]="running";
+			/* running */
+			(ans->status)[i]=0;
 		} else if (curr->skip){
-			(ans->status)[i]="sleeping";
+			/* sleeping */
+			(ans->status)[i]=1;
 		} else {
-			(ans->status)[i]="waiting";
+			/* ready */
+			(ans->status)[i]=2;
 		}
 	}
 	return (void *)ans;
@@ -157,8 +161,9 @@ void * ps(){
 
 
 void sys_sleep(uint64_t ticks){
-	current->skip = 1;
-	SleepNode * sn = current->sn ;
+	ProcessNode * cn = current;
+	cn->skip = 1;
+	SleepNode * sn = cn->sn ;
 	if(sn != NULL){
 		/* No process should enter here */
 		sn->ticks = ticks;
@@ -167,8 +172,8 @@ void sys_sleep(uint64_t ticks){
 	}
 	sn = la_malloc(sizeof(SleepNode));
 	sn->ticks = ticks;
-	sn->pn = current;
-	current->sn = sn;
+	sn->pn = cn;
+	cn->sn = sn;
 	if (sleeping == NULL){
 		sleeping = sn;
 		sn->next = NULL;
@@ -263,11 +268,12 @@ void mkwait(uint64_t pid){
 }
 
 void wait(){
-	current->skip = 1;
-	SleepNode * sn = current->sn;
+	ProcessNode * cn = current;
+	cn->skip = 1;
+	SleepNode * sn = cn->sn;
 	if(sn != NULL){
 		deleteSleepNode(sn);
-		current->sn = NULL;
+		cn->sn = NULL;
 	}
 	yield();
 	return;

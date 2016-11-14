@@ -14,7 +14,7 @@ typedef struct ProcessInfo{
 	uint64_t process_count;
 	uint64_t * PIDs;
 	uint8_t ** descrs;
-	uint8_t ** status;
+	uint8_t * status;
 }ProcessInfo;
 
 typedef struct Args{

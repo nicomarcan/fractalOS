@@ -12,6 +12,16 @@ int64_t hello_world(uint64_t argc, uint8_t * argv[]) {
   exit();
 }
 
+int64_t fkbomb(uint64_t argc, uint8_t * argv[]) {
+  Args a;
+  a.argc = 0;
+  a.fg = 0;
+  printf("fork!");
+  fkexec(fkbomb,"fkbomb",&a);
+  fkexec(fkbomb,"fkbomb",&a);
+  exit();
+}
+
 /* waits, if not prints messages */
 int64_t waiter(uint64_t argc, uint8_t * argv[]) {
 	_wait();
@@ -53,8 +63,24 @@ int64_t mutextest(uint64_t argc, uint8_t * argv[]) {
 int64_t _ps(uint64_t argc, uint8_t * argv[]){
 	ProcessInfo * pi = (ProcessInfo *)ps();
 	printf("Number of processes: %d\n",pi->process_count);
+	uint8_t * status;
 	for( int i=0; i<pi->process_count ; i++){
-		printf("%d ---- %s ---- %s\n",(pi->PIDs)[i],(pi->descrs)[i],(pi->status)[i]);
+		switch((pi->status)[i]){
+			case 0:
+				status = "running";
+				break;
+			case 1:
+				status = "sleeping";
+				break;
+			case 2:
+				status = "ready";
+				break;
+				
+			default:
+				status = "unknown";
+				break;
+		}
+		printf("%d ---- %s ---- %s\n",(pi->PIDs)[i],(pi->descrs)[i],status);
 	}
 	free(pi->PIDs);
 	free(pi->descrs);
@@ -100,9 +126,13 @@ int64_t read_fifoc(uint64_t argc, uint8_t * argv[]) {
     putchar('\n');
     exit();
   }
-
-  if(read_fifo(argv[0],(uint8_t *)buf2,argv[1][0]-'0') < 0){
-    printf("failed" );
+  if(c_atoi(argv[1]) > 100){
+         printf("Ingrese una cantidad a leer menor a 100" );
+         putchar('\n');
+         exit();
+  }
+  if(read_fifo(argv[0],(uint8_t *)buf2,c_atoi(argv[1])) < 0){
+    printf("El fifo no está inicializado" );
     putchar('\n');
     exit();
   }
@@ -120,14 +150,26 @@ int64_t mkfifoc(uint64_t argc, uint8_t * argv[]) {
   }
   ans = mkfifo(argv[0]);
   if (ans < 1){
-    printf("failed");
+    printf("Esa direccion ya fue usada");
       putchar('\n');
     exit();
   }
-  printf("succeed");
+  printf("El fifo se creo con exito");
     putchar('\n');
   exit();
 }
+
+int64_t rmfifoc(uint64_t argc, uint8_t * argv[]) {
+  int64_t ans;
+  if(argc < 1){
+    printf("Ingrese una direccion" );
+    putchar('\n');
+    exit();
+  }
+  rmfifo(argv[0]);
+  exit();
+}
+
 
 int64_t write_fifoc(uint64_t argc, uint8_t * argv[]) {
   int64_t ans;
@@ -136,13 +178,16 @@ int64_t write_fifoc(uint64_t argc, uint8_t * argv[]) {
     putchar('\n');
     exit();
   }
-
-  putchar('\n');
+  if(c_strlen(argv[1]) > 100){
+          printf("La longitud del string debe ser menor a 100" );
+          putchar('\n');
+          exit();
+  }
   if (write_fifo(argv[0],argv[1],c_strlen(argv[1])) < 0){
     printf("failed" );
     putchar('\n');
   }
-
+   putchar('\n');
   exit();
 
 }

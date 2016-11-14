@@ -3,20 +3,29 @@
 #include <c_syscall.h>
 #include <philosophersGUI.h>
 #include <libgph.h>
-#define SQUARESIZE 64
+#include <math.h>
+#define SQUARESIZE 32
+#define MINSIZE 20
 #define Y_DELTA 80
 #define X_DELTA 200
+#define RADIUS 164
 
 char * stateStrings[3] = { "Hungry", "Thinking", "Eating" };
-State philoState[PHILOCOUNT];
-int forkState[PHILOCOUNT];
+State philoState[PHILOMAX];
+int forkState[PHILOMAX];
 static mutex m;
 static uint8_t initGM = 0;
+uint64_t prev = -1;
 
-void render() {
-	
-	
-	for(int i = 0; i < PHILOCOUNT; i++) {
+circleprinter cpr = printCircleFilled2;
+
+void render(uint64_t philos) {
+
+	if(philos != prev){
+		prev = philos;
+		clear();
+	}
+	for(int i = 0; i < philos; i++) {
 		printf("Philosopher %d: %s\n", i, stateStrings[philoState[i]]);
 		printf("Fork - ");
 
@@ -29,22 +38,36 @@ void render() {
 	putchar('\n');
 }
 
-void renderGM(){
-	
+void renderGM(uint64_t philos){
+	static uint32_t prevColours[PHILOMAX];
+	static double cosang[PHILOMAX];
+	static double sinang[PHILOMAX];
 	if(!initGM){
 		mutex_init(&m);
 		initGM = 1;
+		for(int i=0 ; i<PHILOMAX ; i++){
+			prevColours[i]=-1;
+		}
 	}
-	
+	if(philos != prev){
+		prev = philos;
+		double incr = 2*PI/philos;
+		double ang = 0;
+		for(int i=0 ; i<PHILOMAX ; i++ , ang+=incr){
+			prevColours[i]=-1;
+			cosang[i]=cos(ang);
+			sinang[i]=sin(ang);
+		}
+		clear();
+	}
+
 	mutex_lock(&m);
-	/* Just a demo */
-	uint32_t colours[PHILOCOUNT];
-	
+	uint32_t colours[PHILOMAX];
 	/* 0-RED   -  Hungry */
 	/* 1-BLUE  -  Thinking */
 	/* 2-GREEN -  Eating */
-	
-	for(int i=0;i<PHILOCOUNT ; i++){
+
+	for(int i=0;i<philos ; i++){
 		switch(philoState[i]){
 			case 0:
 				colours[i]=RED;
@@ -59,27 +82,16 @@ void renderGM(){
 				break;
 		}
 	}
-	
-	uint64_t ypos = CENTRE_Y - Y_DELTA;
-	uint64_t xpos = CENTRE_X - X_DELTA;
-	
-	/* 3 per line */
-	for (int i=0; i<PHILOCOUNT ; i++){
-		if(i%3 == 0 && i!=0){
-			xpos += X_DELTA;
-			ypos = CENTRE_Y - Y_DELTA;
+	uint64_t rad = SQUARESIZE + 1*(PHILOINIT-philos);
+	for (int i=0; i<philos ; i++){
+		if(prevColours[i] != colours[i]){
+			prevColours[i] = colours[i];
+			cpr(CENTRE_X + RADIUS*sinang[i],CENTRE_Y + RADIUS*cosang[i],rad,colours[i]);
 		}
-		printSquare2(xpos,ypos,SQUARESIZE,SQUARESIZE,colours[i]);
-		ypos += Y_DELTA;
 	}
-	/*
-	printSquare2(CENTRE_X,CENTRE_Y-80,64,64,colours[0]);
-	printSquare2(CENTRE_X,CENTRE_Y,64,64,colours[1]);
-	printSquare2(CENTRE_X,CENTRE_Y+80,64,64,colours[2]);
-	*/
-	sleep(10);
+	sleep(5);
 	mutex_unlock(&m);
-	
+
 }
 
 void setPhiloState(int philo, State state) {
