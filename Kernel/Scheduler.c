@@ -4,6 +4,7 @@
 #include <asmlib.h>
 #include <stdbool.h>
 #include <Mutex.h>
+#include <trylock.h>
 #define NULL 0
 
 typedef struct ProcessNode ProcessNode;
@@ -37,6 +38,7 @@ Process * foreground = NULL;
 static int process_count = 0;
 static bool schelduler_interrupts = true;
 SleepNode * sleeping = NULL;
+TryLock * tl = NULL;
 
 uint64_t insertProcess(void * entry_point,uint64_t rax,uint64_t rdi, uint64_t rsi,uint8_t * descr,uint8_t fg){
 	Process * p;
@@ -109,7 +111,10 @@ void schedule(){
 
 void * switchStackPointer(void * rsp){
 	current->p->stack_pointer = rsp;
-	schedule();
+	if (trylock(tl)) {
+		schedule();
+		tryunlock(tl);
+	}
 	return current->p->stack_pointer;
 }
 
@@ -118,8 +123,10 @@ uint64_t fkexec(void * entry_point,uint8_t * descr,Args * args){
 }
 
 void begin(){
+	tl = tryinit();
 	_sti();
 	((void (*)(void))(current->p->entry_point))();
+
 }
 
 void exit(){
@@ -318,19 +325,12 @@ void giveFg(uint64_t pid){
 	}
 }
 
-void enable_interrupts()
-{
-	_sti();
-}
-
-void disable_interrupts()
-{
-	_cli();
-}
 void release_lock_and_sleep(mutex * m){
-	disable_interrupts();
+	while(!trylock(tl)) {
+		yield();
+	}
 	mutex_unlock(m);
 	current->skip = true;
-	enable_interrupts();
+	tryunlock(tl);
 	yield();
 }

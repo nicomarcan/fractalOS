@@ -43,7 +43,7 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 		printf("Por favor indique la capacidad de la cola.\n");
 		exit();
 		*/
-		max_capacity = 1000;
+		max_capacity = 5;
 	}
 	else {
 		sscanf(argv[0], "%d", &max_capacity);
