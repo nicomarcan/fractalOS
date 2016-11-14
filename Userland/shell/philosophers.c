@@ -1,25 +1,27 @@
 #include <clib.h>
 #include <scanf.h>
 #include <c_syscall.h>
+#include <c_string.h>
 #include <philosophers.h>
 #include <philosophersGUI.h>
+#define MINRADIUS 164
 
 typedef struct mainstruct {
-	State state[PHILOMAX];		
+	State state[PHILOMAX];
 	mutex m;
 	mutex semaphores[PHILOMAX];
 	int philosopherId[PHILOMAX];
 	uint64_t philosopherPID[PHILOMAX];
 	uint8_t paused ;
 	uint8_t run ;
-	uint64_t PHILOCOUNT; 
+	uint64_t PHILOCOUNT;
 } mainstruct;
 
 
 typedef void (*voidfunc)(uint64_t,guistruct*);
 static void insertPhilo(uint64_t id,guistruct * gs,mainstruct * ms);
 static void removePhilo(mainstruct * ms);
-static void initStructs(guistruct * gs,mainstruct * ms);
+static void initStructs(guistruct * gs,mainstruct * ms,uint64_t radius);
 
 
 int left(int i,mainstruct * ms);
@@ -99,9 +101,13 @@ void test(int id,guistruct * gs,mainstruct * ms) {
 }
 
 int64_t philosophers(uint64_t argc, uint8_t ** argv) {
+	uint64_t radius=MINRADIUS;
+	if(argc == 1){
+		radius = c_atoi(argv[0]);
+	}
 	guistruct gs;
 	mainstruct ms;
-	initStructs(&gs,&ms);
+	initStructs(&gs,&ms,radius);
 
 	for (int i = 0; i < ms.PHILOCOUNT; i++) {
 		insertPhilo(i,&gs,&ms);
@@ -170,9 +176,10 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 	exit();
 }
 
-static void initStructs(guistruct * gs,mainstruct * ms){
+static void initStructs(guistruct * gs,mainstruct * ms,uint64_t radius){
 	gs->prev = -1;
 	gs->initGM = 0;
+	gs->RADIUS = MINRADIUS > radius ? MINRADIUS : radius;
 	for(int i=0;i < PHILOINIT ; i++){
 		mutex_init(&ms->semaphores[i]);
 	}

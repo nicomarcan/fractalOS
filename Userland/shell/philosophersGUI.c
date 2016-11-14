@@ -8,7 +8,6 @@
 #define MINSIZE 20
 #define Y_DELTA 80
 #define X_DELTA 200
-#define RADIUS 164
 
 char * stateStrings[3] = { "Hungry", "Thinking", "Eating" };
 
@@ -79,7 +78,7 @@ void renderGM(uint64_t philos,guistruct * gs){
 	for (int i=0; i<philos ; i++){
 		if(gs->prevColours[i] != colours[i]){
 			gs->prevColours[i] = colours[i];
-			cpr(CENTRE_X + RADIUS*gs->sinang[i],CENTRE_Y + RADIUS*gs->cosang[i],rad,colours[i]);
+			cpr(CENTRE_X + (gs->RADIUS)*gs->sinang[i],CENTRE_Y + (gs->RADIUS)*gs->cosang[i],rad,colours[i]);
 		}
 	}
 	sleep(5);
