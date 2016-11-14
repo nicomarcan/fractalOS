@@ -62,13 +62,23 @@ int64_t mkfifo(const char * addr){
         strcpy((uint8_t *)fifos[fifo_count-1].addr,(uint8_t *)addr);
         fifos[fifo_count-1].w = 0;
         fifos[fifo_count-1].r = 0;
-				fifos[fifo_count-1].w_pid = 0;
+	fifos[fifo_count-1].w_pid = 0;
         fifos[fifo_count-1].r_pid = 0;
-				fifos[fifo_count-1].w_fd = 0;
+	fifos[fifo_count-1].w_fd = 0;
         fifos[fifo_count-1].r_fd = 0;
         fifos[fifo_count-1].not_read = 0;
 
         return fifo_count;
+}
+
+void get_opened_fifos(OPENED_FIFOS * of){
+	int i = 0;
+	of->fifos = la_malloc(fifo_count * BUFF_SIZE);
+	for(;i<fifo_count;i++){
+			of->fifos[i] = la_malloc(BUFF_SIZE);
+			strcpy((uint8_t *)of->fifos[i],(uint8_t *)fifos[i].addr);
+	}
+	of->size = i;
 }
 
 int64_t rmfifo(const char * addr){
@@ -81,9 +91,9 @@ int64_t rmfifo(const char * addr){
         if(!found){
                 return 0;
         }
-				fifos[i-1] = fifos[fifo_count-1];
+	fifos[i-1] = fifos[fifo_count-1];
         fifo_count--;
-        fifos = la_realloc(fifos,fifo_count*sizeof(FIFO *));
+        fifos = la_realloc(fifos,fifo_count*sizeof(FIFO ));
         return fifo_count;
 }
 

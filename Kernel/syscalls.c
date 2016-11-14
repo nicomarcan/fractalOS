@@ -26,6 +26,9 @@ int64_t sys_write(uint64_t fd,const uint8_t *buf, uint64_t count){
 		case STDERR:
 			ret = sys_write_err(buf, count);
 			break;
+		default:
+			ret = write_fifo(fd,buf,count);
+			return;
 	}
 	return ret;
 }
@@ -41,13 +44,14 @@ static int64_t sys_write_err(const uint8_t * buf, uint64_t count){
 }
 
 int64_t sys_read(uint64_t fd,uint8_t *buf,uint64_t count){
-	while(!isFg()){
-		yield();
-	}
+
 	int64_t i = 0;
 	int8_t c;
 	switch(fd){
 		case STDIN:
+			while(!isFg()){
+				yield();
+			}
 			while(i<count && (c=getChar())!=-1){
 				if (c > 0) {
 					buf[i]=c;
@@ -56,11 +60,15 @@ int64_t sys_read(uint64_t fd,uint8_t *buf,uint64_t count){
 			}
 			break;
 		default:
+			i = read_fifo(fd,buf,count);
 			break;
 	}
 	return i;
 }
 
+void sys_ipcs(OPENED_FIFOS * of){
+	 get_opened_fifos(of);
+}
 
 int64_t sys_mkfifo(const char * addr){
 	return mkfifo(addr);

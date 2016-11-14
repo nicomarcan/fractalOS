@@ -15,6 +15,8 @@ int64_t sys_read_fifo(uint64_t fd , uint8_t * buf, uint64_t count);
 int64_t sys_open_fifo(const char * addr,uint64_t mode);
 int64_t sys_close_fifo(const char * addr,uint64_t mode);
 
+
+void sys_ipcs();
 void sys_pixel(uint32_t x,uint32_t y,uint32_t ccoord);
 void * sys_mem(uint64_t size);
 void * sys_realloc(void * p,uint64_t nsize);

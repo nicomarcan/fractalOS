@@ -169,6 +169,7 @@ void init_shell(){
   add_entry("fg","gives the foreground to a process",fg);
   add_entry("prodcons","display producer/cosumer problem",prod_con);
   add_entry("fkbomb","forkbomb",fkbomb);
+  add_entry("ipcs","show ipcs",ipcs);
 }
 
 /* command entry initialization */

@@ -16,4 +16,5 @@ int64_t write_fifoc(uint64_t argc, uint8_t * argv[]);
 int64_t read_fifoc(uint64_t argc, uint8_t * argv[]);
 int64_t fkbomb(uint64_t argc, uint8_t * argv[]);
 int64_t rmfifoc(uint64_t argc, uint8_t * argv[]);
+void ipcs();
 #endif
