@@ -4,7 +4,7 @@
 #include <scanf.h>
 #include <clib.h>
 #include <stdbool.h>
-#define MAX_SPEED 100
+#define MIN_SPEED 10
 
 static void * producer(uint64_t argc, uint8_t ** argv) {
 	SQueue * pq = (SQueue *) argv[0];
@@ -36,19 +36,26 @@ static void * consumer(uint64_t argc, uint8_t ** argv) {
 
 int64_t prod_con(int64_t argc, int64_t * argv[])
 {
+	int max_capacity,* cons_speed, * prod_speed;
+
 	if (argc <= 0) {
+		/*
 		printf("Por favor indique la capacidad de la cola.\n");
 		exit();
+		*/
+		max_capacity = 1000;
 	}
-	int max_capacity, * cons_speed, * prod_speed;
-	sscanf(argv[0], "%d", &max_capacity);
-	SQueue * sq = squeue_init(max_capacity);
-	Args * arg = malloc(arg);
-	cons_speed = malloc(sizeof(cons_speed));
-	prod_speed = malloc(sizeof(prod_speed));
+	else {
+		sscanf(argv[0], "%d", &max_capacity);
+	}
 
-	*cons_speed = 10;
-	*prod_speed = 10;
+	SQueue * sq = squeue_init(max_capacity);
+	Args * arg = malloc(sizeof(Args));
+	cons_speed = malloc(sizeof(int));
+	prod_speed = malloc(sizeof(int));
+
+	*cons_speed = 5;
+	*prod_speed = 5;
 	arg->argc = 1;
 	arg->argv = malloc(3 * sizeof(SQueue *));
 	arg->argv[0] = sq;
@@ -59,9 +66,7 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 
 	int8_t c, end = false;
 	while(!end) {
-		printf("a\n");
 		c = getchar();
-		printf("b\n");
 		switch(c) {
 			case 'q':
 				kill(prod_pid, 0);
@@ -74,8 +79,8 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 				break;
 			case 'a':
 				/* consumption speed up */
-				if (*cons_speed < MAX_SPEED){
-					*cons_speed++;
+				if (*cons_speed > 0){
+					(*cons_speed)--;
 					printf("La velocidad del consumidor aumento. Ahora es %d\n", *cons_speed );
 				}
 				else {
@@ -84,8 +89,8 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 				break;
 			case 'z':
 				/* consumption speed down */
-				if (*cons_speed > 0 ){
-					*cons_speed--;
+				if (*cons_speed < MIN_SPEED ){
+					(*cons_speed)++;
 					printf("La velocidad del consumidor diminuyo. Ahora es %d\n", *cons_speed );
 				}
 				else {
@@ -94,8 +99,8 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 				break;
 			case 's':
 				/* production speed up */
-				if (*prod_speed > MAX_SPEED ){
-					*prod_speed++;
+				if (*prod_speed > 0  ){
+					(*prod_speed)--;
 					printf("La velocidad del productor aumento. Ahora es %d\n", *prod_speed );
 				}
 				else {
@@ -104,8 +109,8 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 				break;
 			case 'x':
 				/* production speed down */
-				if (*prod_speed > 0 ){
-					*prod_speed--;
+				if (*prod_speed < MIN_SPEED ){
+					(*prod_speed)++;
 					printf("La velocidad del productor disminuyo. Ahora es %d\n", *prod_speed );
 				}
 				else {
