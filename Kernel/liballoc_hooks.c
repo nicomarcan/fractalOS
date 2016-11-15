@@ -3,7 +3,7 @@
 #include <Mutex.h>
 #define NULL 0
 #define PSIZE  4096
-#define PNUM   4096*2
+#define PNUM   4096*8
 #define PSTART 0xA00000
 
 typedef int (*lockfunc)(void);
@@ -56,7 +56,7 @@ void togglelock(){
 		unlock = unlock_mutex;
 		lockset = 1;
 	}
-	
+
 }
 
 void* liballoc_alloc(int npages){
@@ -147,5 +147,3 @@ static int unlock_int(){
 	return 0;
 }
 /* END LEGACY */
-
-

@@ -68,6 +68,7 @@
 #define    KRLEFT_SHIFT       0x2A
 #define    KRLEFT_SHIFT_BK	  0xAA
 #define    KRRIGHT_SHIFT      0x36
+#define    KRRIGHT_SHIFT_BK   0xB6
 
 #define    KRCAPS_LOCK        0x3A
 #define    KRSCROLL_LOCK      0x46

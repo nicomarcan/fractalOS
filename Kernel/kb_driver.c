@@ -6,7 +6,8 @@
 #define BUFF_SIZE 0xFF
 
 static char ctrl=0;
-static char shift=0;
+static char lshift=0;
+static char rshift=0;
 static char blockm=0;
 
 static void insert(unsigned char c);
@@ -28,6 +29,12 @@ char fetch(){
 	unsigned char c=(unsigned char)kb_read();
 	unsigned char p;
 	switch (c){
+		case KRRIGHT_SHIFT:
+			rshift=1;
+			break;
+		case KRRIGHT_SHIFT_BK:
+			rshift=0;
+			break;
 		case KRLEFT_CTRL:
 			ctrl=1;
 			break;
@@ -35,10 +42,10 @@ char fetch(){
 			ctrl=0;
 			break;
 		case KRLEFT_SHIFT:
-			shift=1;
+			lshift=1;
 			break;
 		case KRLEFT_SHIFT_BK:
-			shift=0;
+			lshift=0;
 			break;
 		case KRCAPS_LOCK:
 			blockm=!blockm;
@@ -58,8 +65,8 @@ char fetch(){
 			default:
 				break;
 		}
-	} 
-	if (shift) {
+	}
+	if (lshift || rshift) {
 		p=asciiShift[c];
 		if(blockm && isAlpha(p))
 			p=asciiNonShift[c];
