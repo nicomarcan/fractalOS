@@ -8,7 +8,6 @@ typedef struct cond_variable {
 	Queue_p q;
 } cond_variable;
 
-static int64_t reg = false;
 
 cond_variable * cond_variable_init()
 {

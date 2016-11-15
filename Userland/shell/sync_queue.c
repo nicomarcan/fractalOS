@@ -11,7 +11,7 @@ typedef struct SQueue {
 
 SQueue * squeue_init(int max_size)
 {
-	SQueue * new = malloc(sizeof(new));
+	SQueue * new = malloc(sizeof(SQueue));
 	new->q = new_queue();
 	new->full_buffer = cond_variable_init();
 	new->empty_buffer = cond_variable_init();

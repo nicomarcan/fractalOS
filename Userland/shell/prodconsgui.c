@@ -1,38 +1,36 @@
 #include <math.h>
 #include <libgph.h>
 #include <prodconsgui.h>
+#include <c_syscall.h>
 #define RADIUS 164
 #define SQUARESIZE 32
 
-typedef struct guiprodcon{
-	int next;
-    int max;
-	double cosang[30];
-	double sinang[30];
-} guiprodcon;
-
-    uint64_t rad = SQUARESIZE ;
-
-guiprodcon * renderinit(uint64_t max_size){
+guiprodcon * renderinit(uint64_t max_size, uint64_t radius){
     guiprodcon * ret = malloc(sizeof(guiprodcon));
     ret->next = 0;
     ret->max = max_size;
+	ret->m = malloc(sizeof(mutex));
+	ret->r = radius;
+	mutex_init(ret->m);
     double ang = 0;
     double incr = 2*PI/max_size;
     for(int i = 0; i < max_size; i++, ang+=incr) {
         ret->cosang[i]=cos(ang);
         ret->sinang[i]=sin(ang);
-            printf(" %d y %d y %d\n",(int)(ang),(int)(ret->cosang[i]*100), (int)(ret->sinang[i]*100));
     }
     return ret;
 }
 
 void renderenque(guiprodcon * gs){
-    printCircleFilled2(CENTRE_X + RADIUS*gs->sinang[gs->next],CENTRE_Y + RADIUS*gs->cosang[gs->next],rad, RED);
-    (gs->next)++;
+	mutex_lock(gs->m);
+    printCircleFilled2(CENTRE_X + (gs->r)*gs->sinang[gs->next],CENTRE_Y + (gs->r)*gs->cosang[gs->next],SQUARESIZE, RED);
+    gs->next++;
+	mutex_unlock(gs->m);
 }
 
 void renderdeque(guiprodcon * gs){
-    (gs->next)--;
-    printCircleFilled2(CENTRE_X + RADIUS*gs->sinang[gs->next],CENTRE_Y + RADIUS*gs->cosang[gs->next],rad, GREEN);
+	mutex_lock(gs->m);
+    gs->next--;
+    printCircleFilled2(CENTRE_X + (gs->r)*gs->sinang[gs->next],CENTRE_Y + (gs->r)*gs->cosang[gs->next],SQUARESIZE, GREEN);
+	mutex_unlock(gs->m);
 }
