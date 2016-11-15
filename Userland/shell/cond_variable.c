@@ -8,11 +8,10 @@ typedef struct cond_variable {
 	Queue_p q;
 } cond_variable;
 
-static int64_t reg = false;
 
 cond_variable * cond_variable_init()
 {
-    cond_variable * cv = malloc(sizeof(cond_variable_init));
+    cond_variable * cv = malloc(sizeof(cond_variable));
 	cv->q = new_queue();
     return cv;
 }

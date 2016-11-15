@@ -7,10 +7,11 @@
 #include <rtc.h>
 #include <liballoc.h>
 #include <Scheduler.h>
-
+#include <Process.h>
 #define SYS_OUT_COLOR			0x29
 #define SYS_ERR_COLOR			0x49
 
+extern Process * foreground;
 static int64_t sys_write_out(const uint8_t * buf, uint64_t count);
 static int64_t sys_write_err(const uint8_t * buf, uint64_t count);
 
