@@ -14,7 +14,7 @@ guiprodcon * renderinit(uint64_t max_size, uint64_t radius){
 	mutex_init(ret->m);
     double ang = 0;
     double incr = 2*PI/max_size;
-    for(int i = 0; i < max_size; i++, ang+=incr) {
+    for(int i = 0; i <= max_size; i++, ang+=incr) {
         ret->cosang[i]=cos(ang);
         ret->sinang[i]=sin(ang);
     }

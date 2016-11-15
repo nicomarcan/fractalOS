@@ -16,8 +16,7 @@ static void * producer(uint64_t argc, uint8_t ** argv) {
 	while(1) {
 		//Think
 		sleep(*prod_speed);
-		senque(pq, i);
-		renderenque(pcg);
+		senque(pq, i, pcg);
 		/*
 		printf("Producido %d. Ahora hay %d/%d items en la cola.\n", i, squeue_size(pq), squeue_max_size(pq));
 		*/
@@ -35,8 +34,7 @@ static void * consumer(uint64_t argc, uint8_t ** argv) {
 	while(1) {
 		//Think
 		sleep(*cons_speed);
-		i = sdeque(pq);
-		renderdeque(pcg);
+		i = sdeque(pq, pcg);
 		/*
 		printf("Consumido %d. Ahora hay %d/%d items en la cola.\n", i, squeue_size(pq), squeue_max_size(pq));
 		*/
@@ -67,6 +65,8 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 
 	Args * arg1 = malloc(sizeof(Args));
 	Args * arg2 = malloc(sizeof(Args));
+	arg1->fg = 0;
+	arg2->fg = 0;
 	SQueue * sq = squeue_init(max_capacity);
 
 
@@ -75,8 +75,8 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 	cons_speed = malloc(sizeof(int));
 	prod_speed = malloc(sizeof(int));
 
-	*cons_speed = 1;
-	*prod_speed = 1;
+	*cons_speed = 2;
+	*prod_speed = 2;
 	arg1->argc = 3;
 	arg2->argc = 3;
 	arg1->argv = malloc(3 * sizeof(void *));

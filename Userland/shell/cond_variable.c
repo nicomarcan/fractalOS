@@ -11,7 +11,7 @@ typedef struct cond_variable {
 
 cond_variable * cond_variable_init()
 {
-    cond_variable * cv = malloc(sizeof(cond_variable_init));
+    cond_variable * cv = malloc(sizeof(cond_variable));
 	cv->q = new_queue();
     return cv;
 }

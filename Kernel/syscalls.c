@@ -51,11 +51,6 @@ int64_t sys_read(uint64_t fd,uint8_t *buf,uint64_t count){
 	switch(fd){
 		case STDIN:
 			while(!isFg()){
-				if(currPid()==1){
-					char buff[10];
-					intToString(buff,foreground->pid);
-					print(buff,1);
-				}
 				yield();
 			}
 			while(i<count && (c=getChar())!=-1){
