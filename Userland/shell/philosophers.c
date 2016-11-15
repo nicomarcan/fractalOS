@@ -164,6 +164,7 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 				if(ms.PHILOCOUNT>2){
 					mutex_lock(&ms.m);
 					removePhilo(&ms);
+					sleep(5);
 					mutex_unlock(&ms.m);
 				} else {
 					printf("Minimum of 2 philosophers reached\n");

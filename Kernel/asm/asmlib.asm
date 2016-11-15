@@ -5,7 +5,7 @@ GLOBAL _lidt,picMasterMask,picSlaveMask,_irq00handler,_irq01handler
 GLOBAL _int80handler,kb_read,rtc,_out,_in
 GLOBAL _syscall_handler,_hlt,_lhlt,_readfl,_rip,_lrax,changeContextFromRsp,enter_region,leave_region,yield,try_to_lock
 EXTERN irqDispatcher, int_80, syscall_dispatcher, switchStackPointer
-EXTERN decrementTicks
+EXTERN decrementTicks,togglelock
 
 section .text
 
@@ -249,23 +249,20 @@ picSlaveMask:
 
 _irq00handler:
 	pushState
-
-	;push rsp
-	;mov rdi, 0
-	;call irqDispatcher
-	;pop rsp
+	
+	call togglelock
 
 	call decrementTicks
 
 	mov rdi,rsp
-
 	call switchStackPointer
-
 	mov rsp,rax
 
 	mov al, 20h
 	out 20h, al
-
+	
+	call togglelock
+	
 	popState
 	iretq
 

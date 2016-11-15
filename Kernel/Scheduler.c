@@ -26,6 +26,7 @@ struct SleepNode {
 	SleepNode * prev;
 };
 
+extern void togglelock();
 extern void changeContextFromRsp(uint64_t rsp);
 void schedule();
 void sleep(uint64_t ticks);
@@ -124,6 +125,7 @@ uint64_t fkexec(void * entry_point,uint8_t * descr,Args * args){
 
 void begin(){
 	tl = tryinit();
+	togglelock();
 	_sti();
 	((void (*)(void))(current->p->entry_point))();
 

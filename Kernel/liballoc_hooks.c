@@ -1,10 +1,12 @@
 #include <asmlib.h>
 #include <stdint.h>
+#include <Mutex.h>
 #define NULL 0
 #define PSIZE  4096
 #define PNUM   4096*2
 #define PSTART 0xA00000
 
+typedef int (*lockfunc)(void);
 
 extern void * memset(void * p, int32_t c, uint64_t length);
 
@@ -13,6 +15,16 @@ struct page_table {
 };
 
 struct page_table * table = (struct page_table *)NULL;
+static int lock_int();
+static int unlock_int();
+static int lock_mutex();
+static int unlock_mutex();
+static int zero();
+void togglelock();
+static uint8_t lockset = 0;
+static lockfunc lock = zero;
+static lockfunc unlock = zero;
+
 
 void liballoc_pagealloc_init(){
 	int npages = sizeof(struct page_table)/PSIZE ;
@@ -26,26 +38,26 @@ void liballoc_pagealloc_init(){
 	return;
 }
 
-int cleari = 1;
 int liballoc_lock(){
-	uint16_t fl = _readfl();
-	if(!(fl&0x200)){
-		cleari = 0;
-	} else {
-		_cli();
-	}
-	return 0;
+	return lock();
 }
 
 int liballoc_unlock(){
-	if(!cleari){
-		cleari = 1;
-	} else {
-		_sti();
-	}
-	return 0;
+	return unlock();
 }
 
+void togglelock(){
+	if(lockset){
+		lock = zero;
+		unlock = zero;
+		lockset = 0;
+	} else {
+		lock = lock_mutex;
+		unlock = unlock_mutex;
+		lockset = 1;
+	}
+	
+}
 
 void* liballoc_alloc(int npages){
 	uint64_t start = -1;
@@ -98,3 +110,42 @@ int liballoc_free(void * p,int npages){
 	}
 	return 0;
 }
+
+static mutex m = {0};
+
+static int lock_mutex(){
+	mutex_lock(&m);
+}
+
+static int unlock_mutex(){
+	mutex_unlock(&m);
+}
+
+
+static int zero(){
+	return 0;
+}
+
+/* LEGACY */
+int cleari = 1;
+static int lock_int(){
+	uint16_t fl = _readfl();
+	if(!(fl&0x200)){
+		cleari = 0;
+	} else {
+		_cli();
+	}
+	return 0;
+}
+
+static int unlock_int(){
+	if(!cleari){
+		cleari = 1;
+	} else {
+		_sti();
+	}
+	return 0;
+}
+/* END LEGACY */
+
+

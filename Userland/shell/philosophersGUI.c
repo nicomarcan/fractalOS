@@ -81,7 +81,7 @@ void renderGM(uint64_t philos,guistruct * gs){
 			cpr(CENTRE_X + (gs->RADIUS)*gs->sinang[i],CENTRE_Y + (gs->RADIUS)*gs->cosang[i],rad,colours[i]);
 		}
 	}
-	sleep(5);
+	sleep(3);
 	mutex_unlock(&gs->m);
 
 }
