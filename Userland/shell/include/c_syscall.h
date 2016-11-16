@@ -47,6 +47,10 @@ void s_ipcs(OPENED_FIFOS * of);
 ProcessInfo * ps();
 uint64_t fkexec(void * ptr,uint8_t * descr,Args * args);
 void exit();
+/*
+ * Wakes the parent process and exits
+ */
+void wkexit();
 TIME * time();
 void sleep(uint64_t ticks);
 void clear();

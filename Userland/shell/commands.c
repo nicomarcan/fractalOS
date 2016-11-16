@@ -9,7 +9,7 @@
 /* simple debug hello, world */
 int64_t hello_world(uint64_t argc, uint8_t * argv[]) {
   printf("hello, world\n");
-  exit();
+  wkexit();
 }
 
 int64_t fkbomb(uint64_t argc, uint8_t * argv[]) {
@@ -19,7 +19,7 @@ int64_t fkbomb(uint64_t argc, uint8_t * argv[]) {
   printf("fork!");
   fkexec(fkbomb,"fkbomb",&a);
   fkexec(fkbomb,"fkbomb",&a);
-  exit();
+  wkexit();
 }
 
 /* waits, if not prints messages */
@@ -28,13 +28,13 @@ int64_t waiter(uint64_t argc, uint8_t * argv[]) {
 	for(;;) {
 		printf("hola");
 	}
-	exit();
+	wkexit();
 }
 
 int64_t fg(uint64_t argc, uint8_t * argv[]){
 	if(argc!=1){
 		printf("Must pass target pid\n");
-		exit();
+		wkexit();
 	}
 	_fg(c_atoi(argv[0]));
 	exit();
@@ -56,7 +56,7 @@ int64_t mutextest(uint64_t argc, uint8_t * argv[]) {
 		printf("Unlock failed\n");
 	}
 	mutex_destroy(&m);
-	exit();
+	wkexit();
 }
 
 /* prints current processes */
@@ -86,28 +86,28 @@ int64_t _ps(uint64_t argc, uint8_t * argv[]){
 	free(pi->descrs);
 	free(pi->status);
 	free(pi);
-	exit();
+	wkexit();
 }
 
 int64_t _kill(uint64_t argc,uint8_t * argv[]){
 	if(argc!=2){
 		printf("Must pass a pid and kill mode as argument\n");
-		exit();
+		wkexit();
 	}
 	kill(c_atoi(argv[0]),c_atoi(argv[1]));
-	exit();
+	wkexit();
 }
 
 int64_t infiloop(uint64_t argc,uint8_t * argv[]){
 	for(;;);
-	exit();
+	wkexit();
 }
 
 /* prints current time */
 int64_t curr_time(uint64_t argc, uint8_t * argv[]) {
   static uint8_t str [50];
   print_time(str);
-  exit();
+  wkexit();
 }
 
 /* prints input, escapes with "" */
@@ -116,7 +116,7 @@ int64_t echo(uint64_t argc, uint8_t * argv[]) {
     printf(argv[i]);
   }
   putchar('\n');
-  exit();
+  wkexit();
 }
 
 
@@ -129,7 +129,7 @@ void ipcs(){
         for(;i<of.size;i++){
                 printf("%d-> Direccion asociada: %s\n",i,of.fifos[i] );
         }
-         exit();
+         wkexit();
 }
 int64_t read_fifoc(uint64_t argc, uint8_t * argv[]) {
   char buf2[100] ;
@@ -137,12 +137,12 @@ int64_t read_fifoc(uint64_t argc, uint8_t * argv[]) {
   if(argc < 2){
     printf("Ingrese una direccion y una cantidad a leer menor a 100" );
     putchar('\n');
-    exit();
+    wkexit();
   }
   if(c_atoi(argv[1]) > 100){
          printf("Ingrese una cantidad a leer menor a 100" );
          putchar('\n');
-         exit();
+         wkexit();
   }
   r = open_fifo(argv[0],READ);
   if(r < 2){
@@ -152,12 +152,12 @@ int64_t read_fifoc(uint64_t argc, uint8_t * argv[]) {
   if(read(r,(uint8_t *)buf2,c_atoi(argv[1])) < 0){
     printf("El fifo no está inicializado" );
     putchar('\n');
-    exit();
+    wkexit();
   }
   printf(buf2);
   putchar('\n');
   close_fifo(argv[0],READ);
-  exit();
+  wkexit();
 }
 
 int64_t mkfifoc(uint64_t argc, uint8_t * argv[]) {
@@ -165,18 +165,18 @@ int64_t mkfifoc(uint64_t argc, uint8_t * argv[]) {
   if(argc < 1){
     printf("Ingrese una direccion" );
     putchar('\n');
-    exit();
+    wkexit();
   }
   ans = mkfifo(argv[0]);
   if (ans < 1){
     printf("Esa direccion ya fue usada");
       putchar('\n');
-    exit();
+    wkexit();
   }
 
   printf("El fifo se creo con exito");
     putchar('\n');
-  exit();
+  wkexit();
 }
 
 int64_t rmfifoc(uint64_t argc, uint8_t * argv[]) {
@@ -184,10 +184,10 @@ int64_t rmfifoc(uint64_t argc, uint8_t * argv[]) {
   if(argc < 1){
     printf("Ingrese una direccion" );
     putchar('\n');
-    exit();
+    wkexit();
   }
   rmfifo(argv[0]);
-  exit();
+  wkexit();
 }
 
 
@@ -197,12 +197,12 @@ int64_t write_fifoc(uint64_t argc, uint8_t * argv[]) {
   if(argc < 2){
     printf("Ingrese una direccion y un string" );
     putchar('\n');
-    exit();
+    wkexit();
   }
   if(c_strlen(argv[1]) > 100){
           printf("La longitud del string debe ser menor a 100" );
           putchar('\n');
-          exit();
+          wkexit();
   }
   w = open_fifo(argv[0],WRITE);
   if(write < 2){
@@ -214,6 +214,6 @@ int64_t write_fifoc(uint64_t argc, uint8_t * argv[]) {
     putchar('\n');
   }
   close_fifo(argv[0],WRITE);
-  exit();
+  wkexit();
 
 }

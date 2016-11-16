@@ -107,10 +107,17 @@ void print_string(char * str){
 }
 
 void print_newline(){
-	int bk=j,count=WIDTH/C_WIDTH;
-	while(bk<count){
-		print_char(' ');
-		bk++;
+	draw_char((uint8_t*)fb+(i*WIDTH*C_HEIGHT+j*C_WIDTH)*bPP,' ');
+	for(;;){
+		j++;
+		if(j>=(WIDTH/C_WIDTH)){
+			j=0;
+			i++;
+			if(i>=(HEIGHT/C_HEIGHT)){
+				clear_screen();
+			}
+			break;
+		}
 	}
 }
 

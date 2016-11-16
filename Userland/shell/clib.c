@@ -152,3 +152,8 @@ void srand (uint64_t seed) {
 void clear_screen() {
   clear();
 }
+
+void wkexit(){
+	kill(getPpid(),1);
+	exit();
+}

@@ -52,7 +52,7 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 	if (argc < 1) {
 		/*
 		printf("Por favor indique la capacidad de la cola.\n");
-		exit();
+		wkexit();
 		*/
 		max_capacity = 5;
 	}
@@ -167,5 +167,5 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 				break;
 		}
 	}
-	exit();
+	wkexit();
 }

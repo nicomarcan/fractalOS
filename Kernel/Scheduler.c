@@ -307,16 +307,21 @@ void giveFg(uint64_t pid){
 	foreground->fg = 0;
 	foreground = NULL;
 	Process * shellpr = NULL;
+	ProcessNode * shellpn = NULL;
 	ProcessNode * pn = current;
 	uint8_t found = 0;
 	for(int i=0 ; i<process_count ; i++ , pn=pn->next){
 		if(pn->p->pid == 1){
 			shellpr = pn->p;
+			shellpn = pn;
 		}
 		if(pn->p->pid == pid){
 			pn->p->fg = 1;
 			foreground = pn->p;
 			found = 1;
+			if(pn->skip){
+				wake(pn->p->pid);
+			}
 			break;
 		}
 
@@ -324,6 +329,9 @@ void giveFg(uint64_t pid){
 	if(!found){
 		shellpr->fg = 1;
 		foreground = shellpr;
+		if(shellpn->skip){
+			wake(shellpr->pid);
+		}
 	}
 }
 

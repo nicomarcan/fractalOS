@@ -1116,6 +1116,6 @@ int fanorona_main(void)
 	{
 		quit_flag = mainMenu();
     }
-    exit();
+    wkexit();
 
 }

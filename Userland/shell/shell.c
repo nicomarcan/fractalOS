@@ -57,7 +57,7 @@ static int64_t scan(uint64_t argc, uint8_t * argv[]) {
   uint8_t buf[10];
   scanf("%s %d %f ", buf, &i, &d);
   printf("%s|%d|%d\n", buf, i, (int64_t)d);
-  exit();
+  wkexit();
 }
 
 /* display available commands */
@@ -66,7 +66,7 @@ static int64_t help(uint64_t argc, uint8_t * argv[]) {
   for (int i=0; i<comm_table_size;i++) {
     printf("\t%s - %s\n", comm_table[i]->command, comm_table[i]->descr);
   }
-  exit();
+  wkexit();
 }
 
 static int64_t get_colors_from_argv(uint64_t argc, uint8_t * argv[],uint8_t * r, uint8_t * g, uint8_t * b) {
@@ -92,45 +92,45 @@ static int64_t get_colors_from_argv(uint64_t argc, uint8_t * argv[],uint8_t * r,
 static int64_t set_shell_color_complement(uint64_t argc,uint8_t * argv[]){
   int64_t r = 0, g = 0, b = 0, ret;
   if (argc == 0 || argc > 3) {
-    exit();
+    wkexit();
   }
   if (get_colors_from_argv(argc, argv, &r,&g,&b)) {
-    exit();
+    wkexit();
   }
   set_color((uint8_t) r, (uint8_t) g, (uint8_t) b);
   set_back_color((uint8_t) ~r, (uint8_t) ~g, (uint8_t) ~b);
-  exit();
+  wkexit();
 }
 
 static int64_t set_shell_color(uint64_t argc, uint8_t * argv[]) {
   int64_t r = 0, g = 0, b = 0, ret;
   if (argc == 0 || argc > 3) {
-    exit();
+    wkexit();
   }
   if (get_colors_from_argv(argc, argv, &r,&g,&b)) {
-    exit();
+    wkexit();
   }
   set_color((uint8_t) r, (uint8_t) g, (uint8_t) b);
-  exit();
+  wkexit();
 }
 
 static int64_t set_shell__background_color(uint64_t argc, uint8_t * argv[]) {
   int64_t r = 0, g = 0, b = 0, ret;
   if (argc == 0 || argc > 3) {
-    exit();
+    wkexit();
   }
   if (get_colors_from_argv(argc, argv, &r,&g,&b)) {
-    exit();
+    wkexit();
   }
 
   set_back_color((uint8_t) r, (uint8_t) g, (uint8_t) b);
   // printf("%x %x %x", r, g, b);
-  exit();
+  wkexit();
 }
 
 static int64_t clearscr(){
   clear_screen();
-  exit();
+  wkexit();
 }
 
 
@@ -201,7 +201,7 @@ uint8_t shell() {
   int64_t argc;
   uint8_t retval;
   CommDescr * comm;
-  putchars("$ ", 2);
+  putchars(">> ", 3);
   get_input(shell_buf_ptr, BUFSIZ);
 
   read_comm(comm_str, &shell_buf_ptr);
@@ -227,6 +227,7 @@ uint8_t shell() {
 	  }
   	 fkexec(comm->func_ptr,comm->command,args);
   	 free(args);
+  	 _wait();
     }
   }
 

@@ -174,7 +174,7 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 				break;
 		}
 	}
-	exit();
+	wkexit();
 }
 
 static void initStructs(guistruct * gs,mainstruct * ms,uint64_t radius){
