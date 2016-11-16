@@ -10,6 +10,8 @@ typedef struct SQueue {
 	int max_size;
 } SQueue;
 
+int64_t squeue_size(SQueue * sq);
+int64_t squeue_max_size(SQueue * sq);
 SQueue * squeue_init(int max_size)
 {
 	SQueue * new = malloc(sizeof(SQueue));
@@ -43,6 +45,7 @@ void senque(SQueue * sq, int64_t a, guiprodcon * pcg)
 	}
 	enque(sq->q, a);
 	renderenque(pcg);
+	//printf("Producido %d. Ahora hay %d/%d items en la cola.\n", a, squeue_size(sq), squeue_max_size(sq));
 	mutex_unlock(sq->m);
 	cond_variable_signal(sq->empty_buffer);
 }
@@ -55,6 +58,7 @@ int64_t sdeque(SQueue * sq, guiprodcon * pcg)
 	}
 	int64_t a = deque(sq->q);
 	renderdeque(pcg);
+	//printf("Consumido %d. Ahora hay %d/%d items en la cola.\n", a, squeue_size(sq), squeue_max_size(sq));
 	mutex_unlock(sq->m);
 	cond_variable_signal(sq->full_buffer);
 	return a;
