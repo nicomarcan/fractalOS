@@ -87,9 +87,16 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 	int prod_pid = fkexec(producer, "producer", arg1);
 	int cons_pid = fkexec(consumer, "consumer", arg2);
 
-	int8_t c, end = false;
+	int8_t c, end = false, count = 0;
 	while(!end) {
 		c = getchar();
+		if (count == 5) {
+			squeue_render(sq, pcg);
+			count = 0;
+		}
+		else {
+			count++;
+		}
 		switch(c) {
 			case 'q':
 				kill(prod_pid, 0);
@@ -116,6 +123,7 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 			case 'z':
 				/* consumption speed down */
 				if (*cons_speed < MIN_SPEED ){
+
 					(*cons_speed)++;
 					/*
 					printf("La velocidad del consumidor diminuyo. Ahora es %d\n", *cons_speed );

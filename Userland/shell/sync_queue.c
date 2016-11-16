@@ -73,3 +73,11 @@ int64_t squeue_max_size(SQueue * sq)
 {
 	return sq->max_size;
 }
+
+int64_t squeue_render(SQueue * sq, guiprodcon * pcg)
+{
+	mutex_lock(sq->m);
+	clear();
+	renderqueue(pcg);
+	mutex_unlock(sq->m);
+}

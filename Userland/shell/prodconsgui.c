@@ -18,22 +18,25 @@ guiprodcon * renderinit(uint64_t max_size, uint64_t radius){
         ret->cosang[i]=cos(ang);
         ret->sinang[i]=sin(ang);
     }
+	renderqueue(ret);
     return ret;
 }
 
 void renderqueue(guiprodcon * gs)
 {
-	for(int i = 0; i <= gs->next; i++) {
+	mutex_lock(gs->m);
+	for(int i = 0; i < gs->next; i++) {
     	printCircleFilled2(CENTRE_X + (gs->r)*gs->sinang[i],CENTRE_Y + (gs->r)*gs->cosang[i],SQUARESIZE, RED);
 	}
 	for (int i = gs->next + 1; i < gs->max;i++ ) {
 		printCircleFilled2(CENTRE_X + (gs->r)*gs->sinang[i],CENTRE_Y + (gs->r)*gs->cosang[i],SQUARESIZE, GREEN);
 	}
+	mutex_unlock(gs->m);
 }
 
 void renderenque(guiprodcon * gs){
 	mutex_lock(gs->m);
-	renderqueue(gs);
+	printCircleFilled2(CENTRE_X + (gs->r)*gs->sinang[gs->next],CENTRE_Y + (gs->r)*gs->cosang[gs->next],SQUARESIZE, RED);
     gs->next++;
 	mutex_unlock(gs->m);
 }
@@ -41,6 +44,6 @@ void renderenque(guiprodcon * gs){
 void renderdeque(guiprodcon * gs){
 	mutex_lock(gs->m);
     gs->next--;
-    renderqueue(gs);
+	printCircleFilled2(CENTRE_X + (gs->r)*gs->sinang[gs->next],CENTRE_Y + (gs->r)*gs->cosang[gs->next],SQUARESIZE, GREEN);
 	mutex_unlock(gs->m);
 }
