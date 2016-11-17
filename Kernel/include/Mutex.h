@@ -5,13 +5,20 @@
 
 typedef struct mutex {
 	uint64_t m;
+	uint64_t id;
+	uint8_t * name;
 } mutex;
 
 
 /*
  * Initializes the mutex.
  */
-void mutex_init(mutex * m);
+uint64_t mutex_init(mutex * m);
+
+/*
+ * Initializes the mutex and sets its name.
+ */
+uint64_t mutex_nameinit(mutex * m,uint8_t * name);
 
 /*
  * Destroys the mutex.
@@ -27,6 +34,11 @@ void mutex_lock(mutex * m);
  * Unlocks the mutex.
  */
 void mutex_unlock(mutex * m);
+
+/*
+ * Obtains a mutex by name.
+ */
+mutex * mutex_getbyname(uint8_t * name);
 
 
 #endif

@@ -27,6 +27,8 @@ typedef struct Args{
 
 typedef struct mutex{
 	uint64_t m;
+	uint64_t id;
+	uint8_t * name;
 } mutex ;
 
 typedef struct{
@@ -61,7 +63,9 @@ void kill(uint64_t pid,uint64_t mode);
 void _wait();
 uint64_t getPid();
 uint64_t getPpid();
-void mutex_init(mutex * m);
+uint64_t mutex_init(mutex * m);
+uint64_t mutex_nameinit(mutex * m,uint8_t * name);
+mutex * mutex_getbyname(uint8_t * name);
 void mutex_destroy(mutex * m);
 void mutex_lock(mutex * m);
 void mutex_unlock(mutex * m);
