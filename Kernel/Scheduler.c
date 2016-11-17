@@ -102,7 +102,7 @@ void deleteProcessScheduler(uint64_t pid){
 
 void schedule(){
 	current = current->next;
-	for(int i=1; i<process_count ; i++ , current = current->next){
+	for(int i=0; i<process_count ; i++ , current = current->next){
 		if(!current->skip){
 			break;
 		}
