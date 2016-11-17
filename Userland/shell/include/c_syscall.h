@@ -71,4 +71,8 @@ void mutex_lock(mutex * m);
 void mutex_unlock(mutex * m);
 void release_lock_and_sleep(mutex * m);
 void _fg(uint64_t pid);
+
+void * memory(uint64_t m);
+void free_mem(void * p);
+void * mem_realloc(void * p,uint64_t m);
 #endif
