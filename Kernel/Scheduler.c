@@ -335,13 +335,31 @@ void giveFg(uint64_t pid){
 	}
 }
 
-void release_lock_and_sleep(mutex * m){
+void disableScheduler(){
+	if(tl->lock == 1){
+		return;
+	}
 	while(!trylock(tl)) {
 		yield();
 	}
+	togglelock();
+}
+
+void enableScheduler(){
+	if(tl->lock == 0){
+		return;
+	}
+	togglelock();
+	tryunlock(tl);
+}
+
+void release_lock_and_sleep(mutex * m){
+	disableScheduler();
+	
 	mutex_unlock(m);
 	current->skip = true;
-	tryunlock(tl);
+	
+	enableScheduler();
 	yield();
 
 }

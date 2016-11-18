@@ -111,14 +111,14 @@ int liballoc_free(void * p,int npages){
 	return 0;
 }
 
-static mutex m = {0};
+static uint64_t  m = 0;
 
 static int lock_mutex(){
-	mutex_lock(&m);
+	enter_region(&m);
 }
 
 static int unlock_mutex(){
-	mutex_unlock(&m);
+	leave_region(&m);
 }
 
 

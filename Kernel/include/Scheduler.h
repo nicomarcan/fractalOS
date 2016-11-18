@@ -110,7 +110,14 @@ void * ps();
   * process.
   */
  uint64_t currPpid();
-
+	
+	
+	
+ void disableScheduler();	
+	
+	
+ void enableScheduler();	
+ 
  void release_lock_and_sleep(mutex * m);
 
 #endif

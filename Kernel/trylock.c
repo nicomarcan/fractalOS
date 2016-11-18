@@ -1,9 +1,6 @@
 #include <trylock.h>
 #include <stdbool.h>
 #include <stdint.h>
-typedef struct TryLock {
-    uint64_t lock;
-} TryLock;
 
 TryLock * tryinit()
 {
@@ -20,4 +17,12 @@ bool trylock(TryLock * tl)
 void tryunlock(TryLock * tl)
 {
     tl->lock = false;
+}
+
+bool itrylock(uint64_t * l){
+	return !try_to_lock(l);
+}
+
+void itryunlock(uint64_t * l){
+	*l=0;
 }

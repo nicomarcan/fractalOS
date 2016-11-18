@@ -162,10 +162,17 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 			case 's':
 				/* remove philosopher */
 				if(ms.PHILOCOUNT>2){
-					mutex_lock(&ms.m);
-					removePhilo(&ms);
-					sleep(5);
-					mutex_unlock(&ms.m);
+					uint8_t success = 0;
+					while(!success){
+						mutex_lock(&ms.m);
+						if(ms.state[ms.PHILOCOUNT -1] == Thinking && 
+						   ms.state[left(ms.PHILOCOUNT -1,&ms)] != Eating && 
+						   ms.state[right(ms.PHILOCOUNT -1,&ms)] != Eating){
+							removePhilo(&ms);
+							success = 1;
+						}
+						mutex_unlock(&ms.m);
+					}
 				} else {
 					printf("Minimum of 2 philosophers reached\n");
 				}
@@ -194,6 +201,7 @@ static void insertPhilo(uint64_t id,guistruct * gs,mainstruct * ms){
 	ms->philosopherId[id] = id;
 	ms->state[id] = Thinking;
 	setPhiloState(id, Thinking,gs);
+	mutex_init(&ms->semaphores[id]);
 	Args * args = malloc(sizeof(Args));
 	args->argc=id;
 	args->argv=malloc(2*sizeof(void*));
