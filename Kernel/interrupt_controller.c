@@ -46,7 +46,7 @@ void int_33() {
  int64_t syscall_dispatcher(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
 	int64_t ret = 0;
 
-	uint64_t count = 33;
+	uint64_t count = 34;
 
 	syscall_proto syscalls[] = {
 		/* 00 */(syscall_proto)sys_read,
@@ -75,13 +75,14 @@ void int_33() {
 		/* 23 */(syscall_proto)mutex_nameinit,
 		/* 24 */(syscall_proto)mutex_getbyname,
 		/* 25 */(syscall_proto)release_lock_and_sleep,
-		/* 26 */(syscall_proto)sys_ipcs,
-		/* 27 */(syscall_proto)sys_mkfifo,
-		/* 28 */(syscall_proto)sys_rmfifo,
-		/* 29 */(syscall_proto)sys_write_fifo,
-		/* 30 */(syscall_proto)sys_read_fifo,
-		/* 31 */(syscall_proto)sys_open_fifo,
-		/* 32 */(syscall_proto)sys_close_fifo
+		/* 26 */(syscall_proto)mutex_info,
+		/* 27 */(syscall_proto)sys_ipcs,
+		/* 28 */(syscall_proto)sys_mkfifo,
+		/* 29 */(syscall_proto)sys_rmfifo,
+		/* 30 */(syscall_proto)sys_write_fifo,
+		/* 31 */(syscall_proto)sys_read_fifo,
+		/* 32 */(syscall_proto)sys_open_fifo,
+		/* 33 */(syscall_proto)sys_close_fifo
 	};
 	if(rax>=0 && rax<count){
 		ret = syscalls[rax](rdi,rsi,rdx);

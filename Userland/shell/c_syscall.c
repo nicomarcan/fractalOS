@@ -90,25 +90,29 @@ void release_lock_and_sleep(mutex * m){
   _int80h(25,m,0,0);
 }
 
+MutexInfo * mutex_info(){
+	return _int80h(26,0,0,0);
+}
 
-void s_ipcs(OPENED_FIFOS * of){
-  _int80h(26,of,0,0);
+
+void infofifo(OPENED_FIFOS * of){
+  _int80h(27,of,0,0);
 }
 int64_t s_mkfifo(const char * addr){
-  return _int80h(27,addr,0,0);
-}
-int64_t s_rmfifo(const char * addr){
   return _int80h(28,addr,0,0);
 }
-int64_t s_write_fifo(uint64_t fd,const uint8_t * buf, uint64_t count ){
-  return _int80h(29,fd,buf,count);
+int64_t s_rmfifo(const char * addr){
+  return _int80h(29,addr,0,0);
 }
-int64_t s_read_fifo(uint64_t fd, uint8_t * buf, uint64_t count ){
+int64_t s_write_fifo(uint64_t fd,const uint8_t * buf, uint64_t count ){
   return _int80h(30,fd,buf,count);
 }
+int64_t s_read_fifo(uint64_t fd, uint8_t * buf, uint64_t count ){
+  return _int80h(31,fd,buf,count);
+}
 int64_t s_open_fifo(const char * addr,  uint64_t mode ){
-  return _int80h(31,addr,mode,0);
+  return _int80h(32,addr,mode,0);
 }
 int64_t s_close_fifo(const char * addr,  uint64_t mode ){
-  return _int80h(32,addr,mode,0);
+  return _int80h(33,addr,mode,0);
 }

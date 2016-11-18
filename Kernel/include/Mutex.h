@@ -9,6 +9,11 @@ typedef struct mutex {
 	uint8_t * name;
 } mutex;
 
+typedef struct MutexInfo{
+	uint64_t nmutexes;
+	uint64_t * ids;
+	uint8_t ** descrs;
+} MutexInfo;
 
 /*
  * Initializes the mutex.
@@ -39,6 +44,9 @@ void mutex_unlock(mutex * m);
  * Obtains a mutex by name.
  */
 mutex * mutex_getbyname(uint8_t * name);
+
+
+MutexInfo * mutex_info();
 
 
 #endif

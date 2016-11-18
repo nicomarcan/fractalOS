@@ -42,8 +42,7 @@ uint64_t mutex_nameinit(mutex * m,uint8_t * name){
 }
 
 static mutex * minit(mutex * m,uint8_t * name){
-	disableScheduler();
-	
+	uint64_t v = disableScheduler();
 	m->m = 0;
 	m->id = historic;
 	m->name = name;
@@ -58,7 +57,7 @@ static mutex * minit(mutex * m,uint8_t * name){
 	mutex_count ++;
 	historic ++;
 	
-	enableScheduler();
+	enableScheduler(v);
 	return m;
 }
 
@@ -83,9 +82,9 @@ static MutexNode * mutexnode_getbyid(uint64_t id){
 }
 
 void mutex_destroy(mutex * m){
-	disableScheduler();
+	uint64_t v = disableScheduler();
 	nodes = mutex_destroy_rec(nodes,m);
-	enableScheduler();
+	enableScheduler(v);
 }
 
 static MutexNode * mutex_destroy_rec(MutexNode * n,mutex * m){
@@ -97,14 +96,14 @@ static MutexNode * mutex_destroy_rec(MutexNode * n,mutex * m){
 		MutexNode * ret = n->next;
 		la_free(n);
 		return ret;
-	}
+	} 
 	n->next = mutex_destroy_rec(n->next,m);
 	return n;
 }
 
 void mutex_lock(mutex * m){
 	if(!itrylock(&(m->m))){
-		disableScheduler();
+		uint64_t v = disableScheduler();
 		MutexNode * mn = mutexnode_getbyid(m->id);
 		pidnode * pidn = la_malloc(sizeof(pidnode));
 		pidn->pid = currPid();
@@ -117,13 +116,13 @@ void mutex_lock(mutex * m){
 			mn->last = pidn;
 		}
 		mn->waitn ++;
-		enableScheduler();
+		enableScheduler(v);
 		wait();
 	}
 }
 
 void mutex_unlock(mutex * m){
-	disableScheduler();
+	uint64_t v = disableScheduler();
 	MutexNode * mn = mutexnode_getbyid(m->id);
 	if(mn->waitn > 0){
 		pidnode * pidn = mn->first;
@@ -138,6 +137,19 @@ void mutex_unlock(mutex * m){
 	} else {
 		itryunlock(&(m->m));
 	}
-	enableScheduler();
-	
+	enableScheduler(v);
 }
+
+MutexInfo * mutex_info(){
+	MutexInfo * ret = la_malloc(sizeof(MutexInfo));
+	ret->nmutexes = mutex_count;
+	ret->descrs = la_malloc(mutex_count*sizeof(uint8_t*));
+	ret->ids = la_malloc(mutex_count*sizeof(uint64_t));
+	MutexNode * n = nodes;
+	for(int i=0; n!=NULL ; i++ , n = n->next){
+		ret->ids[i]=n->m->id;
+		ret->descrs[i]=n->m->name;
+	}
+	return ret;
+}
+

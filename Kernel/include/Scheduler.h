@@ -113,10 +113,10 @@ void * ps();
 	
 	
 	
- void disableScheduler();	
+ uint64_t disableScheduler();	
 	
 	
- void enableScheduler();	
+ void enableScheduler(uint64_t v);	
  
  void release_lock_and_sleep(mutex * m);
 

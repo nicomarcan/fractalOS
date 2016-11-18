@@ -32,10 +32,16 @@ typedef struct mutex{
 } mutex ;
 
 typedef struct{
-        int size;
+     int size;
 	 char ** fifos;
-
 } OPENED_FIFOS;
+
+typedef struct MutexInfo{
+	uint64_t nmutexes;
+	uint64_t * ids;
+	uint8_t ** descrs;
+} MutexInfo;
+
 
 int64_t write(uint64_t fd,const uint8_t * buf, uint64_t count );
 int64_t read(uint64_t fd, const uint8_t * buf, uint8_t count);
@@ -45,7 +51,7 @@ int64_t s_write_fifo(uint64_t fd,const uint8_t * buf, uint64_t count );
 int64_t s_read_fifo(uint64_t fd, uint8_t * buf, uint64_t count );
 int64_t s_open_fifo(const char * addr,  uint64_t mode );
 int64_t s_close_fifo(const char * addr,  uint64_t mode );
-void s_ipcs(OPENED_FIFOS * of);
+void infofifo(OPENED_FIFOS * of);
 ProcessInfo * ps();
 uint64_t fkexec(void * ptr,uint8_t * descr,Args * args);
 void exit();
@@ -70,6 +76,7 @@ void mutex_destroy(mutex * m);
 void mutex_lock(mutex * m);
 void mutex_unlock(mutex * m);
 void release_lock_and_sleep(mutex * m);
+MutexInfo * mutex_info();
 void _fg(uint64_t pid);
 
 void * memory(uint64_t m);

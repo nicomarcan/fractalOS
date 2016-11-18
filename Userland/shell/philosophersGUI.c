@@ -67,12 +67,15 @@ void renderGM(uint64_t philos,guistruct * gs){
 		}
 	}
 	uint64_t rad = SQUARESIZE + 1*(PHILOINIT-philos);
+	uint64_t currx,curry;
 	for (int i=0; i<philos ; i++){
 		if(gs->prevColours[i] != colours[i]){
 			gs->prevColours[i] = colours[i];
-			cpr(CENTRE_X + (gs->RADIUS)*gs->sinang[i],CENTRE_Y + (gs->RADIUS)*gs->cosang[i],rad,colours[i]);
+			currx = CENTRE_X + (gs->RADIUS)*gs->sinang[i];
+			curry = CENTRE_Y + (gs->RADIUS)*gs->cosang[i];
+			cpr(currx,curry,rad,colours[i]);
 			if(i==0){
-				cpr(CENTRE_X + (gs->RADIUS)*gs->sinang[i],CENTRE_Y + (gs->RADIUS)*gs->cosang[i],5,0x000000);		
+				cpr(currx,curry,5,0x000000);		
 			}
 		}
 	}

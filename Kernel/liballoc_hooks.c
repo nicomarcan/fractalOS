@@ -22,6 +22,7 @@ static int unlock_mutex();
 static int zero();
 void togglelock();
 static uint8_t lockset = 0;
+static mutex  m;
 static lockfunc lock = zero;
 static lockfunc unlock = zero;
 
@@ -44,6 +45,10 @@ int liballoc_lock(){
 
 int liballoc_unlock(){
 	return unlock();
+}
+
+void linitlock(){
+	mutex_nameinit(&m,"liballoc_mutex");
 }
 
 void togglelock(){
@@ -111,14 +116,12 @@ int liballoc_free(void * p,int npages){
 	return 0;
 }
 
-static uint64_t  m = 0;
-
 static int lock_mutex(){
-	enter_region(&m);
+	mutex_lock(&m);
 }
 
 static int unlock_mutex(){
-	leave_region(&m);
+	mutex_unlock(&m);
 }
 
 

@@ -27,6 +27,7 @@ struct SleepNode {
 };
 
 extern void togglelock();
+extern void linitlock();
 extern void changeContextFromRsp(uint64_t rsp);
 void schedule();
 void sleep(uint64_t ticks);
@@ -125,6 +126,7 @@ uint64_t fkexec(void * entry_point,uint8_t * descr,Args * args){
 
 void begin(){
 	tl = tryinit();
+	linitlock();
 	togglelock();
 	_sti();
 	((void (*)(void))(current->p->entry_point))();
@@ -335,31 +337,30 @@ void giveFg(uint64_t pid){
 	}
 }
 
-void disableScheduler(){
+uint64_t disableScheduler(){
 	if(tl->lock == 1){
-		return;
+		return 1;
 	}
 	while(!trylock(tl)) {
 		yield();
 	}
 	togglelock();
+	return 0;
 }
 
-void enableScheduler(){
-	if(tl->lock == 0){
-		return;
-	}
+void enableScheduler(uint64_t v){
+	if(v==1 || tl->lock == 0) return;
 	togglelock();
 	tryunlock(tl);
 }
 
 void release_lock_and_sleep(mutex * m){
-	disableScheduler();
+	uint64_t v = disableScheduler();
 	
 	mutex_unlock(m);
 	current->skip = true;
 	
-	enableScheduler();
+	enableScheduler(v);
 	yield();
 
 }

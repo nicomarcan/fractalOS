@@ -138,6 +138,7 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 				ms.run = 0;
 				ms.paused = 1;
 				mutex_destroy(&ms.m);
+				mutex_destroy(&gs.m);
 				wkexit();
 				break;
 			case 'p':
@@ -210,9 +211,6 @@ static void initStructs(guistruct * gs,mainstruct * ms,uint64_t radius){
 	mutex_init(&gs->m);
 	for(int i=0 ; i<PHILOMAX ; i++){
 		gs->prevColours[i]=-1;
-	}
-	for(int i=0;i < PHILOINIT ; i++){
-		mutex_init(&ms->semaphores[i]);
 	}
 	ms->paused=0;
 	ms->run=1;

@@ -123,13 +123,20 @@ int64_t echo(uint64_t argc, uint8_t * argv[]) {
 void ipcs(){
         OPENED_FIFOS of;
         int i = 0;
-        s_ipcs(&of);
-        putchar('\n');
-        printf("Fifos Abiertos: %d\n",of.size);
+        infofifo(&of);
+        printf("Opened FIFOs: %d\n",of.size);
         for(;i<of.size;i++){
-                printf("%d-> Direccion asociada: %s\n",i,of.fifos[i] );
+           printf("%d-> Name: %s\n",i,of.fifos[i] );
         }
-         wkexit();
+        MutexInfo * mi = mutex_info();
+        printf("Active mutexes: %d\n",mi->nmutexes);
+        for(i=0;i<mi->nmutexes;i++){
+			printf("%d-> Name: %s\n",mi->ids[i],mi->descrs[i] != 0 ? mi->descrs[i] : "Unnamed");
+		}
+		free(mi->ids);
+		free(mi->descrs);
+		free(mi);
+        wkexit();
 }
 int64_t read_fifoc(uint64_t argc, uint8_t * argv[]) {
   char buf2[100] ;
