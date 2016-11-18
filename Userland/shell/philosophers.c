@@ -15,6 +15,7 @@ typedef struct mainstruct {
 	uint8_t paused ;
 	uint8_t run ;
 	uint64_t PHILOCOUNT;
+	uint64_t pausecount;
 } mainstruct;
 
 
@@ -30,7 +31,7 @@ void * philosopher(uint64_t argc, uint8_t ** argv);
 void takeForks(int id,guistruct * gs,mainstruct * ms);
 void putForks(int id,guistruct * gs,mainstruct * ms);
 void test(int i,guistruct * gs,mainstruct * ms);
-
+void incrementPausecount(mainstruct * ms);
 voidfunc renderf=renderGM;
 
 
@@ -39,6 +40,7 @@ void * philosopher(uint64_t argc, uint8_t ** argv) {
 	mainstruct * ms = argv[1];
 	while(1) {
 		if(ms->paused){
+			incrementPausecount(ms);
 			kill(getPpid(),1);
 			_wait();
 		}
@@ -122,11 +124,12 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 		switch(c){
 			case 'q':
 				/* quit */
-				ms.paused = 1;
-				uint64_t count = 0;
-				while(count!=ms.PHILOCOUNT){
-					_wait();
-					count++;
+				if(!ms.paused){
+					ms.paused = 1;
+					ms.pausecount = 0;
+					while(ms.pausecount!=ms.PHILOCOUNT){
+						_wait();
+					}
 				}
 				for(int i = 0; i<ms.PHILOCOUNT ; i++){
 					mutex_destroy(&ms.semaphores[i]);
@@ -140,6 +143,10 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 			case 'p':
 				/* pause */
 				ms.paused = 1;
+				ms.pausecount = 0;
+				while(ms.pausecount!=ms.PHILOCOUNT){
+					_wait();
+				}
 				break;
 			case 'r':
 				/* resume */
@@ -153,11 +160,12 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 			case 'w':
 				/* add philosopher */
 				if(ms.PHILOCOUNT<PHILOMAX){
-					ms.paused = 1;
-					uint64_t count = 0;
-					while(count!=ms.PHILOCOUNT){
-						_wait();
-						count++;
+					if(!ms.paused){
+						ms.paused = 1;
+						ms.pausecount = 0;
+						while(ms.pausecount!=ms.PHILOCOUNT){
+							_wait();
+						}
 					}
 					insertPhilo(ms.PHILOCOUNT,&gs,&ms);
 					ms.PHILOCOUNT ++ ;
@@ -172,11 +180,12 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 			case 's':
 				/* remove philosopher */
 				if(ms.PHILOCOUNT>2){
-					ms.paused = 1;
-					uint64_t count = 0;
-					while(count!=ms.PHILOCOUNT){
-						_wait();
-						count++;
+					if(!ms.paused){
+						ms.paused = 1;
+						ms.pausecount = 0;
+						while(ms.pausecount!=ms.PHILOCOUNT){
+							_wait();
+						}
 					}
 					removePhilo(&ms);
 					ms.paused=0;
@@ -208,6 +217,7 @@ static void initStructs(guistruct * gs,mainstruct * ms,uint64_t radius){
 	ms->paused=0;
 	ms->run=1;
 	ms->PHILOCOUNT=PHILOINIT;
+	ms->pausecount = 0;
 	mutex_init(&ms->m);
 }
 
@@ -238,4 +248,10 @@ int left(int i,mainstruct * ms) {
 
 int right(int i,mainstruct * ms) {
 	return (i + 1) % ms->PHILOCOUNT;
+}
+
+void incrementPausecount(mainstruct * ms){
+	mutex_lock(&ms->m);	
+	ms->pausecount ++;
+	mutex_unlock(&ms->m);	
 }
