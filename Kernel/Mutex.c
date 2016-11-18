@@ -35,6 +35,9 @@ uint64_t mutex_init(mutex * m){
 }
 
 uint64_t mutex_nameinit(mutex * m,uint8_t * name){
+	if(mutex_getbyname(name)!=NULL){
+		return -1;
+	}
 	return minit(m,name)->id;
 }
 

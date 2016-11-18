@@ -79,7 +79,7 @@ void renderGM(uint64_t philos,guistruct * gs){
 			gs->prevColours[i] = colours[i];
 			cpr(CENTRE_X + (gs->RADIUS)*gs->sinang[i],CENTRE_Y + (gs->RADIUS)*gs->cosang[i],rad,colours[i]);
 			if(i==0){
-				cpr(CENTRE_X + (gs->RADIUS)*gs->sinang[i],CENTRE_Y + (gs->RADIUS)*gs->cosang[i],10,0x000000);		
+				cpr(CENTRE_X + (gs->RADIUS)*gs->sinang[i],CENTRE_Y + (gs->RADIUS)*gs->cosang[i],5,0x000000);		
 			}
 		}
 	}
