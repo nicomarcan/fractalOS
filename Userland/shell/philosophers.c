@@ -39,6 +39,7 @@ void * philosopher(uint64_t argc, uint8_t ** argv) {
 	mainstruct * ms = argv[1];
 	while(1) {
 		if(ms->paused){
+			kill(getPpid(),1);
 			_wait();
 		}
 		//Think
@@ -121,21 +122,20 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 		switch(c){
 			case 'q':
 				/* quit */
-				if(ms.paused){
-					mutex_lock(&ms.m);
-					printf("Locked mutex\n");
-					for(int i = 0; i<ms.PHILOCOUNT ; i++){
-						mutex_destroy(&ms.semaphores[i]);
-						kill(ms.philosopherPID[i],0);
-					}
-					ms.run = 0;
-					ms.paused = 1;
-					printf("Exiting\n");
-					mutex_destroy(&ms.m);
-					exit();
-				} else {
-					printf("Pause first\n");
+				ms.paused = 1;
+				uint64_t count = 0;
+				while(count!=ms.PHILOCOUNT){
+					_wait();
+					count++;
 				}
+				for(int i = 0; i<ms.PHILOCOUNT ; i++){
+					mutex_destroy(&ms.semaphores[i]);
+					kill(ms.philosopherPID[i],0);
+				}
+				ms.run = 0;
+				ms.paused = 1;
+				mutex_destroy(&ms.m);
+				wkexit();
 				break;
 			case 'p':
 				/* pause */
@@ -153,8 +153,18 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 			case 'w':
 				/* add philosopher */
 				if(ms.PHILOCOUNT<PHILOMAX){
+					ms.paused = 1;
+					uint64_t count = 0;
+					while(count!=ms.PHILOCOUNT){
+						_wait();
+						count++;
+					}
 					insertPhilo(ms.PHILOCOUNT,&gs,&ms);
 					ms.PHILOCOUNT ++ ;
+					ms.paused=0;
+					for(int i = 0; i<ms.PHILOCOUNT ; i++){
+						kill(ms.philosopherPID[i],1);
+					}
 				} else {
 					printf("Maximum of %d philosophers reached\n",PHILOMAX);
 				}
@@ -162,10 +172,17 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 			case 's':
 				/* remove philosopher */
 				if(ms.PHILOCOUNT>2){
-					mutex_lock(&ms.m);
+					ms.paused = 1;
+					uint64_t count = 0;
+					while(count!=ms.PHILOCOUNT){
+						_wait();
+						count++;
+					}
 					removePhilo(&ms);
-					mutex_unlock(&ms.m);
-					sleep(5);
+					ms.paused=0;
+					for(int i = 0; i<ms.PHILOCOUNT ; i++){
+						kill(ms.philosopherPID[i],1);
+					}
 				} else {
 					printf("Minimum of 2 philosophers reached\n");
 				}
@@ -179,8 +196,12 @@ int64_t philosophers(uint64_t argc, uint8_t ** argv) {
 
 static void initStructs(guistruct * gs,mainstruct * ms,uint64_t radius){
 	gs->prev = -1;
-	gs->initGM = 0;
+	gs->initGM = 1;
 	gs->RADIUS = MINRADIUS > radius ? MINRADIUS : radius;
+	mutex_init(&gs->m);
+	for(int i=0 ; i<PHILOMAX ; i++){
+		gs->prevColours[i]=-1;
+	}
 	for(int i=0;i < PHILOINIT ; i++){
 		mutex_init(&ms->semaphores[i]);
 	}

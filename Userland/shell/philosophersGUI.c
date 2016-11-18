@@ -34,13 +34,6 @@ void render(uint64_t philos,guistruct * gs) {
 
 void renderGM(uint64_t philos,guistruct * gs){
 	mutex_lock(&gs->m);
-	if(!gs->initGM){
-		mutex_init(&gs->m);
-		gs->initGM = 1;
-		for(int i=0 ; i<PHILOMAX ; i++){
-			gs->prevColours[i]=-1;
-		}
-	}
 	if(philos != gs->prev){
 		gs->prev = philos;
 		double incr = 2*PI/philos;
