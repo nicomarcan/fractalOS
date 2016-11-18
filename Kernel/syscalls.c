@@ -67,7 +67,7 @@ int64_t sys_read(uint64_t fd,uint8_t *buf,uint64_t count){
 	return i;
 }
 
-void sys_ipcs(OPENED_FIFOS * of){
+void sys_infofifos(OPENED_FIFOS * of){
 	 get_opened_fifos(of);
 }
 

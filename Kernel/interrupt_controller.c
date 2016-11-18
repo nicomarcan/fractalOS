@@ -76,7 +76,7 @@ void int_33() {
 		/* 24 */(syscall_proto)mutex_getbyname,
 		/* 25 */(syscall_proto)release_lock_and_sleep,
 		/* 26 */(syscall_proto)mutex_info,
-		/* 27 */(syscall_proto)sys_ipcs,
+		/* 27 */(syscall_proto)sys_infofifos,
 		/* 28 */(syscall_proto)sys_mkfifo,
 		/* 29 */(syscall_proto)sys_rmfifo,
 		/* 30 */(syscall_proto)sys_write_fifo,
