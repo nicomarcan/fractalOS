@@ -6,7 +6,7 @@
 #include <Scheduler.h>
 
 typedef struct{
-	 char * addr;
+	 char  addr[ADDR_SIZE];
 	unsigned char array[BUFF_SIZE];
 	int w_pid;
 	int r_pid;
@@ -25,9 +25,9 @@ typedef struct{
 
 
 int fifo_count = 0;
-FIFO * fifos;
-FD * fds;
-mutex * fifos_m;
+FIFO  fifos[FIFOS_MAX];
+FD  fds[FIFOS_MAX];
+mutex  fifos_m[FIFOS_MAX];
 int fd_count = 0;
 
 static void insert(FIFO * f,unsigned char c);
@@ -47,6 +47,8 @@ static void insert(FIFO * f,unsigned char c){
 int64_t mkfifo(const char * addr){
 	int i = 0;
 	int repeated = 0;
+	if(fifo_count > 9)
+		return 0;
 	for(;i < fifo_count && !repeated;i++){
 		if(strcmp((uint8_t *)fifos[i].addr,(uint8_t *)addr) == 0)
 			repeated = 1;
@@ -55,10 +57,7 @@ int64_t mkfifo(const char * addr){
                 return 0;
         }
 	fifo_count++;
-	fifos = la_realloc(fifos,fifo_count*sizeof(FIFO ));
-	fifos_m = la_realloc(fifos_m,fifo_count*sizeof(mutex));
 	mutex_init(&fifos_m[fifo_count-1]);
-      	fifos[fifo_count-1].addr = la_malloc(sizeof(strlen(addr)));
         strcpy((uint8_t *)fifos[fifo_count-1].addr,(uint8_t *)addr);
         fifos[fifo_count-1].w = 0;
         fifos[fifo_count-1].r = 0;
@@ -67,16 +66,14 @@ int64_t mkfifo(const char * addr){
 	fifos[fifo_count-1].w_fd = 0;
         fifos[fifo_count-1].r_fd = 0;
         fifos[fifo_count-1].not_read = 0;
-
         return fifo_count;
 }
 
 void get_opened_fifos(OPENED_FIFOS * of){
 	int i = 0;
-	of->fifos = la_malloc(fifo_count * BUFF_SIZE);
 	for(;i<fifo_count;i++){
-			of->fifos[i] = la_malloc(BUFF_SIZE);
-			strcpy((uint8_t *)of->fifos[i],(uint8_t *)fifos[i].addr);
+			of->fifos[i] = la_malloc(ADDR_SIZE);
+		strcpy((uint8_t *)of->fifos[i],(uint8_t *)fifos[i].addr);
 	}
 	of->size = i;
 }
@@ -92,8 +89,10 @@ int64_t rmfifo(const char * addr){
                 return 0;
         }
 	fifos[i-1] = fifos[fifo_count-1];
+	mutex_destroy(&fifos_m[i-1]);
+	fifos_m[i-1]=fifos_m[fifo_count-1];
         fifo_count--;
-        fifos = la_realloc(fifos,fifo_count*sizeof(FIFO ));
+
         return fifo_count;
 }
 
@@ -125,7 +124,6 @@ int64_t open_fifo(const char * addr,uint64_t mode){
 					}
 					if(!found){
 						fd_count++;
-						fds = la_realloc(fds,fd_count*sizeof(FD ));
 						fds[fd_count-1].pid= currPid();
 						fds[fd_count-1].next_fd = 4;
 						fifos[i-1].w_fd= 3;
@@ -148,7 +146,6 @@ int64_t open_fifo(const char * addr,uint64_t mode){
 				}
 				if(!found){
 					fd_count++;
-					fds = la_realloc(fds,fd_count*sizeof(FD ));
 					fds[fd_count-1].pid= currPid();
 					fds[fd_count-1].next_fd = 4;
 					fifos[i-1].r_fd= 3;
@@ -232,8 +229,8 @@ int64_t read_fifo(uint64_t fd, uint8_t * buf, uint64_t count ){
         if(!found ){
                 return -1;
         }
-	while( fifos[i-1].not_read < count){
-		yield();
+	if( fifos[i-1].not_read < count){
+		return -2;
 	}
 	mutex_lock(&(fifos_m[i-1]));
         for(j = 0; j < count ; j++){

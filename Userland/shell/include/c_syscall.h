@@ -6,6 +6,7 @@
 #define STDERR 2
 #define READ 2
 #define WRITE 1
+#define FIFOS_MAX 100
 
 typedef struct{
 	uint8_t sec,min,hour,day,month;
@@ -33,7 +34,7 @@ typedef struct mutex{
 
 typedef struct{
      int size;
-	 char ** fifos;
+	 char  * fifos[FIFOS_MAX];
 } OPENED_FIFOS;
 
 typedef struct MutexInfo{

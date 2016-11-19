@@ -141,6 +141,7 @@ void ipcs(){
 int64_t read_fifoc(uint64_t argc, uint8_t * argv[]) {
   char buf2[100] ;
   int64_t r;
+  int ans;
   if(argc < 2){
     printf("Ingrese una direccion y una cantidad a leer menor a 100" );
     putchar('\n');
@@ -155,10 +156,16 @@ int64_t read_fifoc(uint64_t argc, uint8_t * argv[]) {
   if(r < 2){
     printf("failed" );
     putchar('\n');
+    wkexit();
   }
-  if(read(r,(uint8_t *)buf2,c_atoi(argv[1])) < 0){
-    printf("El fifo no está inicializado" );
+  if((ans=read(r,(uint8_t *)buf2,c_atoi(argv[1]))) == -1){
+    printf("El fifo no esta inicializado" );
     putchar('\n');
+    wkexit();
+  }else if(ans == -2){
+    printf("El fifo no dispone de la cantidad de caracteres deseados" );
+    putchar('\n');
+    close_fifo(argv[0],READ);
     wkexit();
   }
   printf(buf2);
@@ -215,6 +222,7 @@ int64_t write_fifoc(uint64_t argc, uint8_t * argv[]) {
   if(write < 2){
     printf("failed" );
     putchar('\n');
+    wkexit();
   }
   if (write(w,argv[1],c_strlen(argv[1])) < 0){
     printf("failed" );

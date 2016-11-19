@@ -2,11 +2,13 @@
 #define FIFO_H
 
 #define BUFF_SIZE 100
+#define ADDR_SIZE 20
+#define FIFOS_MAX 100
 #define WRITE 1
 #define READ 2
 typedef struct{
         int size;
-	 char ** fifos;
+	 char  * fifos[10];
 
 } OPENED_FIFOS;
 
