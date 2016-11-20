@@ -1,6 +1,5 @@
 GLOBAL loader
 EXTERN shell_main
-
 section .text
 
 loader:

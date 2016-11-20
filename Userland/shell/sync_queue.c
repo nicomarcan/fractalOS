@@ -30,6 +30,7 @@ void squeue_destroy(SQueue * sq)
 	free(sq->m);
 	cond_variable_destroy(sq->full_buffer);
 	cond_variable_destroy(sq->empty_buffer);
+	mutex_destroy(sq->m);
 	free(sq);
 }
 int8_t is_empty(SQueue * sq)

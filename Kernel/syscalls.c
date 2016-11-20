@@ -14,6 +14,12 @@
 extern Process * foreground;
 static int64_t sys_write_out(const uint8_t * buf, uint64_t count);
 static int64_t sys_write_err(const uint8_t * buf, uint64_t count);
+static mutex fifo_m;
+
+
+void fifoinitlock(){
+	mutex_nameinit(&fifo_m,"fifo_mainlock");
+}
 
 /*
  * EAX:4
@@ -28,7 +34,9 @@ int64_t sys_write(uint64_t fd,const uint8_t *buf, uint64_t count){
 			ret = sys_write_err(buf, count);
 			break;
 		default:
+			mutex_lock(&fifo_m);
 			ret = write_fifo(fd,buf,count);
+			mutex_unlock(&fifo_m);
 			return;
 	}
 	return ret;
@@ -61,7 +69,9 @@ int64_t sys_read(uint64_t fd,uint8_t *buf,uint64_t count){
 			}
 			break;
 		default:
+			mutex_lock(&fifo_m);
 			i = read_fifo(fd,buf,count);
+			mutex_unlock(&fifo_m);
 			break;
 	}
 	return i;
@@ -72,25 +82,43 @@ void sys_infofifos(OPENED_FIFOS * of){
 }
 
 int64_t sys_mkfifo(const char * addr){
-	return mkfifo(addr);
+	mutex_lock(&fifo_m);
+	int64_t ret = mkfifo(addr);
+	mutex_unlock(&fifo_m);
+	return ret;
 }
 
 int64_t sys_rmfifo(const char * addr){
-	return rmfifo(addr);
+	mutex_lock(&fifo_m);
+	int64_t ret = rmfifo(addr);
+	mutex_unlock(&fifo_m);
+	return ret;
 }
 int64_t sys_write_fifo(uint64_t fd,const uint8_t * buf, uint64_t count ){
-	return write_fifo(fd,buf,count);
+	mutex_lock(&fifo_m);
+	int64_t ret = write_fifo(fd,buf,count);
+	mutex_unlock(&fifo_m);
+	return ret;
 }
 
 int64_t sys_read_fifo(uint64_t fd, uint8_t * buf, uint64_t count ){
-	return read_fifo(fd,buf,count);
+	mutex_lock(&fifo_m);
+	int64_t ret = read_fifo(fd,buf,count);
+	mutex_unlock(&fifo_m);
+	return ret;
 }
 
 int64_t sys_open_fifo(const char * addr,uint64_t mode){
-	 return open_fifo(addr,mode);
+	 mutex_lock(&fifo_m);
+	 int64_t ret = open_fifo(addr,mode);
+	 mutex_unlock(&fifo_m);
+	 return ret;
 }
 int64_t sys_close_fifo(const char * addr,uint64_t mode){
-	 return close_fifo(addr,mode);
+	 mutex_lock(&fifo_m);
+	 int64_t ret = close_fifo(addr,mode);
+	 mutex_unlock(&fifo_m);
+	 return ret;
 }
 
 

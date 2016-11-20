@@ -5,6 +5,7 @@
 #include <c_syscall.h>
 #include <fifo.h>
 #include <c_string.h>
+#include <cond_variable.h>
 
 /* simple debug hello, world */
 int64_t hello_world(uint64_t argc, uint8_t * argv[]) {
@@ -128,14 +129,25 @@ void ipcs(){
         for(;i<of.size;i++){
            printf("%d-> Name: %s\n",i,of.fifos[i] );
         }
+        printf("\n");
         MutexInfo * mi = mutex_info();
         printf("Active mutexes: %d\n",mi->nmutexes);
         for(i=0;i<mi->nmutexes;i++){
 			printf("%d-> Name: %s\n",mi->ids[i],mi->descrs[i] != 0 ? mi->descrs[i] : "Unnamed");
 		}
+		printf("\n");
+		CVInfo * cvi = cond_variable_info();
+		printf("Active condition variables: %d\n",cvi->cvnum);
+		for(i=0;i<cvi->cvnum;i++){
+			printf("%d-> Name: %s\n",cvi->cvids[i],cvi->descrs[i] != 0 ? cvi->descrs[i] : "Unnamed");
+		}
+		printf("\n");
 		free(mi->ids);
 		free(mi->descrs);
 		free(mi);
+		free(cvi->cvids);
+		free(cvi->descrs);
+		free(cvi);
         wkexit();
 }
 int64_t read_fifoc(uint64_t argc, uint8_t * argv[]) {

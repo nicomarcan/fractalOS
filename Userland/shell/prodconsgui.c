@@ -22,6 +22,13 @@ guiprodcon * renderinit(uint64_t max_size, uint64_t radius){
     return ret;
 }
 
+void renderdestroy(guiprodcon * gpc){
+	mutex_destroy(gpc->m);
+	free(gpc);
+	return;
+}
+	
+
 void renderqueue(guiprodcon * gs)
 {
 	mutex_lock(gs->m);

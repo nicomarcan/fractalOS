@@ -12,6 +12,7 @@ typedef struct guiprodcon{
 } guiprodcon;
 
 guiprodcon * renderinit(uint64_t max_size, uint64_t radius);
+void renderdestroy(guiprodcon * gpc);
 void renderenque(guiprodcon * gs);
 void renderdeque(guiprodcon * gs);
 

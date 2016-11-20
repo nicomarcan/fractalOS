@@ -104,6 +104,7 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 				squeue_destroy(sq);
 				free(cons_speed);
 				free(prod_speed);
+				renderdestroy(pcg);
 				end = true;
 				break;
 			case 'a':

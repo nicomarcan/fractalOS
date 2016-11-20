@@ -11,6 +11,7 @@
 void * memset(void * destiny, int32_t c, uint64_t length);
 extern char bss;
 extern char endOfBinary;
+extern void cvinitlock();
 
 /* command table entry */
 typedef struct {
@@ -47,6 +48,7 @@ int64_t shell_main() {
 	memset(&bss, 0, &endOfBinary - &bss);
 
   init_shell();
+  cvinitlock();
   while(!shell());
 }
 
