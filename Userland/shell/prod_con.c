@@ -91,8 +91,8 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 	arg2->argv = malloc(4 * sizeof(void *));
 	arg1->argv[0] = sq;
 	arg2->argv[0] = sq;
-	arg1->argv[1] = cons_speed;
-	arg2->argv[1] = prod_speed;
+	arg1->argv[1] = prod_speed;
+	arg2->argv[1] = cons_speed;
 	arg1->argv[2] = pcg;
 	arg2->argv[2] = pcg;
 	arg1->argv[3] = text_prod;
