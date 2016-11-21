@@ -2,6 +2,7 @@
 #include <cond_variable.h>
 #include <stdint.h>
 #include <prodconsgui.h>
+#include <stdbool.h>
 typedef struct SQueue {
 	Queue_p q;
 	cond_variable * full_buffer;
@@ -38,27 +39,29 @@ int8_t is_empty(SQueue * sq)
 	return q_is_empty(sq->q);
 }
 
-void senque(SQueue * sq, int64_t a, guiprodcon * pcg)
+void senque(SQueue * sq, int64_t a, guiprodcon * pcg, bool text)
 {
 	mutex_lock(sq->m);
 	while(q_size(sq->q)>= sq->max_size) {
 		cond_variable_wait(sq->full_buffer, sq->m);
 	}
 	enque(sq->q, a);
-	renderenque(pcg);
+	if (!text)
+		renderenque(pcg);
 	//printf("Producido %d. Ahora hay %d/%d items en la cola.\n", a, squeue_size(sq), squeue_max_size(sq));
 	mutex_unlock(sq->m);
 	cond_variable_signal(sq->empty_buffer);
 }
 
-int64_t sdeque(SQueue * sq, guiprodcon * pcg)
+int64_t sdeque(SQueue * sq, guiprodcon * pcg, bool text)
 {
 	mutex_lock(sq->m);
 	while(is_empty(sq)) {
 		cond_variable_wait(sq->empty_buffer, sq->m);
 	}
 	int64_t a = deque(sq->q);
-	renderdeque(pcg);
+	if (!text)
+		renderdeque(pcg);
 	//printf("Consumido %d. Ahora hay %d/%d items en la cola.\n", a, squeue_size(sq), squeue_max_size(sq));
 	mutex_unlock(sq->m);
 	cond_variable_signal(sq->full_buffer);

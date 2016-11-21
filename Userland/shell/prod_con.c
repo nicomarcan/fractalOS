@@ -12,11 +12,15 @@ static void * producer(uint64_t argc, uint8_t ** argv) {
 	int * prod_speed = (int *) argv[1];
 	guiprodcon * pcg = (guiprodcon *) argv[2];
 	int i = 0;
+	bool text = (bool) *argv[3];
 	free(argv);
 	while(1) {
 		//Think
 		sleep(*prod_speed);
-		senque(pq, i, pcg);
+		senque(pq, i, pcg, text);
+		if (text) {
+			printf("Producido %d. Ahora hay %d/%d items en la cola.\n", i, squeue_size(pq), squeue_max_size(pq));
+		}
 		i++;
 	}
 	exit();
@@ -27,14 +31,15 @@ static void * consumer(uint64_t argc, uint8_t ** argv) {
 	int * cons_speed = (int *) argv[1];
 	guiprodcon * pcg = (guiprodcon *) argv[2];
 	int i = 0;
+	bool text = (bool) *argv[3];
 	free(argv);
 	while(1) {
 		//Think
 		sleep(*cons_speed);
-		i = sdeque(pq, pcg);
-
-
-
+		i = sdeque(pq, pcg, text);
+		if (text) {
+			printf("Consumido %d. Ahora hay %d/%d items en la cola.\n", i, squeue_size(pq), squeue_max_size(pq));
+		}
 	}
 	exit();
 }
@@ -42,7 +47,7 @@ static void * consumer(uint64_t argc, uint8_t ** argv) {
 int64_t prod_con(int64_t argc, int64_t * argv[])
 {
 	int max_capacity, radius, * cons_speed, * prod_speed;
-
+	bool text_mode = false,  * text_prod, * text_cons;
 	if (argc < 2) {
 		radius = 250;
 	}
@@ -58,6 +63,9 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 	}
 	else {
 		sscanf(argv[0], "%d", &max_capacity);
+		if (max_capacity > 30) {
+			text_mode =true;
+		}
 	}
 
 	Args * arg1 = malloc(sizeof(Args));
@@ -65,25 +73,30 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 	arg1->fg = 0;
 	arg2->fg = 0;
 	SQueue * sq = squeue_init(max_capacity);
-
-
-	guiprodcon * pcg = renderinit(max_capacity, radius);
+	guiprodcon * pcg = 0;
+	if (!text_mode)
+		pcg= renderinit(max_capacity, radius);
 
 	cons_speed = malloc(sizeof(int));
 	prod_speed = malloc(sizeof(int));
 
 	*cons_speed = 10;
 	*prod_speed = 10;
+	*text_prod = text_mode;
+	*text_cons = text_mode;
+
 	arg1->argc = 3;
 	arg2->argc = 3;
-	arg1->argv = malloc(3 * sizeof(void *));
-	arg2->argv = malloc(3 * sizeof(void *));
+	arg1->argv = malloc(4 * sizeof(void *));
+	arg2->argv = malloc(4 * sizeof(void *));
 	arg1->argv[0] = sq;
 	arg2->argv[0] = sq;
 	arg1->argv[1] = cons_speed;
 	arg2->argv[1] = prod_speed;
 	arg1->argv[2] = pcg;
 	arg2->argv[2] = pcg;
+	arg1->argv[3] = text_prod;
+	arg2->argv[3] = text_cons;
 	int prod_pid = fkexec(producer, "producer", arg1);
 	int cons_pid = fkexec(consumer, "consumer", arg2);
 
@@ -91,7 +104,8 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 	while(!end) {
 		c = getchar();
 		if (count == 5) {
-			squeue_render(sq, pcg);
+			if (!text_mode)
+				squeue_render(sq, pcg);
 			count = 0;
 		}
 		else {
@@ -111,14 +125,14 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 				/* consumption speed up */
 				if (*cons_speed > 0){
 					(*cons_speed)--;
-					/*
-					printf("La velocidad del consumidor aumento. Ahora es %d\n", *cons_speed );
-					*/
+					if (text_mode){
+						printf("La velocidad del consumidor aumento. Ahora es %d\n", *cons_speed );
+					}
 				}
 				else {
-					/*
-					printf("La velocidad del consumidor esta al maximo.\n");
-					*/
+					if (text_mode)
+						printf("La velocidad del consumidor esta al maximo.\n");
+
 				}
 				break;
 			case 'z':
@@ -126,42 +140,42 @@ int64_t prod_con(int64_t argc, int64_t * argv[])
 				if (*cons_speed < MIN_SPEED ){
 
 					(*cons_speed)++;
-					/*
-					printf("La velocidad del consumidor diminuyo. Ahora es %d\n", *cons_speed );
-					*/
+					if (text_mode)
+						printf("La velocidad del consumidor diminuyo. Ahora es %d\n", *cons_speed );
+
 				}
 				else {
-					/*
-					printf("La velocidad del consumidor esta al minimo.\n");
-					*/
+					if (text_mode)
+						printf("La velocidad del consumidor esta al minimo.\n");
+
 				}
 				break;
 			case 's':
 				/* production speed up */
 				if (*prod_speed > 0  ){
 					(*prod_speed)--;
-					/*
-					printf("La velocidad del productor aumento. Ahora es %d\n", *prod_speed );
-					*/
+					if (text_mode)
+						printf("La velocidad del productor aumento. Ahora es %d\n", *prod_speed );
+
 				}
 				else {
-					/*
-					printf("La velocidad del productor esta al maximo.\n");
-					*/
+					if (text_mode)
+						printf("La velocidad del productor esta al maximo.\n");
+
 				}
 				break;
 			case 'x':
 				/* production speed down */
 				if (*prod_speed < MIN_SPEED ){
 					(*prod_speed)++;
-					/*
-					printf("La velocidad del productor disminuyo. Ahora es %d\n", *prod_speed );
-					*/
+					if (text_mode)
+						printf("La velocidad del productor disminuyo. Ahora es %d\n", *prod_speed );
+
 				}
 				else {
-					/*
-					printf("La velocidad del productor esta al minimo.\n");
-					*/
+					if (text_mode)
+						printf("La velocidad del productor esta al minimo.\n");
+
 				}
 				break;
 			default:

@@ -2,6 +2,7 @@
 #include <libgph.h>
 #include <prodconsgui.h>
 #include <c_syscall.h>
+
 #define RADIUS 164
 #define SQUARESIZE 32
 
@@ -27,7 +28,7 @@ void renderdestroy(guiprodcon * gpc){
 	free(gpc);
 	return;
 }
-	
+
 
 void renderqueue(guiprodcon * gs)
 {
